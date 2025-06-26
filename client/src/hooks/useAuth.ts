@@ -71,11 +71,17 @@ export function useAuth() {
         };
       }
       
-      const response = await fetchWithAuth("/api/auth/user");
-      if (!response.ok) {
-        throw new Error("Failed to fetch user");
+      // Handle real JWT tokens
+      if (token && token !== "demo_token") {
+        const response = await fetchWithAuth("/api/auth/user");
+        if (!response.ok) {
+          throw new Error("Failed to fetch user");
+        }
+        return response.json();
       }
-      return response.json();
+      
+      // No token
+      throw new Error("No authentication token");
     },
     retry: false,
     refetchOnWindowFocus: false,

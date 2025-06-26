@@ -22,11 +22,19 @@ export default function AuthPage() {
     const password = formData.get("password") as string;
 
     try {
-      // 临时解决方案：模拟登录
-      if (email === "demo@levelupsolo.net" && password === "demo1234") {
-        // Store fake tokens
-        localStorage.setItem("accessToken", "demo_token");
-        localStorage.setItem("refreshToken", "demo_refresh_token");
+      // 先尝试真实登录
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store real tokens
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("refreshToken", data.refreshToken);
         
         toast({
           title: "登录成功",
@@ -36,11 +44,26 @@ export default function AuthPage() {
         // Force page reload to update auth state
         window.location.href = "/";
       } else {
-        toast({
-          title: "登录失败",
-          description: "请使用 demo@levelupsolo.net / demo1234 登录",
-          variant: "destructive",
-        });
+        // 如果真实登录失败，检查是否是 demo 账户
+        if (email === "demo@levelupsolo.net" && password === "demo1234") {
+          // Store fake tokens for demo
+          localStorage.setItem("accessToken", "demo_token");
+          localStorage.setItem("refreshToken", "demo_refresh_token");
+          
+          toast({
+            title: "登录成功",
+            description: "欢迎回来！（Demo 模式）",
+          });
+          
+          // Force page reload to update auth state
+          window.location.href = "/";
+        } else {
+          toast({
+            title: "登录失败",
+            description: data.message || "邮箱或密码错误",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({
