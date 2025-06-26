@@ -33,7 +33,12 @@ export default function Navigation({ currentPage, onPageChange }: NavigationProp
   });
 
   const handleLogout = () => {
-    window.location.href = "/api/logout";
+    // Clear authentication data
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    
+    // Redirect to home page
+    window.location.href = "/";
   };
 
 
