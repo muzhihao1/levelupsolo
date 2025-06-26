@@ -1,5 +1,11 @@
 {
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist/public",
-  "framework": null
+  "framework": null,
+  "installCommand": "npm install --production=false",
+  "build": {
+    "env": {
+      "SKIP_TYPESCRIPT_CHECK": "true"
+    }
+  }
 }

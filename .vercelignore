@@ -1,0 +1,9 @@
+server/
+scripts/
+*.sql
+*.md
+.env*
+drizzle.config.ts
+tsconfig.build.json
+tsconfig.vercel.json
+vercel-static/
