@@ -2,6 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import aiRoutes from "./ai";
+import { registerMobileRoutes } from "./mobile-routes";
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use((req, res, next) => {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https: blob:",
     "font-src 'self' https://fonts.gstatic.com",
-    "connect-src 'self' https://api.openai.com wss: ws:",
+    "connect-src 'self' https://api.openai.com https://*.supabase.co wss: ws:",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'"
@@ -78,6 +79,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Register mobile routes with JWT authentication
+  registerMobileRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
