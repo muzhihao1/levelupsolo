@@ -3,6 +3,17 @@
   "outputDirectory": "dist/public",
   "framework": null,
   "installCommand": "npm install --production=false",
+  "functions": {
+    "api/auth/login.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/auth/register.ts": {
+      "runtime": "@vercel/node"
+    },
+    "api/auth/user.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
   "build": {
     "env": {
       "SKIP_TYPESCRIPT_CHECK": "true"
