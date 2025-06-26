@@ -20,15 +20,7 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-// User passwords table - separate for security
-export const userPasswords = pgTable("user_passwords", {
-  id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id).unique(),
-  hashedPassword: text("hashed_password").notNull(),
+  hashedPassword: text("hashed_password"), // 密码字段
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

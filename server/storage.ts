@@ -1,5 +1,5 @@
 import { 
-  skills, tasks, goals, goalTasks, activityLogs, milestones, microTasks, users, userProfiles, userStats, userPasswords,
+  skills, tasks, goals, goalTasks, activityLogs, milestones, microTasks, users, userProfiles, userStats,
   type Skill, type InsertSkill,
   type Task, type InsertTask,
   type Goal, type InsertGoal,
@@ -119,26 +119,20 @@ export class DatabaseStorage implements IStorage {
 
   async setUserPassword(userId: string, hashedPassword: string): Promise<void> {
     await db
-      .insert(userPasswords)
-      .values({
-        userId,
+      .update(users)
+      .set({
         hashedPassword,
+        updatedAt: new Date(),
       })
-      .onConflictDoUpdate({
-        target: userPasswords.userId,
-        set: {
-          hashedPassword,
-          updatedAt: new Date(),
-        },
-      });
+      .where(eq(users.id, userId));
   }
 
   async getUserPassword(userId: string): Promise<string | undefined> {
-    const [password] = await db
-      .select()
-      .from(userPasswords)
-      .where(eq(userPasswords.userId, userId));
-    return password?.hashedPassword;
+    const [user] = await db
+      .select({ hashedPassword: users.hashedPassword })
+      .from(users)
+      .where(eq(users.id, userId));
+    return user?.hashedPassword || undefined;
   }
 
   // Skills

@@ -88,7 +88,7 @@ export async function setupAuth(app: Express) {
       // Hash password
       const hashedPassword = await bcrypt.hash(data.password, 10);
       
-      // Create user
+      // Create user with password
       const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       await storage.upsertUser({
         id: userId,
@@ -96,10 +96,8 @@ export async function setupAuth(app: Express) {
         firstName: data.firstName,
         lastName: data.lastName,
         profileImageUrl: null,
+        hashedPassword,
       });
-      
-      // Store password (you'll need to add this to your storage)
-      await storage.setUserPassword(userId, hashedPassword);
       
       // Generate tokens
       const tokens = auth.generateTokens(userId, data.email);
