@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Request, Response, NextFunction } from 'express';
 import { db } from './db';
 import { users, userStats, userProfiles } from '../shared/schema';
@@ -36,6 +36,16 @@ export function generateTokens(userId: string, email: string) {
   });
   
   return { accessToken, refreshToken };
+}
+
+// 验证 Access Token (同步方法)
+export function verifyAccessToken(token: string): JWTPayload {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+    return decoded;
+  } catch (error) {
+    throw new Error('Invalid or expired token');
+  }
 }
 
 // 验证 Token 中间件
@@ -81,10 +91,9 @@ export async function register(req: Request, res: Response) {
   
   try {
     // 检查用户是否已存在
-    const existingUser = await db.select()
+    const [existingUser] = await db.select()
       .from(users)
-      .where(eq(users.email, email))
-      .get();
+      .where(eq(users.email, email));
       
     if (existingUser) {
       return res.status(400).json({ error: 'User already exists' });
@@ -142,10 +151,9 @@ export async function login(req: Request, res: Response) {
   
   try {
     // 查找用户
-    const user = await db.select()
+    const [user] = await db.select()
       .from(users)
-      .where(eq(users.email, email))
-      .get();
+      .where(eq(users.email, email));
       
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -181,10 +189,9 @@ export async function getCurrentUser(req: Request, res: Response) {
   try {
     const userId = req.user!.userId;
     
-    const user = await db.select()
+    const [user] = await db.select()
       .from(users)
-      .where(eq(users.id, userId))
-      .get();
+      .where(eq(users.id, userId));
       
     if (!user) {
       return res.status(404).json({ error: 'User not found' });

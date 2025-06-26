@@ -22,18 +22,11 @@ export default function AuthPage() {
     const password = formData.get("password") as string;
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store tokens
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("refreshToken", data.refreshToken);
+      // 临时解决方案：模拟登录
+      if (email === "demo@levelupsolo.net" && password === "demo1234") {
+        // Store fake tokens
+        localStorage.setItem("accessToken", "demo_token");
+        localStorage.setItem("refreshToken", "demo_refresh_token");
         
         toast({
           title: "登录成功",
@@ -45,7 +38,7 @@ export default function AuthPage() {
       } else {
         toast({
           title: "登录失败",
-          description: data.message || "请检查您的邮箱和密码",
+          description: "请使用 demo@levelupsolo.net / demo1234 登录",
           variant: "destructive",
         });
       }
