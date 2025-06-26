@@ -263,17 +263,6 @@ export type InsertUserStats = z.infer<typeof insertUserStatsSchema>;
 
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
-export interface MicroTask {
-  id: string;
-  title: string;
-  description: string;
-  duration: number; // minutes
-  expReward: number;
-  parentMilestone: string;
-  completed: boolean;
-  createdAt: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-}
 
 export interface UserState {
   energyLevel: 'high' | 'medium' | 'low';
@@ -290,23 +279,35 @@ export interface TaskRecommendation {
   type: 'micro' | 'milestone' | 'warmup';
 }
 
-export interface Goal {
+export interface GoalInterface {
   id: number;
   userId: string;
   title: string;
   description: string;
   completed: boolean;
-  progress: real;
-  targetDate: timestamp;
-  expReward: number; // 目标完成经验奖励
-  pomodoroExpReward: integer; // 每个番茄钟经验奖励
-  requiredEnergyBalls: integer; // 主线任务所需能量球数量
-  skillTags: string[]; // 关联的技能标签
-  relatedSkillIds: integer[]; // 关联的技能ID数组
+  progress: number;
+  targetDate: Date | null;
+  expReward: number;
+  pomodoroExpReward: number;
+  requiredEnergyBalls: number;
+  skillTags: string[];
+  relatedSkillIds: number[];
   createdAt: string;
-  completedAt: timestamp;
-  microTasks: MicroTask[];
-  warmupTasks: MicroTask[];
+  completedAt: Date | null;
+  microTasks: MicroTaskInterface[];
+  warmupTasks: MicroTaskInterface[];
+}
+
+export interface MicroTaskInterface {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  expReward: number;
+  parentMilestone: string;
+  completed: boolean;
+  createdAt: string;
+  difficulty: 'easy' | 'medium' | 'hard';
   userState?: UserState;
   recommendations?: TaskRecommendation[];
 }

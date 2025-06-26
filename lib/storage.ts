@@ -8,7 +8,7 @@ export interface User {
   firstName: string | null;
   lastName: string | null;
   profileImageUrl: string | null;
-  hashedPassword?: string;
+  hashedPassword?: string | null;
 }
 
 export interface CreateUserData {
