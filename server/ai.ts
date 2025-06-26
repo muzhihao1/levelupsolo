@@ -1,6 +1,6 @@
 import { Router } from "express";
 import OpenAI from "openai";
-import { isAuthenticated } from "./replitAuth";
+import { isAuthenticated } from "./simpleAuth";
 
 const router = Router();
 
