@@ -33,8 +33,8 @@ export default function AuthPage() {
           description: "欢迎回来！",
         });
         
-        // Redirect to dashboard
-        setLocation("/");
+        // Force page reload to update auth state
+        window.location.href = "/";
       } else {
         toast({
           title: "登录失败",
@@ -82,8 +82,8 @@ export default function AuthPage() {
           description: "欢迎加入 LevelUp Solo！",
         });
         
-        // Redirect to dashboard
-        setLocation("/");
+        // Force page reload to update auth state
+        window.location.href = "/";
       } else {
         toast({
           title: "注册失败",

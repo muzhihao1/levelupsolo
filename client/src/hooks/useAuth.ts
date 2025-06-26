@@ -58,6 +58,19 @@ export function useAuth() {
   const { data: user, isLoading, error, refetch } = useQuery<UserData>({
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
+      const token = localStorage.getItem("accessToken");
+      
+      // Handle demo login
+      if (token === "demo_token") {
+        return {
+          id: "demo_user",
+          email: "demo@levelupsolo.net",
+          firstName: "Demo",
+          lastName: "User",
+          profileImageUrl: null,
+        };
+      }
+      
       const response = await fetchWithAuth("/api/auth/user");
       if (!response.ok) {
         throw new Error("Failed to fetch user");
