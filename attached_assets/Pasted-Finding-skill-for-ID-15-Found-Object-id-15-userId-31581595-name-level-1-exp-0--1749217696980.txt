@@ -1,0 +1,49 @@
+Finding skill for ID: 15 Found: 
+Object {id: 15, userId: "31581595", name: "学习能力", level: 1, exp: 0, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 15 Found: 
+Object {id: 15, userId: "31581595", name: "学习能力", level: 1, exp: 0, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 12 Found: 
+Object {id: 12, userId: "31581595", name: "生活技能", level: 1, exp: 35, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 12 Found: 
+Object {id: 12, userId: "31581595", name: "生活技能", level: 1, exp: 35, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 12 Found: 
+Object {id: 12, userId: "31581595", name: "生活技能", level: 1, exp: 35, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 13 Found: 
+Object {id: 13, userId: "31581595", name: "管理能力", level: 2, exp: 120, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 13 Found: 
+Object {id: 13, userId: "31581595", name: "管理能力", level: 2, exp: 120, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Finding skill for ID: 13 Found: 
+Object {id: 13, userId: "31581595", name: "管理能力", level: 2, exp: 120, …}
+ All skills: 
+(7) [{…}, {…}, {…}, {…}, {…}, {…}, {…}]
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Failed to execute 'fetch' on 'Window': '/api/skills/auto-merge' is not a valid HTTP method.
+at window.fetch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:218642)
+at apiRequest (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/lib/queryClient.ts:9:21)
+at Object.mutationFn (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/pages/skill-tree.tsx:70:20)
+at Object.fn (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:1189:29)
+at run (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:494:49)
+at Object.start (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:536:9)
+at _a6.execute (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:1225:56)
+Failed to execute 'fetch' on 'Window': '/api/skills/auto-merge' is not a valid HTTP method.
+at window.fetch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:218642)
+at apiRequest (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/lib/queryClient.ts:9:21)
+at Object.mutationFn (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/pages/skill-tree.tsx:70:20)
+at Object.fn (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:1189:29)
+at run (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:494:49)
+at Object.start (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:536:9)
+at _a6.execute (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1964b7e3:1225:56)

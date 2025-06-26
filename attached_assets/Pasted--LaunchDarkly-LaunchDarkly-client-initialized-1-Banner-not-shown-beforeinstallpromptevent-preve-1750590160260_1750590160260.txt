@@ -1,0 +1,143 @@
+[LaunchDarkly] LaunchDarkly client initialized
+/~:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+_app-6b0089c83b1309ba.js:38 task queue exceeded allotted deadline by 30ms
+(anonymous) @ _app-6b0089c83b1309ba.js:38Understand this warning
+21Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.Understand this error
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'battery'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+framework-a818883e88d690fb.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-a818883e88d690fb.js:1Understand this warning
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1091480811&gjid=2034134936&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=593209096:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=710673407&gjid=1697583399&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=707148080:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1893290394&gjid=724788142&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=661003246:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=274344422&gjid=1421271524&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=174454354:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stallwart.build.js:1 stallwart: failed ping 1
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=367141202&gjid=1620172341&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=569381353:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=464382626&gjid=1864663613&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=1180815259:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESETUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1311653001&gjid=643903197&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=691093269:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1027909264&gjid=1914889374&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=33522085:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+_app-6b0089c83b1309ba.js:38 onClick is deprecated, please use onPress
+(anonymous) @ _app-6b0089c83b1309ba.js:38Understand this warning
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=63872483&gjid=554397866&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=240836543:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=243687216&gjid=301740186&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=460359672:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+_app-6b0089c83b1309ba.js:38 task queue exceeded allotted deadline by 83ms
+(anonymous) @ _app-6b0089c83b1309ba.js:38Understand this warning
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=29897689&gjid=1352293275&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=1168983368:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1784144090&gjid=1034896560&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=1759634363:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=531139625&gjid=234953203&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=1770753089:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+www.google.co.jp/ads/ga-audiences?v=1&t=sr&slf_rd=1&_r=4&tid=G-MPJY3F1YEL&cid=937194313.1749478453&gtm=45je56g1h2v9135634466za200&aip=1&dma=0&gcd=13l3l3l3l2l1&npa=0&frm=0&tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104684204~104684207~104718208~104791498~104791500&z=1183068846:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=2002602130&gjid=1697522640&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=166279192:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1545584609&gjid=877925164&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=487544372:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=2045491508&gjid=311176447&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=265731483:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=937194313.1749478453&jid=1453832306&gjid=1133681904&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=1316243318:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSEDUnderstand this error
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'battery'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.Understand this warning
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.Understand this warning
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warning
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warning
+replit-dev-banner.js:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoepUnderstand this error
+6Refused to load the font '<URL>' because it violates the following Content Security Policy directive: "font-src 'self' <URL>".
+Understand this error
+/public/js/beacon.js:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoepUnderstand this error
+Console.js:61 GlobalFloatingTimer: not rendering because Object
+Console.js:61 GlobalFloatingTimer mounted
+Console.js:61 GlobalFloatingTimer timerData changed: null
+Console.js:61 LCP: 8220
+Console.js:61 LCP: 9036
+Console.js:61 GlobalFloatingTimer: not rendering because Object
+Console.js:61 FID: 30.100000008940697

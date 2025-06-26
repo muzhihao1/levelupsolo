@@ -1,0 +1,40 @@
+
+> rest-express@1.0.0 dev
+Registered auth strategy for domain: adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev
+Registered auth strategy for domain: levelupsolo.net
+Registered auth strategy for domain: www.levelupsolo.net
+1:04:19 PM [express] serving on port 5000
+Browserslist: browsers data (caniuse-lite) is 8 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+1:04:22 PM [express] GET /api/auth/user 401 in 2ms :: {"message":"Unauthorized"}
+1:04:25 PM [express] GET /api/auth/user 304 in 134ms :: {"id":"31581595","email":"demo@levelupsolo.n…
+1:04:25 PM [express] GET /api/profile 304 in 124ms :: {"id":1,"userId":"31581595","name":"Peter Mu",…
+1:04:26 PM [express] GET /api/skills 304 in 211ms :: [{"id":304,"userId":"31581595","name":"情绪稳定力","…
+1:04:26 PM [express] GET /api/tasks 304 in 228ms :: [{"id":118,"userId":"31581595","title":"改进headsh…
+1:04:26 PM [express] GET /api/goals 304 in 225ms :: [{"id":23,"userId":"31581595","title":"联合专项申请","…
+1:04:26 PM [express] GET /api/user-stats 304 in 83ms :: {"id":1,"userId":"31581595","level":5,"exper…
+1:04:34 PM [express] POST /api/ai/parse-input 200 in 46ms
+1:04:36 PM [express] POST /api/ai/suggestions 200 in 7544ms :: {"suggestions":["• 制定一个每日任务清单，并优先处理与“…
+1:04:38 PM [express] POST /api/ai/parse-input 200 in 40ms
+1:04:40 PM [express] POST /api/ai/parse-input 200 in 43ms
+1:04:40 PM [express] POST /api/ai/parse-input 200 in 53ms
+1:04:40 PM [express] POST /api/ai/parse-input 200 in 40ms
+1:04:40 PM [express] POST /api/ai/parse-input 200 in 41ms
+1:04:41 PM [express] POST /api/ai/parse-input 200 in 41ms
+1:04:41 PM [express] POST /api/ai/parse-input 200 in 41ms
+1:04:41 PM [express] POST /api/ai/parse-input 200 in 38ms
+1:04:41 PM [express] POST /api/ai/parse-input 200 in 43ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 51ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 48ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 156ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 47ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 49ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 161ms
+1:04:42 PM [express] POST /api/ai/parse-input 200 in 176ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 43ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 39ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 53ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 42ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 40ms
+1:04:43 PM [express] POST /api/ai/parse-input 200 in 40ms

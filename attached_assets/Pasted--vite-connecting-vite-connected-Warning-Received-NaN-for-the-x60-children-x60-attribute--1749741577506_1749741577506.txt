@@ -1,0 +1,53 @@
+[vite] connecting...
+[vite] connected.
+Warning: Received NaN for the &#x60;children&#x60; attribute. If this is expected, cast the value to a string.
+    at div
+    at div
+    at div
+    at div
+    at div
+    at SkillsRadarChart (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/charts/skills-radar-chart.tsx:20:44)
+    at div
+    at _c9 (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/card.tsx:114:12)
+    at div
+    at _c (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at Dashboard (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/pages/dashboard.tsx:30:67)
+    at Route (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fb460e5d:323:16)
+    at Switch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fb460e5d:379:17)
+    at Suspense
+    at main
+    at div
+    at Router (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/App.tsx?v=ptz_vVfzMLAeOkBHWhbGt:42:42)
+    at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=fb460e5d:38:15)
+    at TooltipProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=fb460e5d:61:5)
+    at QueryClientProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=fb460e5d:2805:3)
+    at App
+at div
+at div
+at div
+at div
+at div
+at SkillsRadarChart (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/charts/skills-radar-chart.tsx:20:44)
+at div
+at _c9 (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/card.tsx:114:12)
+at div
+at _c (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/card.tsx:20:11)
+at div
+at div
+at Dashboard (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/pages/dashboard.tsx:30:67)
+at Route (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fb460e5d:323:16)
+at Switch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fb460e5d:379:17)
+at Suspense
+at main
+at div
+at Router (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/App.tsx?v=ptz_vVfzMLAeOkBHWhbGt:42:42)
+at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-OXZDJRWN.js?v=fb460e5d:38:15)
+at TooltipProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=fb460e5d:61:5)
+at QueryClientProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=fb460e5d:2805:3)
+at App
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

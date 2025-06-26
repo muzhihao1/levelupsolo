@@ -1,0 +1,139 @@
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+7[Intervention] Slow network is detected. See <URL> for more details. Fallback font will be used while loading: <URL>
+/~:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <div.cm-content cm-lineWrapping>
+Ancestor with aria-hidden: <div. useView_view__C2mnv css-17qdd0f Surface_surfaceRoot__TeA2u> <div class=​" useView_view__C2mnv css-17qdd0f Surface_surfaceRoot__TeA2u" aria-hidden=​"true" style=​"--useView--gap:​ 4px;​ border-color:​ var(--outline-dimmer)​;​ --focusedBorderColor:​ var(--accent-primary-default)​;​ --hoverBorderColor:​ var(--accent-primary-default)​;​">​…​</div>​
+ [LaunchDarkly] LaunchDarkly client initialized
+/~:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+ task queue exceeded allotted deadline by 40ms
+(anonymous) @ _app-6b0089c83b1309ba.js:38
+12Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'battery'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-a818883e88d690fb.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-a818883e88d690fb.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-a818883e88d690fb.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-a818883e88d690fb.js:1
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+/data/repls/adb8cff3-bc53-49f4-bb73-89df1d2237ee/get_connection_metadata:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_CHANGED
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A49152754&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=babd1fef-8881-4e78-a1a2-e537bf262fc2:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_CHANGED
+9303-84289abb4eb95615.js:1 WebSocket connection to 'wss://production-ai-chat.replit.com/river?auth_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMxNTgxNTk1LCJ1c2VyVGltZUNyZWF0ZWQiOiIyMDI0LTAxLTI1VDIzOjQwOjAxLjM0OFoiLCJyZXBsSWQiOiJhZGI4Y2ZmMy1iYzUzLTQ5ZjQtYmI3My04OWRmMWQyMjM3ZWUiLCJtZW1iZXJzaGlwIjoiY29yZSIsImlzc3VlciI6Imh0dHBzOi8vcmVwbGl0LXdlYi1wcm9kLnAucmVwbGl0LmNvbSIsInJvbGVzIjpbXSwiY2FuV3JpdGUiOnRydWUsImhhc1JlcGxpdEFpUHJvIjp0cnVlLCJmbGFnZ2luZ0NvbnRleHQiOiJ7XCJrZXlcIjpcInVzZXI6MzE1ODE1OTVcIixcImtpbmRcIjpcIm93bmVyXCIsXCJyb2xlc1wiOltdLFwiaXNfdGVhbVwiOmZhbHNlLFwiaGFzX2FnZW50X2JpbGxpbmdfdjJcIjpmYWxzZSxcIm1lbWJlcnNoaXBcIjpcImNvcmVcIn0iLCJpYXQiOjE3NTA1NzE0MDYsImV4cCI6MTc1MDU3NTAwNn0.ffKYkHG7IiVANmVelzNzhn6mZQ13wHjaQB10muVSmwRed77OzF-8FRVAQzhmd2IB7fG9fOf46-C252qivwUSaGqMNMfTAiJY6-PQDu0mLmu3z7-1zTjBvXdVQADaR5SkJuYWjdkO6_U6raKiXdRrIyovgcZXl3-zwbAwe0I0N52XpwOhpu_Whbfo3MYq5zK4cNfUe366M8G1BJ5-DnswWDqBecQNYS411l_wryNmTlhWjmRusXL-b-XGe4blCtRh7eVA1ZGhOASh3q2NLyQYoHGFnNUz3AzUK6s4haEgtm5CmGdLJ6wB0_jj5PNHGik-SiS2GGoj74gZ1NLAcezQ4w' failed: Error in connection establishment: net::ERR_NETWORK_CHANGED
+(anonymous) @ 9303-84289abb4eb95615.js:1
+t:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+graphql:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_CHANGED
+sp.replit.com/v1/m:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_CHANGED
+ Error sending segment performance metrics TypeError: Failed to fetch
+    at _app-6b0089c83b1309ba.js:38:9046
+    at _app-6b0089c83b1309ba.js:6:180193
+    at o (_app-6b0089c83b1309ba.js:11:183393)
+    at o (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:23763)
+    at t.<anonymous> (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:22238)
+    at sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:33689
+    at Object.next (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:33794)
+    at sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:32710
+    at new Promise (<anonymous>)
+    at u (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:32455)
+    at t.send (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:22021)
+    at t.<anonymous> (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:21894)
+    at sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:33689
+    at Object.next (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:33794)
+    at sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:32710
+    at new Promise (<anonymous>)
+    at u (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:32455)
+    at t.flush (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:21754)
+    at l (sp.replit.com/sdk.js/v1/dMePKGC4BqfBivpe0Hvl8IoPpzSHgjdX/sdk.min.js:1:21142)
+    at n (_app-6b0089c83b1309ba.js:38:2959)
+(anonymous) @ _app-6b0089c83b1309ba.js:38
+2656-27ae9ee8cedfc0c3.js:1 WebSocket connection to 'wss://eval.kirk.platform.replit.com/wsv2/v2.public.Q2dZSWdMUGV3Z1lTQmdpZno5N0NCaUlFYTJseWF6QUFPcm9CQ2lSaFpHSTRZMlptTXkxaVl6VXpMVFE1WmpRdFltSTNNeTA0T1dSbU1XUXlNak0zWldVU0EyNXBlQm9XY21Wd2JHbDBMWEpsY0d3dFptbHNaWE10YTJseWF5SU5UR1YyWld3dFZYQXRVMjlzYnlvSmJYVjZhR2xvWVc4eFFrNEtGM0psY0d4cGRDMXlaWEJzTFdKc2IyTnJjeTFyYVhKckVoVnlaWEJzYVhRdGNtVndiQzF0WlhSaExXdHBjbXNhSEhKbGNHeHBkQzF0WVhKbllYSnBibVV0WW14dlkydHpMV3RwY210S0J3aWJ5NGNQRUFGUUFIZ0FVaU1JQVJDQWdJQ0FJQmtBQUFBQUFBQVFRQ0VBQUFBQUFBQVFRQ2lBZ0lDQXlBRXdBbUFBYWhBSW04dUhEeElKYlhWNmFHbG9ZVzh4Z2dFQ0tnQ2FBUW9LQ0RBdU1DNHhORFF4b0FFQhYBB6GH4JypNjDdm-ZHXKG_lA7siUIWbEWqfNDIHNvAw17pB9bZGGpZ-Gxyn_hmXw_46zyeVHskE_8PkWWKzAg.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: Error in connection establishment: net::ERR_NETWORK_CHANGED
+connect @ 2656-27ae9ee8cedfc0c3.js:1
+2656-27ae9ee8cedfc0c3.js:1 WebSocket connection to 'wss://eval.kirk.platform.replit.com/wsv2/v2.public.Q2dZSWdMUGV3Z1lTQmdpZno5N0NCaUlFYTJseWF6QUFPcm9CQ2lSaFpHSTRZMlptTXkxaVl6VXpMVFE1WmpRdFltSTNNeTA0T1dSbU1XUXlNak0zWldVU0EyNXBlQm9XY21Wd2JHbDBMWEpsY0d3dFptbHNaWE10YTJseWF5SU5UR1YyWld3dFZYQXRVMjlzYnlvSmJYVjZhR2xvWVc4eFFrNEtGM0psY0d4cGRDMXlaWEJzTFdKc2IyTnJjeTFyYVhKckVoVnlaWEJzYVhRdGNtVndiQzF0WlhSaExXdHBjbXNhSEhKbGNHeHBkQzF0WVhKbllYSnBibVV0WW14dlkydHpMV3RwY210S0J3aWJ5NGNQRUFGUUFIZ0FVaU1JQVJDQWdJQ0FJQmtBQUFBQUFBQVFRQ0VBQUFBQUFBQVFRQ2lBZ0lDQXlBRXdBbUFBYWhBSW04dUhEeElKYlhWNmFHbG9ZVzh4Z2dFQ0tnQ2FBUW9LQ0RBdU1DNHhORFF4b0FFQhYBB6GH4JypNjDdm-ZHXKG_lA7siUIWbEWqfNDIHNvAw17pB9bZGGpZ-Gxyn_hmXw_46zyeVHskE_8PkWWKzAg.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: Error in connection establishment: net::ERR_NETWORK_CHANGED
+connect @ 2656-27ae9ee8cedfc0c3.js:1
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A49152754&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=23aa531d-8fe4-4ebf-bc62-17c8f9ab5013:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_CHANGED
+ task queue exceeded allotted deadline by 142ms
+(anonymous) @ _app-6b0089c83b1309ba.js:38
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html:32 Unrecognized feature: 'battery'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+replit-dev-banner.js:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
+6Refused to load the font '<URL>' because it violates the following Content Security Policy directive: "font-src 'self' <URL>".
+
+Console.js:61 LCP: 6908
+/public/js/beacon.js:1 
+            
+            
+           Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
+Console.js:61 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Mt.forEach.n.<computed> @ Console.js:61
+Console.js:61 LCP: 8004
+Console.js:61 FID: 8.800000000745058

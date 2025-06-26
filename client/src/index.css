@@ -1,0 +1,1061 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* LevelUp Solo Design System - Unified Light Theme */
+  --primary: 220 91% 42%; /* #1E40AF - Much darker blue for better contrast */
+  --primary-foreground: 0 0% 100%; /* Pure white */
+  --accent: 263 84% 45%; /* #8B5CF6 - Darker purple for better contrast */
+  --accent-foreground: 0 0% 100%; /* Pure white */
+  
+  /* Unified Light Background System */
+  --background: 0 0% 100%; /* #FFFFFF - Pure white background */
+  --foreground: 220 13% 18%; /* #1E293B - Darker text for better contrast */
+  --card: 0 0% 100%; /* #FFFFFF - White cards */
+  --card-foreground: 220 13% 18%; /* #1E293B - Darker text */
+  --muted: 210 40% 98%; /* #F8FAFC - Very light gray for sections */
+  --muted-foreground: 215 25% 27%; /* #475569 - Darker gray text for better readability */
+  --border: 214 32% 91%; /* #E2E8F0 - Light borders */
+  --input: 0 0% 100%; /* #FFFFFF - White inputs */
+  --ring: 250 84% 54%; /* Primary color for focus rings */
+  
+  /* Semantic Colors */
+  --success: 142 76% 36%; /* #10B981 - Green */
+  --warning: 38 92% 50%; /* #F59E0B - Orange */
+  --danger: 0 84% 60%; /* #EF4444 - Red */
+  --info: 188 95% 42%; /* #06B6D4 - Cyan */
+  
+  /* Dark Mode Overrides */
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 13% 18%;
+  --secondary: 210 40% 95%; /* Light gray background */
+  --secondary-foreground: 220 13% 18%; /* Dark text for contrast */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Design System Variables */
+  --radius: 0.75rem; /* 12px - Standard border radius */
+  --radius-sm: 0.5rem; /* 8px - Small radius */
+  --radius-lg: 1rem; /* 16px - Large radius */
+  --radius-xl: 1.5rem; /* 24px - Extra large radius */
+  
+  /* Typography Scale */
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+  --font-size-5xl: 3rem; /* 48px */
+  
+  /* Spacing Scale */
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem; /* 32px */
+  --space-12: 3rem; /* 48px */
+  --space-16: 4rem; /* 64px */
+  
+  /* Shadow System */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  --background: 220 13% 8%; /* #0F172A - Dark Background */
+  --foreground: 210 40% 98%; /* #F8FAFC - Light Text */
+  --card: 220 13% 11%; /* #1E293B - Dark Card */
+  --card-foreground: 210 40% 98%;
+  --muted: 215 28% 17%; /* #334155 - Dark Muted */
+  --muted-foreground: 215 20% 65%; /* #94A3B8 - Dark Muted Text */
+  --border: 215 28% 17%; /* #334155 - Dark Border */
+  --input: 215 28% 17%;
+  --popover: 220 13% 11%;
+  --popover-foreground: 210 40% 98%;
+  --secondary: 215 28% 17%;
+  --secondary-foreground: 210 40% 98%;
+}
+
+/* LevelUp Solo Design System - Global Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+}
+
+/* Typography Hierarchy */
+h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: hsl(var(--foreground));
+}
+
+h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.025em;
+  color: hsl(var(--foreground));
+}
+
+h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  line-height: 1.4;
+  color: hsl(var(--foreground));
+}
+
+h4 {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.4;
+  color: hsl(var(--foreground));
+}
+
+h5 {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.5;
+  color: hsl(var(--foreground));
+}
+
+p {
+  font-size: var(--font-size-base);
+  font-weight: 400;
+  line-height: 1.6;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Button System */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: var(--radius);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  color: hsl(var(--primary-foreground));
+  box-shadow: var(--shadow);
+  border: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 1px solid hsl(var(--border));
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background: hsl(var(--muted));
+  box-shadow: var(--shadow);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: hsl(var(--foreground));
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover {
+  background: hsl(var(--muted));
+  border-color: hsl(var(--border));
+}
+
+.btn-sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-lg);
+  border-radius: var(--radius-lg);
+}
+
+/* Card System */
+.card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  box-shadow: var(--shadow);
+}
+
+.card-header {
+  padding: var(--space-6);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.card-content {
+  padding: var(--space-6);
+}
+
+.card-footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid hsl(var(--border));
+  background: hsl(var(--muted));
+}
+
+/* Form System */
+.form-group {
+  margin-bottom: var(--space-4);
+}
+
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  margin-bottom: var(--space-2);
+}
+
+.form-input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius-sm);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: var(--font-size-sm);
+  transition: all 0.2s ease-in-out;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.1);
+}
+
+.form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: hsl(var(--muted));
+}
+
+.form-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.form-error {
+  margin-top: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: hsl(var(--danger));
+}
+
+/* Utility Classes */
+.text-primary {
+  color: hsl(var(--primary));
+}
+
+.text-accent {
+  color: hsl(var(--accent));
+}
+
+.text-success {
+  color: hsl(var(--success));
+}
+
+.text-warning {
+  color: hsl(var(--warning));
+}
+
+.text-danger {
+  color: hsl(var(--danger));
+}
+
+.text-muted {
+  color: hsl(var(--muted-foreground));
+}
+
+.bg-primary {
+  background: hsl(var(--primary));
+}
+
+.bg-accent {
+  background: hsl(var(--accent));
+}
+
+.bg-success {
+  background: hsl(var(--success));
+}
+
+.bg-warning {
+  background: hsl(var(--warning));
+}
+
+.bg-danger {
+  background: hsl(var(--danger));
+}
+
+/* Strong button centering */
+button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+button > * {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Icon spacing in buttons */
+button i + span {
+  margin-left: 0.25rem !important;
+}
+
+button span + i {
+  margin-right: 0.25rem !important;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --card: 240 10% 8%;
+  --card-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --primary: 263 70% 50%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 270 95% 75%;
+  --secondary-foreground: 0 0% 98%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 240 4.9% 83.9%;
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen font-sans antialiased;
+  }
+}
+
+@layer components {
+  .nav-tab {
+    @apply flex flex-col items-center space-y-1 p-2 rounded-lg transition-all duration-300 hover:bg-primary/20 hover:scale-105;
+    @apply min-h-[56px] min-w-[56px] touch-manipulation;
+  }
+
+  .nav-tab.active {
+    @apply bg-gradient-to-r from-primary to-accent text-white scale-105;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .container {
+      @apply px-2;
+    }
+    
+    .nav-tab {
+      @apply min-h-[60px] px-3;
+    }
+    
+    /* Larger touch targets for buttons */
+    button {
+      @apply touch-manipulation;
+    }
+    
+    /* Better spacing for mobile cards */
+    .space-y-3 > * + * {
+      @apply mt-4;
+    }
+    
+    /* Responsive card adjustments */
+    .card {
+      @apply mx-1;
+    }
+    
+    /* Better badge sizing on mobile */
+    .badge {
+      @apply text-xs px-2 py-1;
+    }
+    
+    /* Improved text sizing for mobile */
+    h1 {
+      @apply text-xl;
+    }
+    
+    h2 {
+      @apply text-lg;
+    }
+    
+    h3 {
+      @apply text-base;
+    }
+  }
+
+  .task-item {
+    @apply transition-all duration-200 hover:translate-x-1;
+  }
+
+  .task-item.completed {
+    @apply opacity-70;
+  }
+
+  .skill-tag {
+    @apply px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .exp-reward {
+    @apply text-amber-400 font-semibold;
+  }
+}
+
+@layer utilities {
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce 2s infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s infinite;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 5px hsl(var(--primary)), 0 0 10px hsl(var(--primary)), 0 0 15px hsl(var(--primary));
+    }
+    to {
+      box-shadow: 0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary)), 0 0 30px hsl(var(--primary));
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--secondary));
+}
+
+/* Professional Mode Styles */
+.professional-mode {
+  --gamification-opacity: 0;
+  --professional-text: "任务";
+  --professional-progress: "进度";
+}
+
+.professional-mode .rpg-element {
+  display: none !important;
+}
+
+.professional-mode .experience-display,
+.professional-mode .level-display,
+.professional-mode .skill-tree-visual {
+  opacity: var(--gamification-opacity);
+  pointer-events: none;
+}
+
+.professional-mode .task-card {
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.professional-mode .gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--background)) 100%);
+}
+
+/* Game Mode Styles */
+.game-mode {
+  --gamification-opacity: 1;
+}
+
+.game-mode .rpg-element {
+  display: block !important;
+}
+
+/* Visual Hierarchy Improvements */
+.text-hierarchy-h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: hsl(var(--foreground));
+}
+
+.text-hierarchy-h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: hsl(var(--foreground));
+}
+
+.text-hierarchy-h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: hsl(var(--foreground));
+}
+
+.text-hierarchy-body {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: hsl(var(--foreground) / 0.8);
+}
+
+.text-hierarchy-caption {
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Contrast Levels */
+.contrast-high {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+.contrast-medium {
+  color: hsl(var(--foreground) / 0.8);
+  font-weight: 500;
+}
+
+.contrast-low {
+  color: hsl(var(--muted-foreground));
+  font-weight: 400;
+}
+
+/* Text Contrast Enhancements */
+.text-muted-foreground {
+  color: hsl(215 25% 27%) !important; /* Darker gray for better readability */
+}
+
+.text-gray-400 {
+  color: hsl(215 20% 35%) !important; /* Improved contrast */
+}
+
+.text-gray-500 {
+  color: hsl(215 25% 27%) !important; /* Better readability */
+}
+
+.text-secondary {
+  color: hsl(220 13% 18%) !important; /* Use dark gray for better readability */
+}
+
+/* Ensure all text elements have proper contrast */
+.text-xs, .text-sm, .text-base, .text-lg {
+  color: inherit;
+}
+
+/* Override very light text classes */
+.text-amber-100\/70 {
+  color: hsl(45 90% 60%) !important; /* More visible amber */
+}
+
+/* Background contrast fixes */
+.bg-secondary\/20 {
+  background-color: hsl(210 40% 95% / 0.3) !important;
+}
+
+.border-secondary\/30 {
+  border-color: hsl(210 40% 80%) !important;
+}
+
+/* Specific text contrast improvements */
+.text-slate-400, .text-slate-500 {
+  color: hsl(215 25% 35%) !important;
+}
+
+.text-slate-600 {
+  color: hsl(215 25% 25%) !important;
+}
+
+/* Experience progress text */
+.text-center.text-sm {
+  color: hsl(215 25% 35%) !important;
+}
+
+/* Task card descriptions */
+.text-sm.text-gray-600 {
+  color: hsl(215 25% 35%) !important;
+}
+
+/* Goal milestone text */
+.text-xs.text-muted-foreground {
+  color: hsl(215 25% 40%) !important;
+}
+
+/* Override primary button colors to use accessible blue */
+.bg-primary {
+  background-color: hsl(220 70% 55%) !important; /* Accessible blue */
+}
+
+.bg-primary:hover {
+  background-color: hsl(220 70% 50%) !important; /* Darker blue on hover */
+}
+
+.text-primary {
+  color: hsl(220 70% 55%) !important; /* Blue text */
+}
+
+/* Template buttons specific override */
+button[class*="bg-primary"] {
+  background-color: hsl(220 70% 55%) !important;
+}
+
+button[class*="bg-primary"]:hover {
+  background-color: hsl(220 70% 50%) !important;
+}
+
+/* Skill level badges override */
+.bg-muted {
+  background-color: hsl(210 20% 85%) !important;
+  color: hsl(215 25% 35%) !important;
+}
+
+/* Ensure button text visibility */
+button.bg-primary {
+  color: white !important;
+}
+
+/* Ultimate button text visibility fixes */
+button[class*="bg-purple"] {
+  color: white !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+}
+
+button[class*="bg-purple"]:disabled {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Specific targeting for AI buttons */
+button.w-full[class*="bg-purple"],
+button[class*="bg-purple-700"] {
+  background-color: #6b46c1 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border: none !important;
+}
+
+button.w-full[class*="bg-purple"]:hover,
+button[class*="bg-purple-700"]:hover {
+  background-color: #553c9a !important;
+  color: #ffffff !important;
+}
+
+/* Force override any conflicting styles */
+.bg-purple-700 {
+  background-color: #6b46c1 !important;
+  color: white !important;
+}
+
+.bg-purple-800 {
+  background-color: #553c9a !important;
+  color: white !important;
+}
+
+/* Navigation logo text visibility */
+.bg-gradient-to-br span {
+  color: white !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5) !important;
+}
+
+/* Ensure logo text is always visible */
+div[class*="bg-gradient-to-br"] span {
+  color: #ffffff !important;
+  font-weight: bold !important;
+}
+
+/* Template button text visibility fixes */
+button.w-full.bg-primary,
+button[class*="bg-primary"] {
+  background-color: #3b82f6 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border: none !important;
+}
+
+button.w-full.bg-primary:hover,
+button[class*="bg-primary"]:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Force white text on all primary buttons */
+.bg-primary {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+/* Fix any remaining dark blue elements */
+.bg-blue-600, .bg-blue-700 {
+  background-color: hsl(220 70% 55%) !important;
+}
+
+/* Task milestone badges */
+.bg-purple-100 {
+  background-color: hsl(210 30% 90%) !important;
+  color: hsl(215 25% 35%) !important;
+}
+
+.text-purple-700 {
+  color: hsl(215 25% 35%) !important;
+}
+
+/* Goal progress elements */
+.bg-primary\/10 {
+  background-color: hsl(220 70% 55% / 0.1) !important;
+}
+
+/* Enhanced Interactive Elements */
+.interactive-primary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.2s ease-in-out;
+}
+
+.interactive-primary:hover {
+  background: hsl(var(--primary) / 0.9);
+  border-color: hsl(var(--primary) / 0.8);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+}
+
+.interactive-secondary {
+  background: hsl(var(--secondary));
+  color: hsl(var(--secondary-foreground));
+  border: 2px solid hsl(var(--border));
+  transition: all 0.2s ease-in-out;
+}
+
+.interactive-secondary:hover {
+  background: hsl(var(--secondary) / 0.8);
+  border-color: hsl(var(--primary) / 0.5);
+  transform: translateY(-1px);
+}
+
+/* Focus States for Accessibility */
+.focus-visible:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Keyboard Navigation Support */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-to-content:focus {
+  top: 6px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .card {
+    border: 2px solid hsl(var(--foreground));
+  }
+  
+  .btn {
+    border: 2px solid hsl(var(--foreground));
+  }
+  
+  .nav-tab {
+    border: 1px solid hsl(var(--foreground));
+  }
+}
+
+/* Animation Performance */
+.animate-optimized {
+  will-change: transform, opacity;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .professional-mode * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 640px) {
+  /* Typography scaling for mobile */
+  .text-hierarchy-h1 {
+    font-size: 1.875rem;
+  }
+  
+  .text-hierarchy-h2 {
+    font-size: 1.5rem;
+  }
+  
+  .text-hierarchy-h3 {
+    font-size: 1.25rem;
+  }
+  
+  /* Container spacing */
+  .container {
+    padding: 0 1rem;
+  }
+  
+  /* Card optimizations */
+  .card {
+    margin: 0.5rem;
+    border-radius: 0.75rem;
+  }
+  
+  .card-content {
+    padding: 1rem;
+  }
+  
+  /* Touch-friendly buttons */
+  .btn {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  .btn-sm {
+    min-height: 36px;
+    padding: 0.5rem 0.75rem;
+  }
+  
+  /* Navigation optimizations */
+  .nav-tab {
+    min-height: 60px;
+    min-width: 60px;
+    padding: 0.75rem;
+  }
+  
+  /* Form improvements */
+  .form-input {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem;
+  }
+  
+  /* Modal/Dialog adjustments */
+  .dialog-content {
+    margin: 1rem;
+    max-height: calc(100vh - 2rem);
+    width: calc(100vw - 2rem);
+  }
+  
+  /* Quick Add floating button mobile position */
+  .quick-add-floating {
+    bottom: 5rem;
+    right: 1rem;
+    left: auto;
+  }
+  
+  /* Mode toggle mobile adjustments */
+  .mode-toggle-mobile {
+    top: auto;
+    bottom: 7rem;
+    right: 1rem;
+    width: calc(100vw - 2rem);
+    max-width: 320px;
+  }
+  
+  /* AI Assistant mobile positioning */
+  .ai-assistant-mobile {
+    bottom: 1rem;
+    right: 1rem;
+    width: calc(100vw - 2rem);
+    height: calc(100vh - 8rem);
+    max-height: 500px;
+  }
+  
+  /* Breadcrumb mobile */
+  .breadcrumb-mobile {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Grid adjustments */
+  .grid-responsive {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Smart recommendations mobile */
+  .smart-recommendations-mobile .recommendation-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .smart-recommendations-mobile .recommendation-action {
+    align-self: flex-end;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tablet adjustments */
+  .text-hierarchy-h1 {
+    font-size: 2rem;
+  }
+  
+  .text-hierarchy-h2 {
+    font-size: 1.75rem;
+  }
+  
+  /* Grid for tablets */
+  .grid-responsive-tablet {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  /* Navigation spacing */
+  .nav-container {
+    padding: 0 1.5rem;
+  }
+}
+
+/* Touch interaction improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover\:scale-105:hover {
+    transform: none;
+  }
+  
+  .hover\:shadow-md:hover {
+    box-shadow: inherit;
+  }
+  
+  /* Improve tap targets */
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better touch feedback */
+  .touch-feedback:active {
+    transform: scale(0.98);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Ensure crisp rendering on retina displays */
+  .icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  
+  /* Slightly thicker borders for better visibility */
+  .border {
+    border-width: 0.5px;
+  }
+}

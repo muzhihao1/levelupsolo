@@ -1,0 +1,84 @@
+[vite] connecting...
+[vite] connected.
+Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+AI parsing failed: 
+SyntaxError {}
+
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+AI parsing failed: 
+SyntaxError {}
+
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400

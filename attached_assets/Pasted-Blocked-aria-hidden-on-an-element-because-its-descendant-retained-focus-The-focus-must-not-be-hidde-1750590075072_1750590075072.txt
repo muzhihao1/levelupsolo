@@ -1,0 +1,125 @@
+Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <div.cm-content cm-lineWrapping>
+Ancestor with aria-hidden: <div. useView_view__C2mnv css-17qdd0f Surface_surfaceRoot__TeA2u> 
+_app-6b0089c83b1309ba.js:38 [LaunchDarkly] LaunchDarkly client initialized
+/~:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+_app-6b0089c83b1309ba.js:38 task queue exceeded allotted deadline by 30ms
+22
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+5
+Unrecognized feature: 'ambient-light-sensor'.
+5
+Unrecognized feature: 'battery'.
+5
+Unrecognized feature: 'execution-while-not-rendered'.
+5
+Unrecognized feature: 'execution-while-out-of-viewport'.
+5
+Unrecognized feature: 'layout-animations'.
+5
+Unrecognized feature: 'legacy-image-formats'.
+5
+Unrecognized feature: 'navigation-override'.
+5
+Unrecognized feature: 'oversized-images'.
+5
+Unrecognized feature: 'publickey-credentials'.
+5
+Unrecognized feature: 'speaker-selection'.
+5
+Unrecognized feature: 'unoptimized-images'.
+5
+Unrecognized feature: 'unsized-media'.
+framework-a818883e88d690fb.js:1 Unrecognized feature: 'pointer-lock'.
+5
+Allow attribute will take precedence over 'allowfullscreen'.
+5
+Allow attribute will take precedence over 'allowpaymentrequest'.
+stats.g.doubleclick.…CIAD~&z=593209096:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…CIAD~&z=707148080:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…CIAD~&z=661003246:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…CIAD~&z=174454354:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stallwart.build.js:1 stallwart: failed ping 1
+stats.g.doubleclick.…CIAD~&z=569381353:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…IAD~&z=1180815259:1 
+ Failed to load resource: net::ERR_CONNECTION_RESET
+stats.g.doubleclick.…CIAD~&z=691093269:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…gCIAD~&z=33522085:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+_app-6b0089c83b1309ba.js:38 onClick is deprecated, please use onPress
+stats.g.doubleclick.…CIAD~&z=240836543:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…CIAD~&z=460359672:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+_app-6b0089c83b1309ba.js:38 task queue exceeded allotted deadline by 83ms
+stats.g.doubleclick.…IAD~&z=1168983368:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…IAD~&z=1759634363:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…IAD~&z=1770753089:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+www.google.co.jp/ads…1500&z=1183068846:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.…CIAD~&z=166279192:1 
+ Failed to load resource: net::ERR_CONNECTION_CLOSED
+replit-dev-banner.js:1 
+ Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
+24
+Refused to load the font '<URL>' because it violates the following Content Security Policy directive: "font-src 'self' <URL>".
+/public/js/beacon.js:1 
+ Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep
+eruda.js:2 GlobalFloatingTimer: not rendering because 
+Object
+eruda.js:2 GlobalFloatingTimer mounted
+eruda.js:2 GlobalFloatingTimer timerData changed: null
+eruda.js:2 LCP: 8116
+eruda.js:2 LCP: 8848
+eruda.js:2 GlobalFloatingTimer: not rendering because 
+Object
+eruda.js:2 FID: 29.399999991059303
+_app-6b0089c83b1309ba.js:38 
+ POST https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=U…d=877925164&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=487544372 net::ERR_CONNECTION_CLOSED
+adb8cff3-bc53-49f4-b…irk.replit.dev/:196 
+ GET https://replit.com/public/js/replit-dev-banner.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+workspace_iframe.html:142 
+ GET https://replit.com/public/js/beacon.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+eruda.js:2 GlobalFloatingTimer: not rendering because 
+{timerData: null}
+eruda.js:2 GlobalFloatingTimer mounted
+eruda.js:2 GlobalFloatingTimer timerData changed: null
+eruda.js:2 LCP: 6964
+eruda.js:2 LCP: 7664
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 [vite] server connection lost. Polling for restart...
+adb8cff3-bc53-49f4-b…irk.replit.dev/:196 
+ GET https://replit.com/public/js/replit-dev-banner.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+adb8cff3-bc53-49f4-b…F&id=%3Ar125%3A:142 
+ GET https://replit.com/public/js/beacon.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 GlobalFloatingTimer: not rendering because 
+{timerData: null}
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 GlobalFloatingTimer mounted
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 GlobalFloatingTimer timerData changed: null
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 LCP: 7896
+adb8cff3-bc53-49f4-b…da/3.2.3/eruda.js:2 LCP: 8744
+_app-6b0089c83b1309ba.js:38 
+ POST https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=U…d=311176447&_gid=2098712955.1750554573&_u=SCCAgEAjQAAAAGgCIAD~&z=265731483 net::ERR_CONNECTION_CLOSED
+adb8cff3-bc53-49f4-b…irk.replit.dev/:196 
+ GET https://replit.com/public/js/replit-dev-banner.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+workspace_iframe.htm…F&id=%3Ar13f%3A:142 
+ GET https://replit.com/public/js/beacon.js net::ERR_BLOCKED_BY_RESPONSE.NotSameOriginAfterDefaultedToSameOriginByCoep 200 (OK)
+Console.js:61 GlobalFloatingTimer: not rendering because 
+{timerData: null}
+Console.js:61 GlobalFloatingTimer mounted
+Console.js:61 GlobalFloatingTimer timerData changed: null
+Console.js:61 LCP: 6320
+Console.js:61 LCP: 7088
+Console.js:61 GlobalFloatingTimer: not rendering because 
+{timerData: null}
+Console.js:61 FID: 32.400000005960464
+Console.js:61 Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}.
+Mt.forEach.n.<computed>	@	Console.js:61

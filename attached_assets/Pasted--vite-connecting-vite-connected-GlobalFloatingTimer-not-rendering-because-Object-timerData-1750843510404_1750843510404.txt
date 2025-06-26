@@ -1,0 +1,29 @@
+[vite] connecting...
+[vite] connected.
+GlobalFloatingTimer: not rendering because 
+Object {timerData: null}
+GlobalFloatingTimer mounted
+GlobalFloatingTimer timerData changed: null
+LCP: 5628
+LCP: 6212
+FID: 5.2999999998137355
+GlobalFloatingTimer: not rendering because 
+Object {timerData: null}
+Error generating warmup tasks: 
+TypeError {message: "Failed to execute 'fetch' on 'Window': '/api/tasks/29/warmup-tasks' is not a valid HTTP method."}
+
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+Failed to execute 'fetch' on 'Window': '/api/tasks/29/warmup-tasks' is not a valid HTTP method.
+at window.fetch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:218642)
+at apiRequest (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/lib/queryClient.ts:9:21)
+at generateWarmupTasks (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/unified-rpg-task-manager.tsx:2372:35)
+at HTMLUnknownElement.callCallback2 (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:3674:22)
+at Object.invokeGuardedCallbackDev (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:3699:24)
+at invokeGuardedCallback (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:3733:39)
+at invokeGuardedCallbackAndCatchFirstError (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:3736:33)
+at executeDispatch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:7014:11)
+at processDispatchQueueItemsInOrder (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:7034:15)
+at processDispatchQueue (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-WERSD76P.js?v=c2280435:7043:13)

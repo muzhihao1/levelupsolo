@@ -1,0 +1,422 @@
+Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/g/collect?v=2&tid=G-MPJY3F1YEL&cid=373784251.1748648560&gtm=45je56a1v9135634466za200&aip=1&dma=0&gcd=13l3l3l3l2l1&npa=0&frm=0&tag_exp=101509157~103116026~103200004~103233427~103351869~103351871~104617979~104617981~104661466~104661468~104718207~104736445~104736447:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+8[Intervention] Slow network is detected. See <URL> for more details. Fallback font will be used while loading: <URL>
+_app-5008ba5c6d170924.js:38 task queue exceeded allotted deadline by 30ms
+(anonymous) @ _app-5008ba5c6d170924.js:38
+WayToHeyball:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+stallwart.build.js:1 stallwart: failed ping 1
+64Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'battery'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-1e139e774a6cecd3.js:1
+framework-1e139e774a6cecd3.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-1e139e774a6cecd3.js:1
+/~:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <div.cm-content cm-lineWrapping>
+Ancestor with aria-hidden: <div. useView_view__C2mnv css-17qdd0f Surface_surfaceRoot__TeA2u> null
+/~:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <a.NavItem_root__DZrwo css-w3oj38>
+Ancestor with aria-hidden: <div> null
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=680348504&gjid=1323997414&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=748998805:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=536791468&gjid=898798813&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1529335532:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=2079719179&gjid=1237285693&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=456099947:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1911181629&gjid=1193721940&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=895912669:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=414170800&gjid=139611205&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=50863345:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1844080089&gjid=1207475912&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1397198786:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1831499630&gjid=188894613&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1786189781:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=119971848&gjid=505147538&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1250743148:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1444099974&gjid=569415825&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=528076524:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=62620483&gjid=646757752&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=103466697:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=909522756&gjid=2085847024&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1811906936:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1856287159&gjid=187275044&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1049202514:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1491083432&gjid=1893464699&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=114096863:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1609032392&gjid=1211870355&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=2083856276:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=27564357&gjid=718908645&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=154778764:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=183275961&gjid=1105693599&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=2090680997:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+2menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=742973652&gjid=1348348089&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=553136799:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=447169827&gjid=962838446&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=743081233:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749736799263.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1749736799263.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=389212247&gjid=1716917579&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=811994395:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=721846243&gjid=966226692&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1374626630:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+2menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=901392018&gjid=546391449&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=230699324:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=175261120&gjid=689838307&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1239090064:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=737182318&gjid=640706272&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=893102414:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=699277195&gjid=1022821681&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1795822385:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+attached_assets/image_1749739584625.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1610708825&gjid=514917919&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=184439360:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749739808452.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1049396044&gjid=236604747&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1973366803:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=670302680&gjid=201252059&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1135308391:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=560775815&gjid=1210224732&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=2076611800:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=638228670&gjid=1472145831&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1757385497:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1210500941&gjid=402687091&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=535653103:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=552707968&gjid=1895713815&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=148437313:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749740228790.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1749740217247.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1136853983&gjid=1094922680&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=637200538:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1598627885&gjid=1002326290&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=619330013:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1091968870&gjid=439885644&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1935610577:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749740406659.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=253424916&gjid=957727163&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=2098891116:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=65967257&gjid=2025391354&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1365317780:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=531040815&gjid=430701290&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=217862393:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749740595672.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=371393931&gjid=1645732470&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=841847819:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=343301708&gjid=921789619&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1995841557:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1361029612&gjid=343768002&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=758600571:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749740806946.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1749740822105.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1450636881&gjid=1913838867&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=603800211:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1152922156&gjid=1474293046&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1202458506:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1882367890&gjid=1911420897&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=6780521:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+3menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1439372448&gjid=1909311326&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1676825282:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1758599262&gjid=182638675&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=156462880:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1116813577&gjid=230728463&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=859900716:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+attached_assets/image_1749741330818.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=651360057&gjid=750127078&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=465426783:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749741397260.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1952374869&gjid=325558482&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1157196125:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=2146708846&gjid=164154395&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1733548356:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+2menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=643327344&gjid=30950303&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=435372876:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1473526775&gjid=173171218&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1423970397:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=308074561&gjid=1141033969&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1379226513:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749741872564.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=32779306&gjid=1105202414&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1619962611:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_RESET
+attached_assets/image_1749742070544.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1975540333&gjid=1464950387&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=537790890:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1535927537&gjid=1239707545&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1477679144:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stallwart.build.js:1 stallwart: failed ping 1
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1913558649&gjid=2065980209&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=800475113:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+[Violation] Potential permissions policy violation: payment is not allowed in this document.
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=877498535&gjid=1773210825&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1744322756:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749742414354.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1749742372581.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1727321699&gjid=285781240&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=511825017:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1325133843&gjid=785500087&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1364865497:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=946574403&gjid=808314723&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=1182852483:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+attached_assets/image_1749742638482.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j101&tid=UA-25629695-1&cid=373784251.1748648560&jid=1035257837&gjid=163426354&_gid=1963110673.1748790242&_u=SCCAgEAjQAAAAGgCIAD~&z=2104587002:1 
+            
+            
+           Failed to load resource: net::ERR_CONNECTION_CLOSED
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html:32 Unrecognized feature: 'battery'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+2menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+Console.js:61 Habit tasks raw data: Array(3)
+Console.js:61 Checking habit 公众号写作: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 练球: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 跑步: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Habit tasks raw data: Array(3)
+Console.js:61 Checking habit 公众号写作: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 练球: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 跑步: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+2menu.660ae325.js:1 Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset 4294967295 is invalid.
+    at HTMLDocument.g (menu.660ae325.js:1:149448)
+    at menu.660ae325.js:52:40260
+Console.js:61 Habit tasks raw data: Array(3)
+Console.js:61 Checking habit 公众号写作: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 练球: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 跑步: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Habit tasks raw data: Array(3)
+Console.js:61 Checking habit 公众号写作: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 练球: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025
+Console.js:61 Checking habit 跑步: completed=true, lastCompleted=Thu Jun 12 2025, today=Thu Jun 12 2025

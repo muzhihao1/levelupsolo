@@ -1,0 +1,48 @@
+Content Security Policy of your site blocks some resources
+Some resources are blocked because their origin is not listed in your site's Content Security Policy (CSP). Your site's CSP is allowlist-based, so resources must be listed in the allowlist in order to be accessed.
+
+A site's Content Security Policy is set either via an HTTP header (recommended), or via a meta HTML tag.
+
+To fix this issue do one of the following:
+
+(Recommended) If you're using an allowlist for 'script-src', consider switching from an allowlist CSP to a strict CSP, because strict CSPs are more robust against XSS. See how to set a strict CSP.
+Or carefully check that all of the blocked resources are trustworthy; if they are, include their sources in the CSP of your site. ⚠️Never add a source you don't trust to your site's CSP. If you don't trust the source, consider hosting resources on your own site instead.
+1 directive
+Resource	Status	Directive	Source location
+data	blocked	font-src	createAssigner.js:9
+Learn more: Content Security Policy - Source Allowlists
+Deprecated feature used
+Unload event listeners are deprecated and will be removed.
+
+1 source
+_app-6b0089c83b1309ba.js:38
+Learn more: Check the feature status page for more details.
+Incorrect use of <label for=FORM_ELEMENT>
+The label's for attribute doesn't match any element id. This might prevent the browser from correctly autofilling the form and accessibility tools from working correctly.
+
+To fix this issue, make sure the label's for attribute references the correct id of a form field.
+
+1 resource
+Violating node
+Learn more: The label elements
+No label associated with a form field
+Page layout may be unexpected due to Quirks Mode
+Specify a Cross-Origin Resource Policy to prevent a resource from being blocked
+Because your site has the Cross-Origin Embedder Policy (COEP) enabled, each resource must specify a suitable Cross-Origin Resource Policy (CORP). This behavior prevents a document from loading cross-origin resources which don’t explicitly grant permission to be loaded.
+
+To solve this, add the following to the resource’ response header:
+
+Cross-Origin-Resource-Policy: same-site if the resource and your site are served from the same site.
+Cross-Origin-Resource-Policy: cross-origin if the resource is served from another location than your website. ⚠️If you set this header, any website can embed this resource.
+Alternatively, the document can use the variant: Cross-Origin-Embedder-Policy: credentialless instead of require-corp. It allows loading the resource, despite the missing CORP header, at the cost of requesting it without credentials like Cookies.
+
+2 requests
+Request	Parent Frame	Blocked Resource
+
+ replit-dev-banner.js	
+https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/tasks	
+
+ beacon.js	
+https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/tasks	
+Learn more: COOP and COEP
+Learn more: Same-Site and Same-Origin

@@ -1,0 +1,70 @@
+getIconEmoji is not defined
+getIconEmoji is not defined
+getIconEmoji is not defined
+getIconEmoji is not defined
+The above error occurred in the <TaskCard> component:
+
+    at TaskCard (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/unified-rpg-task-manager.tsx:51:3)
+    at div
+    at div
+    at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:121:13
+    at Presence (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-35JT3HWS.js?v=4179995a:24:11)
+    at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=4179995a:385:13
+    at _c5 (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/tabs.tsx:72:12)
+    at div
+    at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:121:13
+    at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:44:15)
+    at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=4179995a:263:7
+    at div
+    at div
+    at UnifiedRPGTaskManager (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/unified-rpg-task-manager.tsx:411:33)
+    at div
+    at Tasks
+    at Route (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=4179995a:323:16)
+    at Switch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=4179995a:379:17)
+    at Suspense
+    at main
+    at div
+    at Router (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/App.tsx?v=uzYG8IsnceNHG_4FGRfam:50:42)
+    at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:44:15)
+    at TooltipProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=4179995a:61:5)
+    at QueryClientProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=4179995a:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+
+at TaskCard (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/unified-rpg-task-manager.tsx:51:3)
+at div
+at div
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:121:13
+at Presence (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-35JT3HWS.js?v=4179995a:24:11)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=4179995a:385:13
+at _c5 (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/ui/tabs.tsx:72:12)
+at div
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:121:13
+at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:44:15)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=4179995a:263:7
+at div
+at div
+at UnifiedRPGTaskManager (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/components/unified-rpg-task-manager.tsx:411:33)
+at div
+at Tasks
+at Route (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=4179995a:323:16)
+at Switch (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=4179995a:379:17)
+at Suspense
+at main
+at div
+at Router (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/src/App.tsx?v=uzYG8IsnceNHG_4FGRfam:50:42)
+at Provider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-S2FNQBCY.js?v=4179995a:44:15)
+at TooltipProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=4179995a:61:5)
+at QueryClientProvider (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=4179995a:2805:3)
+at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://adb8cff3-bc53-49f4-bb73-89df1d2237ee-00-2ykhd8ny3l973.kirk.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+getIconEmoji is not defined
