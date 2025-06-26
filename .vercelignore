@@ -1,5 +1,4 @@
 server/
-shared/
 scripts/
 *.sql
 *.md
@@ -8,4 +7,3 @@ drizzle.config.ts
 tsconfig.build.json
 tsconfig.vercel.json
 vercel-static/
-package-lock.json
