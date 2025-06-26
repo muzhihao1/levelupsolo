@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import aiRoutes from "./ai";
 import { registerMobileRoutes } from "./mobile-routes";
+import { setupAuth } from "./simpleAuth";
 
 const app = express();
 
@@ -79,6 +80,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+  
+  // Setup JWT authentication routes
+  await setupAuth(app);
   
   // Register mobile routes with JWT authentication
   registerMobileRoutes(app);
