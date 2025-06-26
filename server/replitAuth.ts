@@ -8,9 +8,8 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
-}
+// Skip Replit auth check if not on Replit
+const isReplitEnvironment = !!process.env.REPLIT_DOMAINS;
 
 const getOidcConfig = memoize(
   async () => {
@@ -89,6 +88,61 @@ export async function setupAuth(app: Express) {
   app.use(passport.session());
 
   let config: any = null;
+  
+  // Skip OIDC setup if not on Replit
+  if (!isReplitEnvironment) {
+    console.log("Not on Replit, using simplified auth");
+    
+    // Simple demo login for non-Replit environments
+    app.get("/api/login", async (req, res) => {
+      const demoUser = {
+        claims: {
+          sub: "31581595",
+          email: "demo@levelupsolo.net",
+          first_name: "Demo",
+          last_name: "User",
+          profile_image_url: null
+        }
+      };
+      
+      try {
+        await storage.upsertUser({
+          id: demoUser.claims.sub,
+          email: demoUser.claims.email,
+          firstName: demoUser.claims.first_name,
+          lastName: demoUser.claims.last_name,
+          profileImageUrl: demoUser.claims.profile_image_url,
+        });
+        
+        (req as any).user = demoUser;
+        req.login(demoUser, (err) => {
+          if (err) {
+            console.error("Login error:", err);
+            return res.status(500).json({ message: "Login failed" });
+          }
+          res.redirect("/");
+        });
+      } catch (error) {
+        console.error("Demo login error:", error);
+        res.status(500).json({ message: "Login failed", error: String(error) });
+      }
+    });
+    
+    app.get("/api/callback", (req, res) => {
+      res.redirect("/");
+    });
+    
+    app.get("/api/logout", (req, res) => {
+      req.logout(() => {
+        req.session.destroy(() => {
+          res.clearCookie('connect.sid');
+          res.redirect("/");
+        });
+      });
+    });
+    
+    return;
+  }
   
   try {
     config = await getOidcConfig();
@@ -206,8 +260,14 @@ export async function setupAuth(app: Express) {
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
   const user = req.user as any;
 
-  // Demo mode for deployment - create consistent demo user
-  if (!req.isAuthenticated() && req.hostname.includes('levelupsolo')) {
+  // For non-Replit environments or demo mode
+  if (!isReplitEnvironment || req.hostname.includes('levelupsolo')) {
+    // Check if user is already authenticated
+    if (req.isAuthenticated() && user?.claims) {
+      return next();
+    }
+    
+    // Otherwise, create/use demo user
     const demoUser = {
       claims: {
         sub: "31581595", // Using the actual user ID from your data
@@ -233,6 +293,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
       return next();
     } catch (error) {
       console.error("Demo user setup failed:", error);
+      return res.status(500).json({ message: "Failed to setup user" });
     }
   }
 

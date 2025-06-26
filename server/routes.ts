@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./simpleAuth";
 import { z } from "zod";
 import { createInsertSchema } from "drizzle-zod";
 import { skills, tasks, goals, activityLogs, microTasks } from "@shared/schema";
@@ -25,7 +25,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const allowedOrigins = [
       'https://levelupsolo.net',
       'https://www.levelupsolo.net',
-      ...(process.env.REPLIT_DOMAINS?.split(',') || []).map(domain => `https://${domain}`)
+      'http://localhost:5173', // Local development
+      'http://localhost:5000'  // Local development
     ];
 
     const origin = req.headers.origin;
