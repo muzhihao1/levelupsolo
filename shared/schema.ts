@@ -24,6 +24,15 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// User passwords table - separate for security
+export const userPasswords = pgTable("user_passwords", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id).unique(),
+  hashedPassword: text("hashed_password").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const userProfiles = pgTable("user_profiles", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),

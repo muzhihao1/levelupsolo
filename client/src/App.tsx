@@ -25,6 +25,7 @@ const GoalsSimple = lazy(() => import("@/pages/goals-simple"));
 const GrowthLog = lazy(() => import("@/pages/growth-log"));
 const WeeklySummary = lazy(() => import("@/pages/weekly-summary"));
 const Templates = lazy(() => import("@/pages/templates"));
+const AuthPage = lazy(() => import("@/pages/auth"));
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -47,10 +48,18 @@ function Router() {
 
   if (!isAuthenticated) {
     return (
-      <Switch>
-        <Route path="/" component={Landing} />
-        <Route component={Landing} />
-      </Switch>
+      <Suspense fallback={
+        <div className="min-h-screen bg-background flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        </div>
+      }>
+        <Switch>
+          <Route path="/" component={Landing} />
+          <Route path="/landing" component={Landing} />
+          <Route path="/auth" component={AuthPage} />
+          <Route component={Landing} />
+        </Switch>
+      </Suspense>
     );
   }
 

@@ -1,5 +1,5 @@
 import { 
-  skills, tasks, goals, goalTasks, activityLogs, milestones, microTasks, users, userProfiles, userStats,
+  skills, tasks, goals, goalTasks, activityLogs, milestones, microTasks, users, userProfiles, userStats, userPasswords,
   type Skill, type InsertSkill,
   type Task, type InsertTask,
   type Goal, type InsertGoal,
@@ -18,7 +18,10 @@ import { inArray } from "drizzle-orm";
 export interface IStorage {
   // User operations (required for authentication)
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  setUserPassword(userId: string, hashedPassword: string): Promise<void>;
+  getUserPassword(userId: string): Promise<string | undefined>;
 
   // Skills
   getSkills(userId: string): Promise<Skill[]>;
@@ -94,6 +97,11 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -107,6 +115,30 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async setUserPassword(userId: string, hashedPassword: string): Promise<void> {
+    await db
+      .insert(userPasswords)
+      .values({
+        userId,
+        hashedPassword,
+      })
+      .onConflictDoUpdate({
+        target: userPasswords.userId,
+        set: {
+          hashedPassword,
+          updatedAt: new Date(),
+        },
+      });
+  }
+
+  async getUserPassword(userId: string): Promise<string | undefined> {
+    const [password] = await db
+      .select()
+      .from(userPasswords)
+      .where(eq(userPasswords.userId, userId));
+    return password?.hashedPassword;
   }
 
   // Skills
