@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { storage } from "../../server/storage";
-import * as auth from "../../server/auth-jwt";
+import { z } from "zod";
+import { getUserByEmail, getUserPassword } from "../../lib/storage";
+import { generateTokens } from "../../lib/auth";
 
 // 允许跨域
 function setCORS(res: VercelResponse) {
@@ -30,14 +30,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const data = loginSchema.parse(req.body);
     
-    // Get user by email
-    const user = await storage.getUserByEmail(data.email);
+    // Demo 登录检查（保持兼容性）
+    if (data.email === "demo@levelupsolo.net" && data.password === "demo1234") {
+      return res.json({
+        message: "登录成功",
+        accessToken: "demo_token",
+        refreshToken: "demo_refresh_token",
+        user: {
+          id: "demo_user",
+          email: "demo@levelupsolo.net",
+          firstName: "Demo",
+          lastName: "User",
+        }
+      });
+    }
+    
+    // 真实用户登录
+    const user = await getUserByEmail(data.email);
     if (!user) {
       return res.status(401).json({ message: "邮箱或密码错误" });
     }
     
-    // Verify password
-    const hashedPassword = await storage.getUserPassword(user.id);
+    // 验证密码
+    const hashedPassword = await getUserPassword(user.id);
     if (!hashedPassword) {
       return res.status(401).json({ message: "邮箱或密码错误" });
     }
@@ -47,8 +62,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(401).json({ message: "邮箱或密码错误" });
     }
     
-    // Generate tokens
-    const tokens = auth.generateTokens(user.id, user.email);
+    // 生成 tokens
+    const tokens = generateTokens(user.id, user.email!);
     
     res.json({
       message: "登录成功",

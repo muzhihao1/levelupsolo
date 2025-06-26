@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { storage } from "../../server/storage";
-import * as auth from "../../server/auth-jwt";
+import { z } from "zod";
+import { getUserByEmail, createUser } from "../../lib/storage";
+import { generateTokens } from "../../lib/auth";
 
 // 允许跨域
 function setCORS(res: VercelResponse) {
@@ -32,18 +32,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const data = registerSchema.parse(req.body);
     
-    // Check if user already exists
-    const existingUser = await storage.getUserByEmail(data.email);
+    // 检查用户是否已存在
+    const existingUser = await getUserByEmail(data.email);
     if (existingUser) {
       return res.status(400).json({ message: "该邮箱已被注册" });
     }
     
-    // Hash password
+    // 哈希密码
     const hashedPassword = await bcrypt.hash(data.password, 10);
     
-    // Create user with password
+    // 创建用户
     const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    await storage.upsertUser({
+    const user = await createUser({
       id: userId,
       email: data.email,
       firstName: data.firstName,
@@ -52,17 +52,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       hashedPassword,
     });
     
-    // Generate tokens
-    const tokens = auth.generateTokens(userId, data.email);
+    // 生成 tokens
+    const tokens = generateTokens(user.id, user.email!);
     
     res.json({
       message: "注册成功",
       ...tokens,
       user: {
-        id: userId,
-        email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
       }
     });
   } catch (error) {

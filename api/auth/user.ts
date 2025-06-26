@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { storage } from "../../server/storage";
-import * as auth from "../../server/auth-jwt";
+import { getUser } from "../../lib/storage";
+import { verifyAccessToken } from "../../lib/auth";
 
 // 允许跨域
 function setCORS(res: VercelResponse) {
@@ -28,8 +28,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const token = authHeader.substring(7);
-    const decoded = auth.verifyAccessToken(token);
-    const user = await storage.getUser(decoded.userId);
+    
+    // Handle demo token
+    if (token === "demo_token") {
+      return res.json({
+        id: "demo_user",
+        email: "demo@levelupsolo.net",
+        firstName: "Demo",
+        lastName: "User",
+        profileImageUrl: null,
+      });
+    }
+    
+    const decoded = verifyAccessToken(token);
+    const user = await getUser(decoded.userId);
     
     if (!user) {
       return res.status(404).json({ message: "User not found" });
