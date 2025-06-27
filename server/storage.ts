@@ -620,7 +620,7 @@ export class DatabaseStorage implements IStorage {
     return updated || undefined;
   }
 
-  async deleteTask(id: number): Promise<boolean> {
+  async deleteGoalTask(id: number): Promise<boolean> {
     const result = await db.delete(goalTasks).where(eq(goalTasks.id, id));
     return result.rowCount ? result.rowCount > 0 : false;
   }
@@ -1065,7 +1065,6 @@ export class MemStorage implements IStorage {
   private currentGoalId = 1;
   private currentGoalTaskId = 1;
   private currentActivityLogId = 1;
-  private currentMilestoneId = 1;
 
   constructor() {
     this.initializeDefaultData();
@@ -1516,7 +1515,7 @@ export class MemStorage implements IStorage {
     return updated;
   }
 
-  async deleteTask(id: number): Promise<boolean> {
+  async deleteGoalTask(id: number): Promise<boolean> {
     return this.goalTasks.delete(id);
   }
 
