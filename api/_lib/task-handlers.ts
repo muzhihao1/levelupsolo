@@ -11,7 +11,7 @@ import {
   activityLogs,
   type InsertTask,
   insertTaskSchema
-} from '@shared/schema';
+} from '../../shared/schema';
 import OpenAI from 'openai';
 import { z } from 'zod';
 

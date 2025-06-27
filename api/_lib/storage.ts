@@ -10,7 +10,7 @@ import {
   type User, type UpsertUser,
   type UserProfile, type InsertUserProfile,
   type UserStats, type InsertUserStats
-} from "@shared/schema";
+} from "../../shared/schema";
 import { db } from "./db";
 import { eq, desc, and, asc } from "drizzle-orm";
 import { inArray } from "drizzle-orm";

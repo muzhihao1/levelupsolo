@@ -1,10 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { eq } from "drizzle-orm";
 import { users } from '../../shared/schema';
+import { db } from './db';
 
 // 设置 CORS
 export function setCORS(res: VercelResponse) {
@@ -44,22 +43,7 @@ export async function handleLogin(req: VercelRequest, res: VercelResponse) {
     }
     
     // 真实用户登录
-    const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL || "";
-    
-    if (!connectionString) {
-      console.error("No database connection string found");
-      return res.status(500).json({ message: "服务器配置错误" });
-    }
-    
-    let client = null;
-    
     try {
-      client = postgres(connectionString, {
-        ssl: 'require',
-        max: 1,
-      });
-      
-      const db = drizzle(client);
       
       const result = await db.select()
         .from(users)
@@ -106,12 +90,6 @@ export async function handleLogin(req: VercelRequest, res: VercelResponse) {
           lastName: user.lastName,
         }
       });
-      
-    } finally {
-      if (client) {
-        await client.end();
-      }
-    }
     
   } catch (error) {
     console.error("Login error:", error);
