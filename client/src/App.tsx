@@ -27,6 +27,7 @@ const WeeklySummary = lazy(() => import("@/pages/weekly-summary"));
 const Templates = lazy(() => import("@/pages/templates"));
 const AuthPage = lazy(() => import("@/pages/auth"));
 const DebugUser = lazy(() => import("@/pages/debug-user"));
+const FixData = lazy(() => import("@/pages/fix-data"));
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -90,6 +91,7 @@ function Router() {
             <Route path="/log" component={GrowthLog} />
             <Route path="/weekly-summary" component={WeeklySummary} />
             <Route path="/debug-user" component={DebugUser} />
+            <Route path="/fix-data" component={FixData} />
             <Route component={NotFound} />
           </Switch>
         </Suspense>
