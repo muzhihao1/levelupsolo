@@ -106,13 +106,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           result = await db.execute(
             sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
           );
-          return res.json((result as any).rows[0] || null);
+          const profileRows = (result as any)?.rows || (result as any) || [];
+          return res.json(profileRows[0] || null);
           
         case 'stats':
           result = await db.execute(
             sql`SELECT * FROM user_stats WHERE user_id = ${decoded.userId} LIMIT 1`
           );
-          if ((result as any).rows.length === 0) {
+          const statsRows = (result as any)?.rows || (result as any) || [];
+          if (statsRows.length === 0) {
             return res.json({
               id: 1,
               userId: decoded.userId,
@@ -128,19 +130,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               totalTasksCompleted: 0,
             });
           }
-          return res.json((result as any).rows[0]);
+          return res.json(statsRows[0]);
           
         case 'skills':
           result = await db.execute(
             sql`SELECT * FROM skills WHERE user_id = ${decoded.userId}`
           );
-          return res.json((result as any).rows);
+          const skillsRows = (result as any)?.rows || (result as any) || [];
+          return res.json(skillsRows);
           
         case 'goals':
           result = await db.execute(
             sql`SELECT * FROM goals WHERE user_id = ${decoded.userId}`
           );
-          return res.json((result as any).rows);
+          const goalsRows = (result as any)?.rows || (result as any) || [];
+          return res.json(goalsRows);
           
         case 'tasks':
           let query = sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`;
@@ -151,7 +155,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           }
           
           result = await db.execute(query);
-          return res.json((result as any).rows);
+          const tasksRows = (result as any)?.rows || (result as any) || [];
+          return res.json(tasksRows);
           
         case 'milestones':
           if (goalId) {
@@ -163,7 +168,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               sql`SELECT * FROM milestones WHERE goal_id IN (SELECT id FROM goals WHERE user_id = ${decoded.userId})`
             );
           }
-          return res.json((result as any).rows);
+          const milestonesRows = (result as any)?.rows || (result as any) || [];
+          return res.json(milestonesRows);
           
         default:
           return res.status(400).json({ message: "未知的查询类型" });

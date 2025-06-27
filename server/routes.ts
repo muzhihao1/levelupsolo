@@ -1626,6 +1626,190 @@ ${activeGoals.map((goal: any) => `- ${goal.title} (完成度: ${Math.round((goal
     }
   });
 
+  // Generic data endpoint for client compatibility
+  app.get('/api/data', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const type = req.query.type;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      switch (type) {
+        case 'tasks':
+          const tasks = await storage.getTasks(userId);
+          return res.json(tasks);
+        
+        case 'skills':
+          await (storage as any).initializeCoreSkills(userId);
+          const skills = await storage.getSkills(userId);
+          return res.json(skills);
+        
+        case 'goals':
+          const goals = await storage.getGoals(userId);
+          return res.json(goals);
+        
+        case 'stats':
+          let stats = await storage.getUserStats(userId);
+          if (!stats) {
+            stats = await storage.createUserStats({
+              userId,
+              level: 1,
+              experience: 0,
+              experienceToNext: 100,
+              energyBalls: 18,
+              maxEnergyBalls: 18,
+              energyBallDuration: 15,
+              streak: 0,
+              totalTasksCompleted: 0,
+            });
+          }
+          // Check and reset energy balls if needed
+          await storage.checkAndResetEnergyBalls(userId);
+          stats = await storage.getUserStats(userId);
+          return res.json(stats);
+        
+        case 'profile':
+          const profile = await storage.getUserProfile(userId);
+          return res.json(profile);
+        
+        default:
+          return res.status(400).json({ message: "Invalid data type" });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).json({ message: "数据库操作失败", error: error.message });
+    }
+  });
+
+  // Generic crud endpoint for client compatibility
+  app.post('/api/crud', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const resource = req.query.resource;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      switch (resource) {
+        case 'tasks':
+          const taskData = insertTaskSchema.parse({
+            ...req.body,
+            userId
+          });
+          const task = await storage.createTask(taskData);
+          return res.json(task);
+        
+        case 'skills':
+          const skillData = insertSkillSchema.parse({
+            ...req.body,
+            userId
+          });
+          const skill = await storage.createSkill(skillData);
+          return res.json(skill);
+        
+        case 'goals':
+          const { milestones, ...goalData } = req.body;
+          const parsedGoalData = insertGoalSchema.parse({
+            ...goalData,
+            userId
+          });
+          const goal = await storage.createGoal(parsedGoalData);
+          
+          // Create milestones if provided
+          if (milestones && Array.isArray(milestones) && milestones.length > 0) {
+            for (let i = 0; i < milestones.length; i++) {
+              const milestone = milestones[i];
+              if (milestone.title && milestone.title.trim()) {
+                await storage.createMilestone({
+                  userId,
+                  goalId: goal.id,
+                  title: milestone.title.trim(),
+                  description: milestone.description || null,
+                  order: i,
+                  completed: false
+                });
+              }
+            }
+          }
+          
+          const goalWithMilestones = await storage.getGoalWithMilestones(goal.id);
+          return res.json(goalWithMilestones);
+        
+        default:
+          return res.status(400).json({ message: "Invalid resource type" });
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid data", errors: error.errors });
+      } else {
+        console.error("Error creating resource:", error);
+        res.status(500).json({ message: "数据库操作失败", error: error.message });
+      }
+    }
+  });
+
+  app.patch('/api/crud', isAuthenticated, async (req: any, res) => {
+    try {
+      const resource = req.query.resource;
+      const id = parseInt(req.query.id);
+
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID" });
+      }
+
+      switch (resource) {
+        case 'tasks':
+          const updatedTask = await storage.updateTask(id, req.body);
+          if (!updatedTask) {
+            return res.status(404).json({ message: "Task not found" });
+          }
+          return res.json(updatedTask);
+        
+        case 'skills':
+          const updatedSkill = await storage.updateSkill(id, req.body);
+          if (!updatedSkill) {
+            return res.status(404).json({ message: "Skill not found" });
+          }
+          return res.json(updatedSkill);
+        
+        default:
+          return res.status(400).json({ message: "Invalid resource type" });
+      }
+    } catch (error) {
+      console.error("Error updating resource:", error);
+      res.status(500).json({ message: "数据库操作失败", error: error.message });
+    }
+  });
+
+  app.delete('/api/crud', isAuthenticated, async (req: any, res) => {
+    try {
+      const resource = req.query.resource;
+      const id = parseInt(req.query.id);
+
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid ID" });
+      }
+
+      switch (resource) {
+        case 'tasks':
+          const success = await storage.deleteTask(id);
+          if (!success) {
+            return res.status(404).json({ message: "Task not found" });
+          }
+          return res.json({ message: "Task deleted successfully" });
+        
+        default:
+          return res.status(400).json({ message: "Invalid resource type" });
+      }
+    } catch (error) {
+      console.error("Error deleting resource:", error);
+      res.status(500).json({ message: "数据库操作失败", error: error.message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

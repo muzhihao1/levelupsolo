@@ -146,7 +146,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createSkill(skillData: InsertSkill): Promise<Skill> {
-    const [skill] = await db
+    const result = await db
       .insert(skills)
       .values({
         ...skillData,
@@ -157,7 +157,12 @@ export class DatabaseStorage implements IStorage {
         icon: skillData.icon || "fas fa-star"
       })
       .returning();
-    return skill;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create skill: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   // Initialize the six core skills for a user
@@ -396,7 +401,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTask(task: InsertTask): Promise<Task> {
-    const [newTask] = await db
+    const result = await db
       .insert(tasks)
       .values({
         ...task,
@@ -405,7 +410,12 @@ export class DatabaseStorage implements IStorage {
         estimatedDuration: task.estimatedDuration ?? 25
       })
       .returning();
-    return newTask;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create task: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   async updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined> {
@@ -522,7 +532,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createGoal(goal: InsertGoal): Promise<Goal> {
-    const [newGoal] = await db
+    const result = await db
       .insert(goals)
       .values({
         ...goal,
@@ -531,7 +541,12 @@ export class DatabaseStorage implements IStorage {
         expReward: goal.expReward || 0
       })
       .returning();
-    return newGoal;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create goal: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   async updateGoal(id: number, goal: Partial<InsertGoal>): Promise<Goal | undefined> {
@@ -580,7 +595,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createGoalTask(goalTask: InsertGoalTask): Promise<GoalTask> {
-    const [newGoalTask] = await db
+    const result = await db
       .insert(goalTasks)
       .values({
         ...goalTask,
@@ -588,7 +603,12 @@ export class DatabaseStorage implements IStorage {
         expReward: goalTask.expReward || 0
       })
       .returning();
-    return newGoalTask;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create goal task: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   async updateGoalTask(id: number, goalTask: Partial<InsertGoalTask>): Promise<GoalTask | undefined> {
@@ -611,14 +631,19 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
-    const [newLog] = await db
+    const result = await db
       .insert(activityLogs)
       .values({
         ...log,
         expGained: log.expGained || 0
       })
       .returning();
-    return newLog;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create activity log: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   async removeTaskCompletionLog(taskId: number): Promise<boolean> {
@@ -639,7 +664,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createMilestone(milestone: InsertMilestone): Promise<Milestone> {
-    const [newMilestone] = await db
+    const result = await db
       .insert(milestones)
       .values({
         ...milestone,
@@ -647,7 +672,12 @@ export class DatabaseStorage implements IStorage {
         order: milestone.order ?? 0
       })
       .returning();
-    return newMilestone;
+    
+    if (!result || result.length === 0) {
+      throw new Error('Failed to create milestone: No data returned from database');
+    }
+    
+    return result[0];
   }
 
   async updateMilestone(id: number, milestoneData: Partial<InsertMilestone>): Promise<Milestone | undefined> {

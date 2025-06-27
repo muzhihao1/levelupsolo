@@ -93,7 +93,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     updated_at = NOW()
                     RETURNING *`
               );
-              return res.json((result as any).rows[0]);
+              const rows = (result as any)?.rows || (result as any) || [];
+              if (!rows || rows.length === 0) {
+                throw new Error('Failed to create/update profile: No data returned from database');
+              }
+              return res.json(rows[0]);
               
             case 'tasks':
               const taskData = {
@@ -106,7 +110,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description}, ${taskData.skillId || null}, ${taskData.goalId || null}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.parentTaskId || null}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1})
                     RETURNING *`
               );
-              return res.json((result as any).rows[0]);
+              const rows = (result as any)?.rows || (result as any) || [];
+              if (!rows || rows.length === 0) {
+                throw new Error('Failed to create task: No data returned from database');
+              }
+              return res.json(rows[0]);
               
             case 'goals':
               const goalData = {
@@ -119,7 +127,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${goalData.user_id}, ${goalData.title}, ${goalData.description}, ${goalData.targetDate || null}, ${goalData.expReward || 50}, ${goalData.requiredEnergyBalls || 4})
                     RETURNING *`
               );
-              return res.json((result as any).rows[0]);
+              const rows = (result as any)?.rows || (result as any) || [];
+              if (!rows || rows.length === 0) {
+                throw new Error('Failed to create goal: No data returned from database');
+              }
+              return res.json(rows[0]);
               
             case 'skills':
               const skillData = {
@@ -131,7 +143,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${skillData.user_id}, ${skillData.name}, ${skillData.color || '#6366F1'}, ${skillData.icon || 'fas fa-star'}, ${skillData.category || 'general'})
                     RETURNING *`
               );
-              return res.json((result as any).rows[0]);
+              const rows = (result as any)?.rows || (result as any) || [];
+              if (!rows || rows.length === 0) {
+                throw new Error('Failed to create skill: No data returned from database');
+              }
+              return res.json(rows[0]);
               
             case 'milestones':
               const milestoneData = {
@@ -143,7 +159,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${milestoneData.goalId}, ${milestoneData.title}, ${milestoneData.description || ''}, ${false})
                     RETURNING *`
               );
-              return res.json((result as any).rows[0]);
+              const rows = (result as any)?.rows || (result as any) || [];
+              if (!rows || rows.length === 0) {
+                throw new Error('Failed to create milestone: No data returned from database');
+              }
+              return res.json(rows[0]);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -199,11 +219,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 );
               }
               
-              if ((result as any).rows.length === 0) {
+              const updateRows = (result as any)?.rows || (result as any) || [];
+              if (updateRows.length === 0) {
                 return res.status(404).json({ message: "Task not found" });
               }
               
-              return res.json((result as any).rows[0]);
+              return res.json(updateRows[0]);
               
             case 'goals':
               const goalUpdate = req.body;
@@ -219,11 +240,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     RETURNING *`
               );
               
-              if ((result as any).rows.length === 0) {
+              const goalUpdateRows = (result as any)?.rows || (result as any) || [];
+              if (goalUpdateRows.length === 0) {
                 return res.status(404).json({ message: "Goal not found" });
               }
               
-              return res.json((result as any).rows[0]);
+              return res.json(goalUpdateRows[0]);
               
             case 'milestones':
               const milestoneUpdate = req.body;
@@ -237,11 +259,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     RETURNING *`
               );
               
-              if ((result as any).rows.length === 0) {
+              const milestoneUpdateRows = (result as any)?.rows || (result as any) || [];
+              if (milestoneUpdateRows.length === 0) {
                 return res.status(404).json({ message: "Milestone not found" });
               }
               
-              return res.json((result as any).rows[0]);
+              return res.json(milestoneUpdateRows[0]);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -278,7 +301,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               return res.status(400).json({ message: "Invalid resource" });
           }
           
-          if ((result as any).rows.length === 0) {
+          const deleteRows = (result as any)?.rows || (result as any) || [];
+          if (deleteRows.length === 0) {
             return res.status(404).json({ message: "Resource not found" });
           }
           
