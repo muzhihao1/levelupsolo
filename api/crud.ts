@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { sql } from "drizzle-orm";
 
 // 设置 CORS
 function setCORS(res: VercelResponse) {
@@ -56,18 +54,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ message: "服务器配置错误: 缺少数据库连接" });
     }
     
-    let client = null;
+    let sql = null;
     let result;
     
     try {
-      client = postgres(connectionString, {
+      sql = postgres(connectionString, {
         ssl: 'require',
         max: 1,
         idle_timeout: 20,
         connect_timeout: 10,
       });
-      
-      const db = drizzle(client);
       
       switch (req.method) {
         case 'POST':
@@ -80,24 +76,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 created_at: new Date(),
                 updated_at: new Date()
               };
-              result = await db.execute(
-                sql`INSERT INTO user_profiles (user_id, name, age, occupation, mission, has_completed_onboarding, has_completed_tutorial)
-                    VALUES (${profileData.user_id}, ${profileData.name}, ${profileData.age}, ${profileData.occupation}, ${profileData.mission}, ${profileData.hasCompletedOnboarding || false}, ${profileData.hasCompletedTutorial || false})
-                    ON CONFLICT (user_id) DO UPDATE SET
-                    name = EXCLUDED.name,
-                    age = EXCLUDED.age,
-                    occupation = EXCLUDED.occupation,
-                    mission = EXCLUDED.mission,
-                    has_completed_onboarding = EXCLUDED.has_completed_onboarding,
-                    has_completed_tutorial = EXCLUDED.has_completed_tutorial,
-                    updated_at = NOW()
-                    RETURNING *`
-              );
-              if (!result || (Array.isArray(result) && result.length === 0)) {
-                throw new Error('Failed to create/update profile: No data returned from database');
-              }
-              const profileResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              return res.json(profileResult);
+              result = await sql`
+                INSERT INTO user_profiles (
+                  user_id, name, age, occupation, mission, 
+                  has_completed_onboarding, has_completed_tutorial
+                )
+                VALUES (
+                  ${profileData.user_id}, 
+                  ${profileData.name}, 
+                  ${profileData.age}, 
+                  ${profileData.occupation}, 
+                  ${profileData.mission}, 
+                  ${profileData.hasCompletedOnboarding || false}, 
+                  ${profileData.hasCompletedTutorial || false}
+                )
+                ON CONFLICT (user_id) DO UPDATE SET
+                  name = EXCLUDED.name,
+                  age = EXCLUDED.age,
+                  occupation = EXCLUDED.occupation,
+                  mission = EXCLUDED.mission,
+                  has_completed_onboarding = EXCLUDED.has_completed_onboarding,
+                  has_completed_tutorial = EXCLUDED.has_completed_tutorial,
+                  updated_at = NOW()
+                RETURNING *
+              `;
+              return res.json(result[0]);
               
             case 'tasks':
               const taskData = {
@@ -105,23 +108,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 user_id: decoded.userId,
                 created_at: new Date()
               };
-              console.log('Creating task with data:', taskData);
-              try {
-                result = await db.execute(
-                  sql`INSERT INTO tasks (user_id, title, description, skill_id, goal_id, exp_reward, task_category, task_type, parent_task_id, difficulty, required_energy_balls, completed, estimated_duration, created_at)
-                      VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description || null}, ${taskData.skillId || null}, ${taskData.goalId || null}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.parentTaskId || null}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1}, ${false}, ${taskData.estimatedDuration || 25}, ${new Date()})
-                      RETURNING *`
-                );
-                console.log('Task creation result:', result);
-              } catch (insertError) {
-                console.error('Task INSERT error:', insertError);
-                throw insertError;
-              }
-              if (!result || (Array.isArray(result) && result.length === 0)) {
-                throw new Error('Failed to create task: No data returned from database');
-              }
-              const taskResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              return res.json(taskResult);
+              result = await sql`
+                INSERT INTO tasks (
+                  user_id, title, description, skill_id, goal_id, 
+                  exp_reward, task_category, task_type, parent_task_id, 
+                  difficulty, required_energy_balls
+                )
+                VALUES (
+                  ${taskData.user_id}, 
+                  ${taskData.title}, 
+                  ${taskData.description}, 
+                  ${taskData.skillId || null}, 
+                  ${taskData.goalId || null}, 
+                  ${taskData.expReward || 10}, 
+                  ${taskData.taskCategory || 'todo'}, 
+                  ${taskData.taskType || 'simple'}, 
+                  ${taskData.parentTaskId || null}, 
+                  ${taskData.difficulty || 'medium'}, 
+                  ${taskData.requiredEnergyBalls || 1}
+                )
+                RETURNING *
+              `;
+              return res.json(result[0]);
               
             case 'goals':
               const goalData = {
@@ -129,48 +137,61 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 user_id: decoded.userId,
                 created_at: new Date()
               };
-              result = await db.execute(
-                sql`INSERT INTO goals (user_id, title, description, target_date, exp_reward, required_energy_balls)
-                    VALUES (${goalData.user_id}, ${goalData.title}, ${goalData.description}, ${goalData.targetDate || null}, ${goalData.expReward || 50}, ${goalData.requiredEnergyBalls || 4})
-                    RETURNING *`
-              );
-              if (!result || (Array.isArray(result) && result.length === 0)) {
-                throw new Error('Failed to create goal: No data returned from database');
-              }
-              const goalResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              return res.json(goalResult);
+              result = await sql`
+                INSERT INTO goals (
+                  user_id, title, description, target_date, 
+                  exp_reward, required_energy_balls
+                )
+                VALUES (
+                  ${goalData.user_id}, 
+                  ${goalData.title}, 
+                  ${goalData.description}, 
+                  ${goalData.targetDate || null}, 
+                  ${goalData.expReward || 50}, 
+                  ${goalData.requiredEnergyBalls || 4}
+                )
+                RETURNING *
+              `;
+              return res.json(result[0]);
               
             case 'skills':
               const skillData = {
                 ...req.body,
                 user_id: decoded.userId
               };
-              result = await db.execute(
-                sql`INSERT INTO skills (user_id, name, color, icon, category)
-                    VALUES (${skillData.user_id}, ${skillData.name}, ${skillData.color || '#6366F1'}, ${skillData.icon || 'fas fa-star'}, ${skillData.category || 'general'})
-                    RETURNING *`
-              );
-              if (!result || (Array.isArray(result) && result.length === 0)) {
-                throw new Error('Failed to create skill: No data returned from database');
-              }
-              const skillResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              return res.json(skillResult);
+              result = await sql`
+                INSERT INTO skills (
+                  user_id, name, color, icon, category
+                )
+                VALUES (
+                  ${skillData.user_id}, 
+                  ${skillData.name}, 
+                  ${skillData.color || '#6366F1'}, 
+                  ${skillData.icon || 'fas fa-star'}, 
+                  ${skillData.category || 'general'}
+                )
+                RETURNING *
+              `;
+              return res.json(result[0]);
               
             case 'milestones':
               const milestoneData = {
                 ...req.body,
                 created_at: new Date()
               };
-              result = await db.execute(
-                sql`INSERT INTO milestones (goal_id, title, description, is_completed)
-                    VALUES (${milestoneData.goalId}, ${milestoneData.title}, ${milestoneData.description || ''}, ${false})
-                    RETURNING *`
-              );
-              if (!result || (Array.isArray(result) && result.length === 0)) {
-                throw new Error('Failed to create milestone: No data returned from database');
-              }
-              const milestoneResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              return res.json(milestoneResult);
+              result = await sql`
+                INSERT INTO milestones (
+                  goal_id, title, description, is_completed
+                )
+                VALUES (
+                  ${milestoneData.goalId}, 
+                  ${milestoneData.title}, 
+                  ${milestoneData.description || ''}, 
+                  ${false}
+                )
+                RETURNING *
+              `;
+              return res.json(result[0]);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -186,98 +207,66 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           switch (resource) {
             case 'tasks':
               const taskUpdate = req.body;
+              result = await sql`
+                UPDATE tasks
+                SET 
+                  title = COALESCE(${taskUpdate.title}, title),
+                  description = COALESCE(${taskUpdate.description}, description),
+                  completed = COALESCE(${taskUpdate.completed}, completed),
+                  completed_at = CASE 
+                    WHEN ${taskUpdate.completed} = true THEN NOW()
+                    WHEN ${taskUpdate.completed} = false THEN NULL
+                    ELSE completed_at
+                  END,
+                  updated_at = NOW()
+                WHERE id = ${id} AND user_id = ${decoded.userId}
+                RETURNING *
+              `;
               
-              // Build update query dynamically
-              let updateParts = [];
-              
-              if (taskUpdate.title !== undefined) {
-                updateParts.push(sql`title = ${taskUpdate.title}`);
-              }
-              if (taskUpdate.description !== undefined) {
-                updateParts.push(sql`description = ${taskUpdate.description}`);
-              }
-              if (taskUpdate.completed !== undefined) {
-                updateParts.push(sql`completed = ${taskUpdate.completed}`);
-                updateParts.push(sql`completed_at = ${taskUpdate.completed ? new Date() : null}`);
-              }
-              
-              if (updateParts.length === 0) {
-                return res.status(400).json({ message: "No fields to update" });
-              }
-              
-              // Use a simple approach with direct SQL
-              if (taskUpdate.completed !== undefined) {
-                result = await db.execute(
-                  sql`UPDATE tasks 
-                      SET completed = ${taskUpdate.completed},
-                          completed_at = ${taskUpdate.completed ? new Date() : null},
-                          updated_at = NOW()
-                      WHERE id = ${id} AND user_id = ${decoded.userId}
-                      RETURNING *`
-                );
-              } else {
-                result = await db.execute(
-                  sql`UPDATE tasks 
-                      SET title = COALESCE(${taskUpdate.title || null}, title),
-                          description = COALESCE(${taskUpdate.description || null}, description),
-                          updated_at = NOW()
-                      WHERE id = ${id} AND user_id = ${decoded.userId}
-                      RETURNING *`
-                );
-              }
-              
-              if (!result) {
+              if (result.length === 0) {
                 return res.status(404).json({ message: "Task not found" });
               }
-              const updateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              if (!updateResult) {
-                return res.status(404).json({ message: "Task not found" });
-              }
-              return res.json(updateResult);
+              
+              return res.json(result[0]);
               
             case 'goals':
               const goalUpdate = req.body;
+              result = await sql`
+                UPDATE goals
+                SET 
+                  title = COALESCE(${goalUpdate.title}, title),
+                  description = COALESCE(${goalUpdate.description}, description),
+                  completed = COALESCE(${goalUpdate.completed}, completed),
+                  progress = COALESCE(${goalUpdate.progress}, progress),
+                  updated_at = NOW()
+                WHERE id = ${id} AND user_id = ${decoded.userId}
+                RETURNING *
+              `;
               
-              result = await db.execute(
-                sql`UPDATE goals 
-                    SET title = COALESCE(${goalUpdate.title || null}, title),
-                        description = COALESCE(${goalUpdate.description || null}, description),
-                        completed = COALESCE(${goalUpdate.completed !== undefined ? goalUpdate.completed : null}, completed),
-                        progress = COALESCE(${goalUpdate.progress !== undefined ? goalUpdate.progress : null}, progress),
-                        updated_at = NOW()
-                    WHERE id = ${id} AND user_id = ${decoded.userId}
-                    RETURNING *`
-              );
-              
-              if (!result) {
+              if (result.length === 0) {
                 return res.status(404).json({ message: "Goal not found" });
               }
-              const goalUpdateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              if (!goalUpdateResult) {
-                return res.status(404).json({ message: "Goal not found" });
-              }
-              return res.json(goalUpdateResult);
+              
+              return res.json(result[0]);
               
             case 'milestones':
               const milestoneUpdate = req.body;
-              result = await db.execute(
-                sql`UPDATE milestones 
-                    SET title = ${milestoneUpdate.title}, 
-                        description = ${milestoneUpdate.description || ''}, 
-                        is_completed = ${milestoneUpdate.isCompleted || false},
-                        updated_at = NOW()
-                    WHERE id = ${id}
-                    RETURNING *`
-              );
+              result = await sql`
+                UPDATE milestones 
+                SET 
+                  title = ${milestoneUpdate.title}, 
+                  description = ${milestoneUpdate.description || ''}, 
+                  is_completed = ${milestoneUpdate.isCompleted || false},
+                  updated_at = NOW()
+                WHERE id = ${id}
+                RETURNING *
+              `;
               
-              if (!result) {
+              if (result.length === 0) {
                 return res.status(404).json({ message: "Milestone not found" });
               }
-              const milestoneUpdateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-              if (!milestoneUpdateResult) {
-                return res.status(404).json({ message: "Milestone not found" });
-              }
-              return res.json(milestoneUpdateResult);
+              
+              return res.json(result[0]);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -291,34 +280,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           
           switch (resource) {
             case 'tasks':
-              result = await db.execute(
-                sql`DELETE FROM tasks WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
-              );
+              result = await sql`
+                DELETE FROM tasks 
+                WHERE id = ${id} AND user_id = ${decoded.userId} 
+                RETURNING id
+              `;
               break;
             case 'goals':
-              result = await db.execute(
-                sql`DELETE FROM goals WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
-              );
+              result = await sql`
+                DELETE FROM goals 
+                WHERE id = ${id} AND user_id = ${decoded.userId} 
+                RETURNING id
+              `;
               break;
             case 'skills':
-              result = await db.execute(
-                sql`DELETE FROM skills WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
-              );
+              result = await sql`
+                DELETE FROM skills 
+                WHERE id = ${id} AND user_id = ${decoded.userId} 
+                RETURNING id
+              `;
               break;
             case 'milestones':
-              result = await db.execute(
-                sql`DELETE FROM milestones WHERE id = ${id} RETURNING id`
-              );
+              result = await sql`
+                DELETE FROM milestones 
+                WHERE id = ${id} 
+                RETURNING id
+              `;
               break;
             default:
               return res.status(400).json({ message: "Invalid resource" });
           }
           
-          if (!result) {
-            return res.status(404).json({ message: "Resource not found" });
-          }
-          const deleteResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-          if (!deleteResult) {
+          if (result.length === 0) {
             return res.status(404).json({ message: "Resource not found" });
           }
           
@@ -336,9 +329,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         details: process.env.NODE_ENV === 'development' ? dbError : undefined
       });
     } finally {
-      if (client) {
+      if (sql) {
         try {
-          await client.end();
+          await sql.end();
         } catch (endError) {
           console.error("Error closing database connection:", endError);
         }
