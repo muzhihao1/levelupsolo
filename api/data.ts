@@ -89,7 +89,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     let client = null;
-    let result;
+    let result: any;
     
     try {
       client = postgres(connectionString, {

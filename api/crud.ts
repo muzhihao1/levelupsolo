@@ -55,7 +55,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     
     let sql = null;
-    let result;
+    let result: any;
     
     try {
       sql = postgres(connectionString, {
