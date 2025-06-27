@@ -30,7 +30,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
+  // Extract the operation from the URL path
+  const pathParts = req.url?.split('/') || [];
+  const operation = pathParts[pathParts.length - 1];
+
+  switch (operation) {
+    case 'simple-login':
+      return handleLogin(req, res);
+    case 'refresh':
+      return handleRefresh(req, res);
+    case 'user':
+      return handleGetUser(req, res);
+    default:
+      return res.status(400).json({ message: "Invalid auth operation" });
+  }
+}
+
+// Login handler
+async function handleLogin(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -139,5 +157,95 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       message: "登录失败",
       error: error instanceof Error ? error.message : String(error)
     });
+  }
+}
+
+// Refresh token handler
+async function handleRefresh(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  try {
+    const { refreshToken } = req.body;
+    
+    if (!refreshToken) {
+      return res.status(400).json({ message: "刷新令牌是必需的" });
+    }
+    
+    // 验证 refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET || 'demo-secret') as any;
+    
+    // 生成新的 tokens
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId, email: decoded.email },
+      process.env.JWT_SECRET || 'demo-secret',
+      { expiresIn: '7d' }
+    );
+    
+    const newRefreshToken = jwt.sign(
+      { userId: decoded.userId, email: decoded.email, type: 'refresh' },
+      process.env.JWT_SECRET || 'demo-secret',
+      { expiresIn: '30d' }
+    );
+    
+    return res.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+    
+  } catch (error) {
+    console.error("Refresh token error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: "无效的刷新令牌" });
+    }
+    return res.status(500).json({ message: "刷新令牌失败" });
+  }
+}
+
+// Get user handler
+async function handleGetUser(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
+
+  try {
+    // 从 Authorization header 获取 token
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: "未授权" });
+    }
+    
+    const token = authHeader.substring(7);
+    
+    // 验证 token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'demo-secret') as any;
+    
+    // Demo 用户
+    if (decoded.userId === 'demo_user') {
+      return res.json({
+        id: "demo_user",
+        email: "demo@levelupsolo.net",
+        firstName: "Demo",
+        lastName: "User",
+        hasCompletedOnboarding: true,
+      });
+    }
+    
+    // 真实用户 - 暂时返回基本信息
+    return res.json({
+      id: decoded.userId,
+      email: decoded.email,
+      firstName: decoded.firstName || "",
+      lastName: decoded.lastName || "",
+      hasCompletedOnboarding: true,
+    });
+    
+  } catch (error) {
+    console.error("Get user error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ message: "无效的令牌" });
+    }
+    return res.status(500).json({ message: "获取用户信息失败" });
   }
 }
