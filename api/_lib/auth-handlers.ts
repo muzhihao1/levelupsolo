@@ -52,12 +52,14 @@ export async function handleLogin(req: VercelRequest, res: VercelResponse) {
     
     // 真实用户登录
     try {
+      console.log("Attempting database query for user:", email);
       
       const result = await db.select()
         .from(users)
         .where(eq(users.email, email))
         .limit(1);
       
+      console.log("Database query completed, found users:", result.length);
       const user = result[0];
       
       if (!user || !user.hashedPassword) {
