@@ -53,19 +53,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
     if (!connectionString) {
       console.error("No database connection string found");
-      return res.status(500).json({ message: "服务器配置错误" });
+      return res.status(500).json({ message: "服务器配置错误: 缺少数据库连接" });
     }
     
-    const client = postgres(connectionString, {
-      ssl: 'require',
-      max: 1,
-    });
-    
-    const db = drizzle(client);
-    
+    let client = null;
     let result;
     
     try {
+      client = postgres(connectionString, {
+        ssl: 'require',
+        max: 1,
+        idle_timeout: 20,
+        connect_timeout: 10,
+      });
+      
+      const db = drizzle(client);
+      
       switch (req.method) {
         case 'POST':
           // 创建资源
@@ -90,7 +93,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     updated_at = NOW()
                     RETURNING *`
               );
-              break;
+              return res.json((result as any).rows[0]);
+              
             case 'tasks':
               const taskData = {
                 ...req.body,
@@ -98,11 +102,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 created_at: new Date()
               };
               result = await db.execute(
-                sql`INSERT INTO tasks (user_id, title, description, skill_id, goal_id, exp_reward, task_category, task_type, difficulty, required_energy_balls)
-                    VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description}, ${taskData.skillId}, ${taskData.goalId}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1})
+                sql`INSERT INTO tasks (user_id, title, description, skill_id, goal_id, exp_reward, task_category, task_type, parent_task_id, difficulty, required_energy_balls)
+                    VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description}, ${taskData.skillId || null}, ${taskData.goalId || null}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.parentTaskId || null}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1})
                     RETURNING *`
               );
-              break;
+              return res.json((result as any).rows[0]);
+              
             case 'goals':
               const goalData = {
                 ...req.body,
@@ -111,10 +116,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               };
               result = await db.execute(
                 sql`INSERT INTO goals (user_id, title, description, target_date, exp_reward, required_energy_balls)
-                    VALUES (${goalData.user_id}, ${goalData.title}, ${goalData.description}, ${goalData.targetDate}, ${goalData.expReward || 50}, ${goalData.requiredEnergyBalls || 4})
+                    VALUES (${goalData.user_id}, ${goalData.title}, ${goalData.description}, ${goalData.targetDate || null}, ${goalData.expReward || 50}, ${goalData.requiredEnergyBalls || 4})
                     RETURNING *`
               );
-              break;
+              return res.json((result as any).rows[0]);
+              
             case 'skills':
               const skillData = {
                 ...req.body,
@@ -125,100 +131,188 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${skillData.user_id}, ${skillData.name}, ${skillData.color || '#6366F1'}, ${skillData.icon || 'fas fa-star'}, ${skillData.category || 'general'})
                     RETURNING *`
               );
-              break;
+              return res.json((result as any).rows[0]);
+              
+            case 'milestones':
+              const milestoneData = {
+                ...req.body,
+                created_at: new Date()
+              };
+              result = await db.execute(
+                sql`INSERT INTO milestones (goal_id, title, description, is_completed)
+                    VALUES (${milestoneData.goalId}, ${milestoneData.title}, ${milestoneData.description || ''}, ${false})
+                    RETURNING *`
+              );
+              return res.json((result as any).rows[0]);
+              
             default:
-              await client.end();
               return res.status(400).json({ message: "Invalid resource" });
           }
-          await client.end();
-          return res.json((result as any).rows[0]);
           
         case 'PUT':
         case 'PATCH':
           // 更新资源
           if (!id) {
-            await client.end();
             return res.status(400).json({ message: "ID is required" });
           }
           
           switch (resource) {
             case 'tasks':
+              const taskUpdate = req.body;
+              let updateFields = [];
+              let values = [];
+              let valueIndex = 1;
+              
+              if (taskUpdate.title !== undefined) {
+                updateFields.push(`title = $${valueIndex++}`);
+                values.push(taskUpdate.title);
+              }
+              if (taskUpdate.description !== undefined) {
+                updateFields.push(`description = $${valueIndex++}`);
+                values.push(taskUpdate.description);
+              }
+              if (taskUpdate.completed !== undefined) {
+                updateFields.push(`completed = $${valueIndex++}`);
+                values.push(taskUpdate.completed);
+                updateFields.push(`completed_at = $${valueIndex++}`);
+                values.push(taskUpdate.completed ? new Date() : null);
+              }
+              
+              if (updateFields.length === 0) {
+                return res.status(400).json({ message: "No fields to update" });
+              }
+              
+              values.push(id);
+              values.push(decoded.userId);
+              
               result = await db.execute(
-                sql`UPDATE tasks SET 
-                    title = COALESCE(${req.body.title}, title),
-                    description = COALESCE(${req.body.description}, description),
-                    completed = COALESCE(${req.body.completed}, completed),
-                    completed_at = CASE WHEN ${req.body.completed} = true THEN NOW() ELSE completed_at END
-                    WHERE id = ${id} AND user_id = ${decoded.userId}
-                    RETURNING *`
+                sql.raw(`UPDATE tasks SET ${updateFields.join(', ')}, updated_at = NOW() WHERE id = $${valueIndex} AND user_id = $${valueIndex + 1} RETURNING *`, values)
               );
-              break;
+              
+              if ((result as any).rows.length === 0) {
+                return res.status(404).json({ message: "Task not found" });
+              }
+              
+              return res.json((result as any).rows[0]);
+              
             case 'goals':
+              const goalUpdate = req.body;
+              let goalUpdateFields = [];
+              let goalValues = [];
+              let goalValueIndex = 1;
+              
+              if (goalUpdate.title !== undefined) {
+                goalUpdateFields.push(`title = $${goalValueIndex++}`);
+                goalValues.push(goalUpdate.title);
+              }
+              if (goalUpdate.description !== undefined) {
+                goalUpdateFields.push(`description = $${goalValueIndex++}`);
+                goalValues.push(goalUpdate.description);
+              }
+              if (goalUpdate.completed !== undefined) {
+                goalUpdateFields.push(`completed = $${goalValueIndex++}`);
+                goalValues.push(goalUpdate.completed);
+              }
+              if (goalUpdate.progress !== undefined) {
+                goalUpdateFields.push(`progress = $${goalValueIndex++}`);
+                goalValues.push(goalUpdate.progress);
+              }
+              
+              if (goalUpdateFields.length === 0) {
+                return res.status(400).json({ message: "No fields to update" });
+              }
+              
+              goalValues.push(id);
+              goalValues.push(decoded.userId);
+              
               result = await db.execute(
-                sql`UPDATE goals SET 
-                    title = COALESCE(${req.body.title}, title),
-                    description = COALESCE(${req.body.description}, description),
-                    progress = COALESCE(${req.body.progress}, progress),
-                    completed = COALESCE(${req.body.completed}, completed),
-                    completed_at = CASE WHEN ${req.body.completed} = true THEN NOW() ELSE completed_at END
-                    WHERE id = ${id} AND user_id = ${decoded.userId}
+                sql.raw(`UPDATE goals SET ${goalUpdateFields.join(', ')}, updated_at = NOW() WHERE id = $${goalValueIndex} AND user_id = $${goalValueIndex + 1} RETURNING *`, goalValues)
+              );
+              
+              if ((result as any).rows.length === 0) {
+                return res.status(404).json({ message: "Goal not found" });
+              }
+              
+              return res.json((result as any).rows[0]);
+              
+            case 'milestones':
+              const milestoneUpdate = req.body;
+              result = await db.execute(
+                sql`UPDATE milestones 
+                    SET title = ${milestoneUpdate.title}, 
+                        description = ${milestoneUpdate.description || ''}, 
+                        is_completed = ${milestoneUpdate.isCompleted || false},
+                        updated_at = NOW()
+                    WHERE id = ${id}
                     RETURNING *`
               );
-              break;
-            case 'skills':
-              result = await db.execute(
-                sql`UPDATE skills SET 
-                    exp = COALESCE(${req.body.exp}, exp),
-                    level = COALESCE(${req.body.level}, level),
-                    max_exp = COALESCE(${req.body.maxExp}, max_exp)
-                    WHERE id = ${id} AND user_id = ${decoded.userId}
-                    RETURNING *`
-              );
-              break;
+              
+              if ((result as any).rows.length === 0) {
+                return res.status(404).json({ message: "Milestone not found" });
+              }
+              
+              return res.json((result as any).rows[0]);
+              
             default:
-              await client.end();
               return res.status(400).json({ message: "Invalid resource" });
           }
-          await client.end();
-          return res.json((result as any).rows[0]);
           
         case 'DELETE':
           // 删除资源
           if (!id) {
-            await client.end();
             return res.status(400).json({ message: "ID is required" });
           }
           
           switch (resource) {
             case 'tasks':
-              await db.execute(
-                sql`DELETE FROM tasks WHERE id = ${id} AND user_id = ${decoded.userId}`
+              result = await db.execute(
+                sql`DELETE FROM tasks WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
               );
               break;
             case 'goals':
-              await db.execute(
-                sql`DELETE FROM goals WHERE id = ${id} AND user_id = ${decoded.userId}`
+              result = await db.execute(
+                sql`DELETE FROM goals WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
               );
               break;
             case 'skills':
-              await db.execute(
-                sql`DELETE FROM skills WHERE id = ${id} AND user_id = ${decoded.userId}`
+              result = await db.execute(
+                sql`DELETE FROM skills WHERE id = ${id} AND user_id = ${decoded.userId} RETURNING id`
+              );
+              break;
+            case 'milestones':
+              result = await db.execute(
+                sql`DELETE FROM milestones WHERE id = ${id} RETURNING id`
               );
               break;
             default:
-              await client.end();
               return res.status(400).json({ message: "Invalid resource" });
           }
-          await client.end();
-          return res.json({ success: true });
+          
+          if ((result as any).rows.length === 0) {
+            return res.status(404).json({ message: "Resource not found" });
+          }
+          
+          return res.json({ success: true, id });
           
         default:
-          await client.end();
           return res.status(405).json({ message: "Method not allowed" });
       }
+      
     } catch (dbError) {
-      await client.end();
-      throw dbError;
+      console.error("Database error:", dbError);
+      return res.status(500).json({ 
+        message: "数据库操作失败",
+        error: dbError instanceof Error ? dbError.message : String(dbError),
+        details: process.env.NODE_ENV === 'development' ? dbError : undefined
+      });
+    } finally {
+      if (client) {
+        try {
+          await client.end();
+        } catch (endError) {
+          console.error("Error closing database connection:", endError);
+        }
+      }
     }
     
   } catch (error) {
@@ -228,7 +322,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     return res.status(500).json({ 
       message: "操作失败",
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
+      details: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }
 }

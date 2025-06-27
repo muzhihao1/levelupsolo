@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { pgTable, varchar, text, timestamp } from "drizzle-orm/pg-core";
 
 // 简化的 users 表定义
@@ -71,73 +71,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ message: "服务器配置错误" });
     }
     
-    let client = null;
+    const client = postgres(connectionString, {
+      ssl: 'require',
+      max: 1,
+    });
     
-    try {
-      client = postgres(connectionString, {
-        ssl: 'require',
-        max: 1,
-      });
-      
-      const db = drizzle(client);
-      
-      const result = await db.select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1);
-      
-      const user = result[0];
-      
-      if (!user || !user.hashedPassword) {
-        return res.status(401).json({ message: "邮箱或密码错误" });
-      }
-      
-      const isValid = await bcrypt.compare(password, user.hashedPassword);
-      if (!isValid) {
-        return res.status(401).json({ message: "邮箱或密码错误" });
-      }
-      
-      // 特殊处理：如果是 279838958@qq.com，使用旧系统的用户ID
-      let userId = user.id;
-      if (email === "279838958@qq.com") {
-        userId = "31581595";
-      }
-      
-      const token = jwt.sign(
-        { userId, email: user.email! },
-        process.env.JWT_SECRET || 'demo-secret',
-        { expiresIn: '7d' }
-      );
-      
-      const refreshToken = jwt.sign(
-        { userId, email: user.email!, type: 'refresh' },
-        process.env.JWT_SECRET || 'demo-secret',
-        { expiresIn: '30d' }
-      );
-      
-      return res.json({
-        message: "登录成功",
-        accessToken: token,
-        refreshToken: refreshToken,
-        user: {
-          id: userId,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        }
-      });
-      
-    } finally {
-      if (client) {
-        await client.end();
-      }
+    const db = drizzle(client);
+    
+    const result = await db.select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    
+    const user = result[0];
+    
+    if (!user || !user.hashedPassword) {
+      return res.status(401).json({ message: "邮箱或密码错误" });
     }
+    
+    const isValid = await bcrypt.compare(password, user.hashedPassword);
+    if (!isValid) {
+      return res.status(401).json({ message: "邮箱或密码错误" });
+    }
+    
+    const token = jwt.sign(
+      { userId: user.id, email: user.email! },
+      process.env.JWT_SECRET || 'demo-secret',
+      { expiresIn: '7d' }
+    );
+    
+    await client.end();
+    
+    return res.json({
+      message: "登录成功",
+      accessToken: token,
+      refreshToken: token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      }
+    });
     
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ 
       message: "登录失败",
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : "Unknown error"
     });
   }
 }

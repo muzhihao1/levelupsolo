@@ -35,7 +35,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'demo-secret') as any;
     
     // 获取查询类型
-    const { type } = req.query;
+    const { type, taskType, goalId } = req.query;
     
     // Demo 用户数据
     if (decoded.userId === 'demo_user') {
@@ -48,9 +48,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             age: "25",
             occupation: "软件工程师",
             mission: "成为全栈开发专家",
-            hasCompletedOnboarding: true,
-            hasCompletedTutorial: true,
+            onboardingCompleted: true
           });
+          
         case 'stats':
           return res.json({
             id: 1,
@@ -66,48 +66,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             streak: 0,
             totalTasksCompleted: 0,
           });
+          
         case 'skills':
           return res.json([]);
+          
         case 'goals':
           return res.json([]);
+          
         case 'tasks':
           return res.json([]);
+          
         default:
-          return res.status(400).json({ message: "Invalid type parameter" });
+          return res.status(400).json({ message: "未知的查询类型" });
       }
     }
     
-    // 真实用户 - 从数据库获取
-    const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL || "";
-    
+    // 真实用户 - 连接数据库
+    const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL;
     if (!connectionString) {
       console.error("No database connection string found");
-      return res.status(500).json({ message: "服务器配置错误" });
+      return res.status(500).json({ message: "服务器配置错误: 缺少数据库连接" });
     }
     
-    const client = postgres(connectionString, {
-      ssl: 'require',
-      max: 1,
-    });
-    
-    const db = drizzle(client);
-    
+    let client = null;
     let result;
     
     try {
+      client = postgres(connectionString, {
+        ssl: 'require',
+        max: 1,
+        idle_timeout: 20,
+        connect_timeout: 10,
+      });
+      
+      const db = drizzle(client);
+      
       switch (type) {
         case 'profile':
           result = await db.execute(
             sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
           );
-          await client.end();
           return res.json((result as any).rows[0] || null);
           
         case 'stats':
           result = await db.execute(
             sql`SELECT * FROM user_stats WHERE user_id = ${decoded.userId} LIMIT 1`
           );
-          await client.end();
           if ((result as any).rows.length === 0) {
             return res.json({
               id: 1,
@@ -130,30 +134,56 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           result = await db.execute(
             sql`SELECT * FROM skills WHERE user_id = ${decoded.userId}`
           );
-          await client.end();
           return res.json((result as any).rows);
           
         case 'goals':
           result = await db.execute(
             sql`SELECT * FROM goals WHERE user_id = ${decoded.userId}`
           );
-          await client.end();
           return res.json((result as any).rows);
           
         case 'tasks':
-          result = await db.execute(
-            sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`
-          );
-          await client.end();
+          let query = sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`;
+          
+          // 如果指定了 taskType，添加过滤条件
+          if (taskType === 'main') {
+            query = sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId} AND task_type = 'main' AND parent_task_id IS NULL`;
+          }
+          
+          result = await db.execute(query);
+          return res.json((result as any).rows);
+          
+        case 'milestones':
+          if (goalId) {
+            result = await db.execute(
+              sql`SELECT * FROM milestones WHERE goal_id = ${goalId}`
+            );
+          } else {
+            result = await db.execute(
+              sql`SELECT * FROM milestones WHERE goal_id IN (SELECT id FROM goals WHERE user_id = ${decoded.userId})`
+            );
+          }
           return res.json((result as any).rows);
           
         default:
-          await client.end();
-          return res.status(400).json({ message: "Invalid type parameter" });
+          return res.status(400).json({ message: "未知的查询类型" });
       }
+      
     } catch (dbError) {
-      await client.end();
-      throw dbError;
+      console.error("Database query error:", dbError);
+      return res.status(500).json({ 
+        message: "数据库查询失败",
+        error: dbError instanceof Error ? dbError.message : String(dbError),
+        details: process.env.NODE_ENV === 'development' ? dbError : undefined
+      });
+    } finally {
+      if (client) {
+        try {
+          await client.end();
+        } catch (endError) {
+          console.error("Error closing database connection:", endError);
+        }
+      }
     }
     
   } catch (error) {
@@ -163,7 +193,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     return res.status(500).json({ 
       message: "获取数据失败",
-      error: error instanceof Error ? error.message : String(error)
+      error: error instanceof Error ? error.message : String(error),
+      details: process.env.NODE_ENV === 'development' ? error : undefined
     });
   }
 }
