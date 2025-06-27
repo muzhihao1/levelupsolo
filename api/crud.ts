@@ -159,35 +159,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           switch (resource) {
             case 'tasks':
               const taskUpdate = req.body;
-              let updateFields = [];
-              let values = [];
-              let valueIndex = 1;
+              
+              // Build update query dynamically
+              let updateParts = [];
               
               if (taskUpdate.title !== undefined) {
-                updateFields.push(`title = $${valueIndex++}`);
-                values.push(taskUpdate.title);
+                updateParts.push(sql`title = ${taskUpdate.title}`);
               }
               if (taskUpdate.description !== undefined) {
-                updateFields.push(`description = $${valueIndex++}`);
-                values.push(taskUpdate.description);
+                updateParts.push(sql`description = ${taskUpdate.description}`);
               }
               if (taskUpdate.completed !== undefined) {
-                updateFields.push(`completed = $${valueIndex++}`);
-                values.push(taskUpdate.completed);
-                updateFields.push(`completed_at = $${valueIndex++}`);
-                values.push(taskUpdate.completed ? new Date() : null);
+                updateParts.push(sql`completed = ${taskUpdate.completed}`);
+                updateParts.push(sql`completed_at = ${taskUpdate.completed ? new Date() : null}`);
               }
               
-              if (updateFields.length === 0) {
+              if (updateParts.length === 0) {
                 return res.status(400).json({ message: "No fields to update" });
               }
               
-              values.push(id);
-              values.push(decoded.userId);
-              
-              result = await db.execute(
-                sql.raw(`UPDATE tasks SET ${updateFields.join(', ')}, updated_at = NOW() WHERE id = $${valueIndex} AND user_id = $${valueIndex + 1} RETURNING *`, values)
-              );
+              // Use a simple approach with direct SQL
+              if (taskUpdate.completed !== undefined) {
+                result = await db.execute(
+                  sql`UPDATE tasks 
+                      SET completed = ${taskUpdate.completed},
+                          completed_at = ${taskUpdate.completed ? new Date() : null},
+                          updated_at = NOW()
+                      WHERE id = ${id} AND user_id = ${decoded.userId}
+                      RETURNING *`
+                );
+              } else {
+                result = await db.execute(
+                  sql`UPDATE tasks 
+                      SET title = COALESCE(${taskUpdate.title || null}, title),
+                          description = COALESCE(${taskUpdate.description || null}, description),
+                          updated_at = NOW()
+                      WHERE id = ${id} AND user_id = ${decoded.userId}
+                      RETURNING *`
+                );
+              }
               
               if ((result as any).rows.length === 0) {
                 return res.status(404).json({ message: "Task not found" });
@@ -197,36 +207,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               
             case 'goals':
               const goalUpdate = req.body;
-              let goalUpdateFields = [];
-              let goalValues = [];
-              let goalValueIndex = 1;
-              
-              if (goalUpdate.title !== undefined) {
-                goalUpdateFields.push(`title = $${goalValueIndex++}`);
-                goalValues.push(goalUpdate.title);
-              }
-              if (goalUpdate.description !== undefined) {
-                goalUpdateFields.push(`description = $${goalValueIndex++}`);
-                goalValues.push(goalUpdate.description);
-              }
-              if (goalUpdate.completed !== undefined) {
-                goalUpdateFields.push(`completed = $${goalValueIndex++}`);
-                goalValues.push(goalUpdate.completed);
-              }
-              if (goalUpdate.progress !== undefined) {
-                goalUpdateFields.push(`progress = $${goalValueIndex++}`);
-                goalValues.push(goalUpdate.progress);
-              }
-              
-              if (goalUpdateFields.length === 0) {
-                return res.status(400).json({ message: "No fields to update" });
-              }
-              
-              goalValues.push(id);
-              goalValues.push(decoded.userId);
               
               result = await db.execute(
-                sql.raw(`UPDATE goals SET ${goalUpdateFields.join(', ')}, updated_at = NOW() WHERE id = $${goalValueIndex} AND user_id = $${goalValueIndex + 1} RETURNING *`, goalValues)
+                sql`UPDATE goals 
+                    SET title = COALESCE(${goalUpdate.title || null}, title),
+                        description = COALESCE(${goalUpdate.description || null}, description),
+                        completed = COALESCE(${goalUpdate.completed !== undefined ? goalUpdate.completed : null}, completed),
+                        progress = COALESCE(${goalUpdate.progress !== undefined ? goalUpdate.progress : null}, progress),
+                        updated_at = NOW()
+                    WHERE id = ${id} AND user_id = ${decoded.userId}
+                    RETURNING *`
               );
               
               if ((result as any).rows.length === 0) {
