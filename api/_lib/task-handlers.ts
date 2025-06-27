@@ -177,7 +177,7 @@ export async function handleUpdateTask(req: VercelRequest, res: VercelResponse) 
   try {
     const decoded = verifyToken(req.headers.authorization);
     const userId = decoded.userId;
-    const taskId = parseInt(req.params.id);
+    const taskId = parseInt(req.query.id as string);
     const updates = req.body;
 
     // Demo user - return updated task without saving
@@ -262,7 +262,7 @@ export async function handleDeleteTask(req: VercelRequest, res: VercelResponse) 
   try {
     const decoded = verifyToken(req.headers.authorization);
     const userId = decoded.userId;
-    const taskId = parseInt(req.params.id);
+    const taskId = parseInt(req.query.id as string);
 
     // Demo user - return success without deleting
     if (userId === 'demo_user') {
@@ -274,10 +274,11 @@ export async function handleDeleteTask(req: VercelRequest, res: VercelResponse) 
     client = postgres(connectionString, { ssl: 'require', max: 1 });
     const db = drizzle(client);
 
-    const result = await db.delete(tasks)
-      .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)));
+    const deletedTasks = await db.delete(tasks)
+      .where(and(eq(tasks.id, taskId), eq(tasks.userId, userId)))
+      .returning();
 
-    if (result.rowCount === 0) {
+    if (deletedTasks.length === 0) {
       return res.status(404).json({ message: "任务未找到" });
     }
 
