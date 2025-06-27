@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
-import { db } from "./db";
-import { users } from "../shared/schema";
+import { db } from "./db.js";
+import { users } from "../shared/schema.js";
 
 export interface User {
   id: string;

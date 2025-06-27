@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { getUserByEmail, createUser } from "../../lib/storage";
-import { generateTokens } from "../../lib/auth";
+import { getUserByEmail, createUser } from "../../lib/storage.js";
+import { generateTokens } from "../../lib/auth.js";
 
 // 允许跨域
 function setCORS(res: VercelResponse) {
