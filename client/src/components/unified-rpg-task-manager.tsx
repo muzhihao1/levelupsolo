@@ -401,8 +401,6 @@ export default function UnifiedRPGTaskManager() {
         expReward: difficulty.xp,
         requiredEnergyBalls: Math.ceil((taskData.estimatedDuration || 25) / 15),
         estimatedDuration: taskData.estimatedDuration || 25,
-        createdAt: new Date(),
-        completedAt: null,
         skillId: null,
         order: 0,
         tags: [],
