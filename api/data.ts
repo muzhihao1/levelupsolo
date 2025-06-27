@@ -107,7 +107,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
           );
           const profileRows = (result as any)?.rows || (result as any) || [];
-          return res.json(profileRows[0] || null);
+          return res.json(profileRows.length > 0 ? profileRows[0] : null);
           
         case 'stats':
           result = await db.execute(
@@ -130,7 +130,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               totalTasksCompleted: 0,
             });
           }
-          return res.json(statsRows[0]);
+          return res.json(statsRows.length > 0 ? statsRows[0] : null);
           
         case 'skills':
           result = await db.execute(
