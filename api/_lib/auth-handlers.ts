@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { pgTable, varchar, text, timestamp } from "drizzle-orm/pg-core";
 
 // 简化的 users 表定义
@@ -18,41 +18,14 @@ const users = pgTable("users", {
 });
 
 // 设置 CORS
-function setCORS(res: VercelResponse) {
+export function setCORS(res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  setCORS(res);
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  // Extract the operation from the URL path
-  const pathParts = req.url?.split('/') || [];
-  const operation = pathParts[pathParts.length - 1];
-
-  switch (operation) {
-    case 'simple-login':
-      return handleLogin(req, res);
-    case 'refresh':
-      return handleRefresh(req, res);
-    case 'user':
-      return handleGetUser(req, res);
-    default:
-      return res.status(400).json({ message: "Invalid auth operation" });
-  }
-}
-
 // Login handler
-async function handleLogin(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function handleLogin(req: VercelRequest, res: VercelResponse) {
   try {
     const { email, password } = req.body;
     
@@ -161,11 +134,7 @@ async function handleLogin(req: VercelRequest, res: VercelResponse) {
 }
 
 // Refresh token handler
-async function handleRefresh(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function handleRefresh(req: VercelRequest, res: VercelResponse) {
   try {
     const { refreshToken } = req.body;
     
@@ -204,11 +173,7 @@ async function handleRefresh(req: VercelRequest, res: VercelResponse) {
 }
 
 // Get user handler
-async function handleGetUser(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function handleGetUser(req: VercelRequest, res: VercelResponse) {
   try {
     // 从 Authorization header 获取 token
     const authHeader = req.headers.authorization;
