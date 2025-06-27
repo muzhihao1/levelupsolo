@@ -147,7 +147,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // If exact match not found, use core skill mapping
     if (!skill && skillName) {
-      skill = await storage.findOrCreateSkill(skillName, userId as string);
+      skill = await storage.findOrCreateSkill(skillName, userId as string) || undefined;
     }
 
     // Create task with AI-determined category and skill assignment

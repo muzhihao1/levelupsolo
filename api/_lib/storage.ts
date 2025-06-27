@@ -45,7 +45,7 @@ export const storage = {
 
   // Skills
   async getSkills(userId: string): Promise<Skill[]> {
-    return db.select().from(skills).where(eq(skills.userId, userId)).orderBy(desc(skills.createdAt));
+    return db.select().from(skills).where(eq(skills.userId, userId)).orderBy(asc(skills.id));
   },
 
   async getSkill(id: number): Promise<Skill | undefined> {
@@ -60,7 +60,7 @@ export const storage = {
 
   async updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill | undefined> {
     const [result] = await db.update(skills)
-      .set({ ...skill, updatedAt: new Date() })
+      .set(skill)
       .where(eq(skills.id, id))
       .returning();
     return result || undefined;
@@ -91,7 +91,7 @@ export const storage = {
 
   async updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined> {
     const [result] = await db.update(tasks)
-      .set({ ...task, updatedAt: new Date() })
+      .set(task)
       .where(eq(tasks.id, id))
       .returning();
     return result || undefined;
@@ -99,7 +99,7 @@ export const storage = {
 
   async deleteTask(id: number): Promise<boolean> {
     const result = await db.delete(tasks).where(eq(tasks.id, id));
-    return result.length > 0;
+    return result.rowCount > 0;
   },
 
   // Goals
@@ -119,7 +119,7 @@ export const storage = {
 
   async updateGoal(id: number, goal: Partial<InsertGoal>): Promise<Goal | undefined> {
     const [result] = await db.update(goals)
-      .set({ ...goal, updatedAt: new Date() })
+      .set(goal)
       .where(eq(goals.id, id))
       .returning();
     return result || undefined;
@@ -127,14 +127,14 @@ export const storage = {
 
   async deleteGoal(id: number, userId: string): Promise<boolean> {
     const result = await db.delete(goals).where(and(eq(goals.id, id), eq(goals.userId, userId)));
-    return result.length > 0;
+    return result.rowCount > 0;
   },
 
   // Activity Logs
   async getActivityLogs(userId: string): Promise<ActivityLog[]> {
     return db.select().from(activityLogs)
       .where(eq(activityLogs.userId, userId))
-      .orderBy(desc(activityLogs.createdAt))
+      .orderBy(desc(activityLogs.date))
       .limit(100);
   },
 
@@ -151,10 +151,7 @@ export const storage = {
     action: string;
     description: string;
   }): Promise<ActivityLog> {
-    return this.createActivityLog({
-      ...data,
-      createdAt: new Date()
-    });
+    return this.createActivityLog(data);
   },
 
   // User Stats
@@ -170,7 +167,7 @@ export const storage = {
 
   async updateUserStats(userId: string, stats: Partial<InsertUserStats>): Promise<UserStats | undefined> {
     const [result] = await db.update(userStats)
-      .set({ ...stats, updatedAt: new Date() })
+      .set(stats)
       .where(eq(userStats.userId, userId))
       .returning();
     return result || undefined;
@@ -205,7 +202,7 @@ export const storage = {
           age: profile.age,
           occupation: profile.occupation,
           mission: profile.mission,
-          onboardingCompleted: profile.onboardingCompleted,
+          hasCompletedOnboarding: profile.hasCompletedOnboarding,
           updatedAt: new Date()
         }
       })
