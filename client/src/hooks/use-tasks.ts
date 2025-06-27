@@ -5,7 +5,7 @@ import type { Task, InsertTask } from "@shared/schema";
 
 export function useTasks() {
   return useQuery<Task[]>({
-    queryKey: ['/api/tasks'],
+    queryKey: ['/api/data?type=tasks'],
   });
 }
 

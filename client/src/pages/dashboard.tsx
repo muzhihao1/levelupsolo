@@ -23,13 +23,13 @@ export default function Dashboard() {
 
   // Fetch user profile
   const { data: userProfile, isLoading: profileLoading } = useQuery<UserProfile>({
-    queryKey: ['/api/profile'],
+    queryKey: ['/api/data?type=profile'],
     retry: false
   });
 
   // Fetch user stats
   const { data: userStats, isLoading: statsLoading } = useQuery<UserStats>({
-    queryKey: ['/api/user-stats'],
+    queryKey: ['/api/data?type=stats'],
     retry: false
   });
 
@@ -58,15 +58,15 @@ export default function Dashboard() {
 
   // Fetch data
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/skills']
+    queryKey: ['/api/data?type=skills']
   });
 
   const { data: goals = [] } = useQuery<GoalWithMilestones[]>({
-    queryKey: ['/api/goals']
+    queryKey: ['/api/data?type=goals']
   });
 
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks']
+    queryKey: ['/api/data?type=tasks']
   });
 
   // Check if onboarding should be shown

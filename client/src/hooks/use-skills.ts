@@ -3,7 +3,7 @@ import type { Skill } from "@shared/schema";
 
 export function useSkills() {
   return useQuery<Skill[]>({
-    queryKey: ['/api/skills'],
+    queryKey: ['/api/data?type=skills'],
   });
 }
 

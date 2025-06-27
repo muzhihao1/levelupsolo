@@ -5,7 +5,7 @@ import type { Goal, InsertGoal } from "@shared/schema";
 
 export function useGoals() {
   return useQuery<Goal[]>({
-    queryKey: ['/api/goals'],
+    queryKey: ['/api/data?type=goals'],
   });
 }
 
