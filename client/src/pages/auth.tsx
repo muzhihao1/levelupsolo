@@ -41,9 +41,9 @@ export default function AuthPage() {
           description: "欢迎回来！",
         });
         
-        // Redirect to dashboard after short delay
+        // Redirect to home page after short delay
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          window.location.href = "/";
         }, 100);
       } else {
         // 如果真实登录失败，检查是否是 demo 账户
@@ -107,9 +107,9 @@ export default function AuthPage() {
           description: "欢迎加入 LevelUp Solo！",
         });
         
-        // Redirect to dashboard after short delay
+        // Redirect to home page after short delay
         setTimeout(() => {
-          window.location.href = "/dashboard";
+          window.location.href = "/";
         }, 100);
       } else {
         toast({
