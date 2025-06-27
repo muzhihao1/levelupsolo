@@ -2,8 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { eq } from "drizzle-orm";
-import { users, userProfiles, userStats, skills, goals, tasks } from "../shared/schema";
+import { eq, sql } from "drizzle-orm";
 
 // 设置 CORS
 function setCORS(res: VercelResponse) {
@@ -68,39 +67,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             totalTasksCompleted: 0,
           });
         case 'skills':
-          return res.json([
-            {
-              id: 1,
-              userId: "demo_user",
-              name: "编程",
-              level: 3,
-              exp: 45,
-              maxExp: 100,
-              color: "#3B82F6",
-              icon: "fas fa-code",
-            }
-          ]);
+          return res.json([]);
         case 'goals':
-          return res.json([
-            {
-              id: 1,
-              userId: "demo_user",
-              title: "学习 React Native",
-              description: "开发一个移动应用",
-              completed: false,
-              progress: 30,
-            }
-          ]);
+          return res.json([]);
         case 'tasks':
-          return res.json([
-            {
-              id: 1,
-              userId: "demo_user",
-              title: "完成 React 教程",
-              description: "学习 React 基础知识",
-              completed: false,
-            }
-          ]);
+          return res.json([]);
         default:
           return res.status(400).json({ message: "Invalid type parameter" });
       }
@@ -119,67 +90,70 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       max: 1,
     });
     
-    const db = drizzle(client, { schema: { users, userProfiles, userStats, skills, goals, tasks } });
+    const db = drizzle(client);
     
     let result;
     
-    switch (type) {
-      case 'profile':
-        result = await db.select()
-          .from(userProfiles)
-          .where(eq(userProfiles.userId, decoded.userId))
-          .limit(1);
-        await client.end();
-        return res.json(result[0] || null);
-        
-      case 'stats':
-        result = await db.select()
-          .from(userStats)
-          .where(eq(userStats.userId, decoded.userId))
-          .limit(1);
-        await client.end();
-        if (result.length === 0) {
-          return res.json({
-            id: 1,
-            userId: decoded.userId,
-            level: 1,
-            experience: 0,
-            experienceToNext: 100,
-            energyBalls: 18,
-            maxEnergyBalls: 18,
-            energyBallDuration: 15,
-            energyPeakStart: 9,
-            energyPeakEnd: 12,
-            streak: 0,
-            totalTasksCompleted: 0,
-          });
-        }
-        return res.json(result[0]);
-        
-      case 'skills':
-        result = await db.select()
-          .from(skills)
-          .where(eq(skills.userId, decoded.userId));
-        await client.end();
-        return res.json(result);
-        
-      case 'goals':
-        result = await db.select()
-          .from(goals)
-          .where(eq(goals.userId, decoded.userId));
-        await client.end();
-        return res.json(result);
-        
-      case 'tasks':
-        result = await db.select()
-          .from(tasks)
-          .where(eq(tasks.userId, decoded.userId));
-        await client.end();
-        return res.json(result);
-        
-      default:
-        await client.end();
-        return res.status(400).json({ message: "Invalid type parameter" });
+    try {
+      switch (type) {
+        case 'profile':
+          result = await db.execute(
+            sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
+          );
+          await client.end();
+          return res.json(result.rows[0] || null);
+          
+        case 'stats':
+          result = await db.execute(
+            sql`SELECT * FROM user_stats WHERE user_id = ${decoded.userId} LIMIT 1`
+          );
+          await client.end();
+          if (result.rows.length === 0) {
+            return res.json({
+              id: 1,
+              userId: decoded.userId,
+              level: 1,
+              experience: 0,
+              experienceToNext: 100,
+              energyBalls: 18,
+              maxEnergyBalls: 18,
+              energyBallDuration: 15,
+              energyPeakStart: 9,
+              energyPeakEnd: 12,
+              streak: 0,
+              totalTasksCompleted: 0,
+            });
+          }
+          return res.json(result.rows[0]);
+          
+        case 'skills':
+          result = await db.execute(
+            sql`SELECT * FROM skills WHERE user_id = ${decoded.userId}`
+          );
+          await client.end();
+          return res.json(result.rows);
+          
+        case 'goals':
+          result = await db.execute(
+            sql`SELECT * FROM goals WHERE user_id = ${decoded.userId}`
+          );
+          await client.end();
+          return res.json(result.rows);
+          
+        case 'tasks':
+          result = await db.execute(
+            sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`
+          );
+          await client.end();
+          return res.json(result.rows);
+          
+        default:
+          await client.end();
+          return res.status(400).json({ message: "Invalid type parameter" });
+      }
+    } catch (dbError) {
+      await client.end();
+      throw dbError;
     }
     
   } catch (error) {
@@ -187,6 +161,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error instanceof jwt.JsonWebTokenError) {
       return res.status(401).json({ message: "无效的令牌" });
     }
-    return res.status(500).json({ message: "获取数据失败" });
+    return res.status(500).json({ 
+      message: "获取数据失败",
+      error: error instanceof Error ? error.message : String(error)
+    });
   }
 }
