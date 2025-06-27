@@ -33,7 +33,7 @@ export default function Goals() {
   });
 
   const { data: goals = [] } = useQuery<Goal[]>({
-    queryKey: ['/api/goals']
+    queryKey: ['/api/data?type=goals']
   });
 
   const { data: milestones = [] } = useQuery<Milestone[]>({
@@ -43,14 +43,14 @@ export default function Goals() {
 
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: typeof newGoal) => {
-      const response = await apiRequest('POST', '/api/goals', {
+      const response = await apiRequest('POST', '/api/crud?resource=goals', {
         ...goalData,
         targetDate: goalData.targetDate ? goalData.targetDate : null
       });
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       setNewGoal({ title: "", description: "", expReward: 500, targetDate: "" });
       setIsAddingGoal(false);
       toast({
@@ -69,7 +69,7 @@ export default function Goals() {
       return response.json();
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       setEditingGoal(null);
       setIsAddingGoal(false);
 
@@ -93,7 +93,7 @@ export default function Goals() {
       await apiRequest('DELETE', `/api/goals/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "目标已删除",
         description: "目标已成功删除",
@@ -108,7 +108,7 @@ export default function Goals() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       setNewMilestone({ title: "", description: "" });
       toast({
         title: "里程碑已添加",
@@ -124,7 +124,7 @@ export default function Goals() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "里程碑已更新",
         description: "里程碑状态已更新",
@@ -138,7 +138,7 @@ export default function Goals() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "里程碑已删除",
         description: "里程碑已成功删除",

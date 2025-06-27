@@ -27,9 +27,9 @@ interface Recommendation {
 }
 
 export default function SmartRecommendations() {
-  const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ['/api/tasks'] });
-  const { data: goals = [] } = useQuery<Goal[]>({ queryKey: ['/api/goals'] });
-  const { data: skills = [] } = useQuery<Skill[]>({ queryKey: ['/api/skills'] });
+  const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ['/api/data?type=tasks'] });
+  const { data: goals = [] } = useQuery<Goal[]>({ queryKey: ['/api/data?type=goals'] });
+  const { data: skills = [] } = useQuery<Skill[]>({ queryKey: ['/api/data?type=skills'] });
   const { data: userStats } = useQuery<UserStats>({ queryKey: ['/api/user-stats'] });
 
   const generateRecommendations = (): Recommendation[] => {

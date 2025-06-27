@@ -19,10 +19,10 @@ export default function OnboardingGuide({ isOpen, onClose, onComplete }: Onboard
   // Mutation to mark onboarding as completed
   const completeOnboardingMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('PATCH', '/api/profile/onboarding-completed', {});
+      return await apiRequest('PATCH', '/api/crud?resource=users', { hasCompletedOnboarding: true });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/profile'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=profile'] });
       onComplete();
     },
     onError: (error) => {

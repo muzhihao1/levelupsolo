@@ -147,10 +147,10 @@ export default function TemplatesSection() {
   // Create task from template mutation
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: InsertTask) => {
-      return await apiRequest('POST', '/api/tasks', taskData);
+      return await apiRequest('POST', '/api/crud?resource=tasks', taskData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/user-stats'] });
       toast({
         title: "任务创建成功",
@@ -170,10 +170,10 @@ export default function TemplatesSection() {
   // Create goal from template mutation
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: InsertGoal) => {
-      return await apiRequest('POST', '/api/goals', goalData);
+      return await apiRequest('POST', '/api/crud?resource=goals', goalData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "目标创建成功",
         description: "模板目标已添加到您的目标列表",

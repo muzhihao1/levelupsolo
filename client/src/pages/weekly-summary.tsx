@@ -36,11 +36,11 @@ export default function WeeklySummary() {
   });
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/skills']
+    queryKey: ['/api/data?type=skills']
   });
 
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks']
+    queryKey: ['/api/data?type=tasks']
   });
 
   // 生成每周总结

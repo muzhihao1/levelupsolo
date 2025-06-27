@@ -61,11 +61,11 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
 
   // Data fetching
   const { data: allTasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks'],
+    queryKey: ['/api/data?type=tasks'],
   });
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/skills'],
+    queryKey: ['/api/data?type=skills'],
   });
 
   // Helper functions
@@ -112,7 +112,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       setMainGoalForm({ title: "", description: "", tags: [] });
       setShowCreateMain(false);
       toast({
@@ -132,7 +132,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
       return response.json();
     },
     onSuccess: (_, { parentId }) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       setStageTaskForm({ title: "", description: "", estimatedDuration: 60 });
       setShowCreateStage(null);
       setExpandedGoals(prev => new Set([...prev, parentId]));
@@ -153,7 +153,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
       return response.json();
     },
     onSuccess: (_, { parentId }) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       setDailyTaskForm({ title: "", description: "", estimatedDuration: 25, isRecurring: false });
       setShowCreateDaily(null);
       
@@ -177,8 +177,8 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       onTaskComplete?.();
       
       toast({
@@ -528,7 +528,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
             <PomodoroTimer 
               task={task} 
               onComplete={() => {
-                queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+                queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
               }} 
             />
           )}

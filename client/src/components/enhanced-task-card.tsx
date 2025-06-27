@@ -52,7 +52,7 @@ export default function EnhancedTaskCard({ task, onEdit, onDelete, onStartTimer 
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/user-stats'] });
       toast({
         title: task.completed ? "任务重新打开" : "任务完成！",
@@ -75,7 +75,7 @@ export default function EnhancedTaskCard({ task, onEdit, onDelete, onStartTimer 
       return await apiRequest('DELETE', `/api/tasks/${task.id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       toast({
         title: "任务已删除",
         description: "任务已从列表中移除",

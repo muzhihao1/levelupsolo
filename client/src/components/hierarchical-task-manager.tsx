@@ -56,7 +56,7 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
   });
 
   const { data: allTasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks']
+    queryKey: ['/api/data?type=tasks']
   });
 
   // Get subtasks for each main task
@@ -70,7 +70,7 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/tasks/main'] });
       setMainTaskForm({ title: "", description: "", estimatedDuration: 25, tags: [] });
       setShowCreateMain(false);
@@ -87,7 +87,7 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
       return response.json();
     },
     onSuccess: (_, { parentId }) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       setStageTaskForm({ title: "", description: "", estimatedDuration: 25, order: 0 });
       setShowCreateStage(null);
       // Auto-expand the parent task to show new stage
@@ -105,8 +105,8 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       onTaskComplete?.();
     }
   });

@@ -21,15 +21,15 @@ export default function UnifiedTaskManager({ onTaskComplete }: UnifiedTaskManage
 
   // 获取数据
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks']
+    queryKey: ['/api/data?type=tasks']
   });
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/skills']
+    queryKey: ['/api/data?type=skills']
   });
 
   const { data: goals = [] } = useQuery<Goal[]>({
-    queryKey: ['/api/goals']
+    queryKey: ['/api/data?type=goals']
   });
 
   const { data: mainTasks = [] } = useQuery<Task[]>({
@@ -48,12 +48,12 @@ export default function UnifiedTaskManager({ onTaskComplete }: UnifiedTaskManage
   // 创建任务的变更
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: { title: string; skillId?: number; expReward?: number; estimatedDuration?: number }) => {
-      const response = await apiRequest('POST', '/api/tasks', taskData);
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', taskData);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       setNewTaskText("");
       toast({
         title: "任务已添加",
@@ -75,8 +75,8 @@ export default function UnifiedTaskManager({ onTaskComplete }: UnifiedTaskManage
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       onTaskComplete?.();
       toast({
         title: "任务已更新",

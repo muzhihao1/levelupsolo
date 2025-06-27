@@ -91,8 +91,8 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-logs'] });
       onComplete();
       setIsOpen(false);

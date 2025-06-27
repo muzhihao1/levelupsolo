@@ -1571,7 +1571,7 @@ function MicroTasksButton({ taskId }: { taskId: number }) {
           task.id === microTaskId ? { ...task, completed: true } : task
         )
       );
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       toast({
         title: "微任务完成",
         description: "获得经验奖励！",

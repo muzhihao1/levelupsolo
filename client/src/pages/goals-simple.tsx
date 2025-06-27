@@ -43,7 +43,7 @@ export default function Goals() {
 
   // 获取目标列表
   const { data: goals = [], isLoading } = useQuery<Goal[]>({
-    queryKey: ['/api/goals'],
+    queryKey: ['/api/data?type=goals'],
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 
@@ -53,7 +53,7 @@ export default function Goals() {
       return await apiRequest("PATCH", `/api/goals/${id}`, updates);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "目标已更新",
         description: "目标状态已成功更新",
@@ -74,7 +74,7 @@ export default function Goals() {
       return await apiRequest("DELETE", `/api/goals/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "目标已删除",
         description: "目标已成功删除",
@@ -95,7 +95,7 @@ export default function Goals() {
       return await apiRequest("PATCH", `/api/goals/${goalId}/milestones/${milestoneId}`, { completed });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
     },
     onError: () => {
       toast({
@@ -174,7 +174,7 @@ export default function Goals() {
       {/* AI智能创建目标 */}
       <div className="space-y-4">
         <IntelligentGoalCreator onGoalCreated={() => {
-          queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+          queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
         }} />
       </div>
 

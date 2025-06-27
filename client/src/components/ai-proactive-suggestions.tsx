@@ -35,19 +35,19 @@ export default function AIProactiveSuggestions({ context }: AIProactiveSuggestio
 
   // Fetch user data for context if not provided
   const { data: goals } = useQuery({ 
-    queryKey: ['/api/goals'],
+    queryKey: ['/api/data?type=goals'],
     enabled: !context?.goals 
   });
   const { data: skills } = useQuery({ 
-    queryKey: ['/api/skills'],
+    queryKey: ['/api/data?type=skills'],
     enabled: !context?.skills 
   });
   const { data: tasks } = useQuery({ 
-    queryKey: ['/api/tasks'],
+    queryKey: ['/api/data?type=tasks'],
     enabled: !context?.tasks 
   });
   const { data: profile } = useQuery({ 
-    queryKey: ['/api/profile'],
+    queryKey: ['/api/data?type=profile'],
     enabled: !context?.profile 
   });
 

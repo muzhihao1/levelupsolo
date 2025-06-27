@@ -41,10 +41,10 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
   const queryClient = useQueryClient();
 
   // Fetch user data for context
-  const { data: goals } = useQuery({ queryKey: ['/api/goals'] });
-  const { data: skills } = useQuery({ queryKey: ['/api/skills'] });
-  const { data: tasks } = useQuery({ queryKey: ['/api/tasks'] });
-  const { data: profile } = useQuery({ queryKey: ['/api/profile'] });
+  const { data: goals } = useQuery({ queryKey: ['/api/data?type=goals'] });
+  const { data: skills } = useQuery({ queryKey: ['/api/data?type=skills'] });
+  const { data: tasks } = useQuery({ queryKey: ['/api/data?type=tasks'] });
+  const { data: profile } = useQuery({ queryKey: ['/api/data?type=profile'] });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

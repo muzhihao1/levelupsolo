@@ -12,7 +12,7 @@ export default function Skills() {
   const { toast } = useToast();
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/skills']
+    queryKey: ['/api/data?type=skills']
   });
 
   // 图标映射函数 - 将Font Awesome类名转换为emoji

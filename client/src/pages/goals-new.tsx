@@ -34,7 +34,7 @@ export default function Goals() {
 
   // 获取目标列表
   const { data: goals = [], isLoading } = useQuery<Goal[]>({
-    queryKey: ['/api/goals'],
+    queryKey: ['/api/data?type=goals'],
   });
 
   // 创建目标表单
@@ -59,7 +59,7 @@ export default function Goals() {
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       setIsCreateDialogOpen(false);
       form.reset();
       toast({
@@ -83,7 +83,7 @@ export default function Goals() {
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
     },
   });
 
@@ -94,7 +94,7 @@ export default function Goals() {
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: completed ? "热身任务已完成" : "任务状态已更新",
         description: completed ? "获得经验奖励！" : "任务状态已更新",

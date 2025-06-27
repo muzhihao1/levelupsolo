@@ -14,12 +14,12 @@ export function useGoalMutations() {
 
   const createGoalMutation = useMutation({
     mutationFn: async (goal: InsertGoal) => {
-      const response = await apiRequest('POST', '/api/goals', goal);
+      const response = await apiRequest('POST', '/api/crud?resource=goals', goal);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       toast({
         title: "目标已创建",
         description: "新目标已成功添加到您的成长计划中",
@@ -29,21 +29,21 @@ export function useGoalMutations() {
 
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, ...goal }: Partial<Goal> & { id: number }) => {
-      const response = await apiRequest('PATCH', `/api/goals/${id}`, goal);
+      const response = await apiRequest('PATCH', `/api/crud?resource=goals&id=${id}`, goal);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
     }
   });
 
   const deleteGoalMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/goals/${id}`);
+      await apiRequest('DELETE', `/api/crud?resource=goals&id=${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "目标已删除",
         description: "目标已成功从您的计划中移除",
