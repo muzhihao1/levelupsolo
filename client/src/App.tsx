@@ -26,6 +26,7 @@ const GrowthLog = lazy(() => import("@/pages/growth-log"));
 const WeeklySummary = lazy(() => import("@/pages/weekly-summary"));
 const Templates = lazy(() => import("@/pages/templates"));
 const AuthPage = lazy(() => import("@/pages/auth"));
+const DebugUser = lazy(() => import("@/pages/debug-user"));
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -87,7 +88,8 @@ function Router() {
             <Route path="/goals" component={GoalsSimple} />
             <Route path="/templates" component={Templates} />
             <Route path="/log" component={GrowthLog} />
-            <Route path="/weekly-summary" component={WeeklySummary} /> 
+            <Route path="/weekly-summary" component={WeeklySummary} />
+            <Route path="/debug-user" component={DebugUser} />
             <Route component={NotFound} />
           </Switch>
         </Suspense>
