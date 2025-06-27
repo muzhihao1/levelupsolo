@@ -5,6 +5,12 @@ import { eq } from "drizzle-orm";
 import { users } from '../../shared/schema';
 import { db } from './db';
 
+// Log environment status on module load
+console.log("Auth handlers loaded. Environment check:", {
+  hasJwtSecret: !!process.env.JWT_SECRET,
+  hasDatabaseUrl: !!process.env.DATABASE_URL || !!process.env.SUPABASE_DATABASE_URL,
+});
+
 // 设置 CORS
 export function setCORS(res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,6 +20,8 @@ export function setCORS(res: VercelResponse) {
 
 // Login handler
 export async function handleLogin(req: VercelRequest, res: VercelResponse) {
+  console.log("Login attempt for email:", req.body?.email);
+  
   try {
     const { email, password } = req.body;
     
@@ -90,7 +98,13 @@ export async function handleLogin(req: VercelRequest, res: VercelResponse) {
           lastName: user.lastName,
         }
       });
-    
+    } catch (error) {
+      console.error("Database login error:", error);
+      return res.status(500).json({ 
+        message: "登录失败",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ 
