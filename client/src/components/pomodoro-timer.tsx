@@ -243,8 +243,6 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-}
-
   const progress = duration > 0 ? ((duration * 60 - timeLeft) / (duration * 60)) * 100 : 0;
 
   return (
