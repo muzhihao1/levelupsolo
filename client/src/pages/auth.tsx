@@ -41,8 +41,10 @@ export default function AuthPage() {
           description: "欢迎回来！",
         });
         
-        // Force page reload to update auth state
-        window.location.href = "/";
+        // Redirect to dashboard after short delay
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 100);
       } else {
         // 如果真实登录失败，检查是否是 demo 账户
         if (email === "demo@levelupsolo.net" && password === "demo1234") {
@@ -105,8 +107,10 @@ export default function AuthPage() {
           description: "欢迎加入 LevelUp Solo！",
         });
         
-        // Force page reload to update auth state
-        window.location.href = "/";
+        // Redirect to dashboard after short delay
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 100);
       } else {
         toast({
           title: "注册失败",
