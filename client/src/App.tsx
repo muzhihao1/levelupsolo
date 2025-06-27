@@ -19,7 +19,6 @@ import { Bot } from "lucide-react";
 
 // Lazy load authenticated pages
 const Dashboard = lazy(() => import("@/pages/dashboard"));
-const DashboardTest = lazy(() => import("@/pages/dashboard-test"));
 const Tasks = lazy(() => import("@/pages/tasks"));
 const SkillTree = lazy(() => import("@/pages/skill-tree"));
 const GoalsSimple = lazy(() => import("@/pages/goals-simple"));
@@ -83,7 +82,6 @@ function Router() {
         }>
           <Switch>
             <Route path="/" component={Dashboard} />
-            <Route path="/test" component={DashboardTest} />
             <Route path="/tasks" component={Tasks} />
             <Route path="/skills" component={SkillTree} />
             <Route path="/goals" component={GoalsSimple} />
