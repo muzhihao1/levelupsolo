@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -23,6 +21,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!title) {
       return res.status(400).json({ message: 'Task title is required' });
     }
+
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+      console.warn("OpenAI API key not configured, returning default analysis");
+      // Return a default analysis when OpenAI is not available
+      return res.status(200).json({
+        category: "todo",
+        difficulty: "medium",
+        skills: ["通用技能"],
+        estimatedDuration: 30,
+        reasoning: "AI分析暂时不可用，使用默认设置"
+      });
+    }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const prompt = `分析以下任务，智能建议最适合的分类和难度。任务标题："${title}"，描述："${description || '无'}"。
 

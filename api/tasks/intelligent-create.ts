@@ -1,8 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import OpenAI from 'openai';
-import { storage } from '../../server/storage';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { storage } from '../_lib/storage';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -29,6 +27,56 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!description) {
       return res.status(400).json({ message: 'Task description is required' });
     }
+
+    // Check if OpenAI API key is configured
+    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+      console.warn("OpenAI API key not configured, using simple task creation");
+      
+      // Simple rule-based task creation without AI
+      const taskCategory = description.includes("每天") || description.includes("坚持") || description.includes("养成") 
+        ? "habit" 
+        : "todo";
+      
+      const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
+      const energyBalls = difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1;
+      
+      const taskData = {
+        userId: userId as string,
+        title: description.trim(),
+        description: null,
+        taskCategory: taskCategory,
+        taskType: taskCategory,
+        difficulty: difficulty,
+        expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
+        estimatedDuration: energyBalls * 15,
+        requiredEnergyBalls: energyBalls,
+        tags: [],
+        skills: [],
+        skillId: null,
+        completed: false,
+        ...(taskCategory === "habit" && {
+          isRecurring: true,
+          recurringPattern: "daily",
+          habitStreak: 0,
+          habitValue: 0,
+          habitDirection: "positive"
+        })
+      };
+
+      const newTask = await storage.createTask(taskData);
+      return res.status(200).json({ 
+        task: newTask, 
+        analysis: {
+          category: taskCategory,
+          title: description.trim(),
+          difficulty: difficulty,
+          skillName: null,
+          energyBalls: energyBalls
+        }
+      });
+    }
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const prompt = `分析以下任务描述，判断是习惯还是支线任务，并分配合适的核心技能和能量球需求：
 
@@ -91,7 +139,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const requiredEnergyBalls = analysis.energyBalls || 2;
 
     // Initialize core skills if they don't exist
-    await (storage as any).initializeCoreSkills(userId);
+    await storage.initializeCoreSkills(userId as string);
 
     // Get user's core skills
     const userSkills = await storage.getSkills(userId as string);
@@ -99,7 +147,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // If exact match not found, use core skill mapping
     if (!skill && skillName) {
-      skill = await (storage as any).findOrCreateSkill(skillName, userId);
+      skill = await storage.findOrCreateSkill(skillName, userId as string);
     }
 
     // Create task with AI-determined category and skill assignment

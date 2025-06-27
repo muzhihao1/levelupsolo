@@ -1,0 +1,55 @@
+{
+  "name": "Level Up Solo - 独自升级",
+  "short_name": "Level Up Solo",
+  "description": "融合 RPG 元素的个人成长管理系统，让你的自我提升之旅充满游戏乐趣",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-1024x1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-1.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "label": "主界面"
+    },
+    {
+      "src": "/screenshot-2.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "label": "任务管理"
+    },
+    {
+      "src": "/screenshot-3.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "label": "技能系统"
+    }
+  ],
+  "categories": ["productivity", "lifestyle", "games"],
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "prefer_related_applications": false
+}

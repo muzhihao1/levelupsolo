@@ -357,6 +357,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Task description is required" });
       }
 
+      // Check if OpenAI API key is configured
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+        console.warn("OpenAI API key not configured, using simple task creation");
+        
+        // Simple rule-based task creation without AI
+        const taskCategory = description.includes("每天") || description.includes("坚持") || description.includes("养成") 
+          ? "habit" 
+          : "todo";
+        
+        const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
+        const energyBalls = difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1;
+        
+        const taskData = {
+          userId,
+          title: description.trim(),
+          description: null,
+          taskCategory: taskCategory,
+          taskType: taskCategory,
+          difficulty: difficulty,
+          expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
+          estimatedDuration: energyBalls * 15,
+          requiredEnergyBalls: energyBalls,
+          tags: [],
+          skills: [],
+          skillId: null,
+          completed: false,
+          ...(taskCategory === "habit" && {
+            isRecurring: true,
+            recurringPattern: "daily",
+            habitStreak: 0,
+            habitValue: 0,
+            habitDirection: "positive"
+          })
+        };
+
+        const newTask = await storage.createTask(taskData);
+        return res.json({ 
+          task: newTask, 
+          analysis: {
+            category: taskCategory,
+            title: description.trim(),
+            difficulty: difficulty,
+            skillName: null,
+            energyBalls: energyBalls
+          }
+        });
+      }
+
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -613,11 +661,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/tasks/analyze-task", isAuthenticated, async (req: any, res) => {
     try {
       const { title, description } = req.body;
+      console.log("Analyzing task:", { title, description });
 
       if (!title) {
         return res.status(400).json({ message: "Task title is required" });
       }
 
+      // Check if OpenAI API key is configured
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
+        console.warn("OpenAI API key not configured, returning default analysis");
+        // Return a default analysis when OpenAI is not available
+        return res.json({
+          category: "todo",
+          difficulty: "medium",
+          skills: ["通用技能"],
+          estimatedDuration: 30,
+          reasoning: "AI分析暂时不可用，使用默认设置"
+        });
+      }
+
+      console.log("OpenAI API Key length:", process.env.OPENAI_API_KEY.length);
+      
       const OpenAI = (await import("openai")).default;
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -638,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 - todo: 一次性待办事项（如购物、修理、项目任务）`;
 
       const response = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
         max_tokens: 300
@@ -646,9 +710,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const analysis = JSON.parse(response.choices[0].message.content || "{}");
       res.json(analysis);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error analyzing task:", error);
-      res.status(500).json({ message: "Failed to analyze task" });
+      console.error("Error details:", error.response?.data || error.message);
+      
+      // Check if it's an OpenAI API error
+      if (error.status === 401) {
+        console.error("OpenAI API authentication failed. Please check your API key.");
+        return res.status(500).json({ 
+          message: "AI服务认证失败，请检查API配置",
+          error: "Authentication failed"
+        });
+      } else if (error.status === 429) {
+        console.error("OpenAI API rate limit exceeded.");
+        return res.status(503).json({ 
+          message: "AI服务暂时繁忙，请稍后再试",
+          error: "Rate limit exceeded"
+        });
+      } else if (error.code === 'ENOTFOUND') {
+        console.error("Cannot reach OpenAI API. Check network connection.");
+        return res.status(503).json({ 
+          message: "无法连接AI服务，请检查网络",
+          error: "Network error"
+        });
+      }
+      
+      res.status(500).json({ 
+        message: "Failed to analyze task",
+        error: error.message || "Unknown error"
+      });
     }
   });
 

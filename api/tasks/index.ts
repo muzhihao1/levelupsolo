@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { storage } from '../../server/storage';
+import { storage } from '../_lib/storage';
 import { createInsertSchema } from 'drizzle-zod';
 import { tasks } from '@shared/schema';
 import { z } from 'zod';
