@@ -131,7 +131,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               return res.status(400).json({ message: "Invalid resource" });
           }
           await client.end();
-          return res.json(result.rows[0]);
+          return res.json((result as any).rows[0]);
           
         case 'PUT':
         case 'PATCH':
@@ -180,7 +180,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               return res.status(400).json({ message: "Invalid resource" });
           }
           await client.end();
-          return res.json(result.rows[0]);
+          return res.json((result as any).rows[0]);
           
         case 'DELETE':
           // 删除资源

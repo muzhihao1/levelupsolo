@@ -101,14 +101,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
           );
           await client.end();
-          return res.json(result.rows[0] || null);
+          return res.json((result as any).rows[0] || null);
           
         case 'stats':
           result = await db.execute(
             sql`SELECT * FROM user_stats WHERE user_id = ${decoded.userId} LIMIT 1`
           );
           await client.end();
-          if (result.rows.length === 0) {
+          if ((result as any).rows.length === 0) {
             return res.json({
               id: 1,
               userId: decoded.userId,
@@ -124,28 +124,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               totalTasksCompleted: 0,
             });
           }
-          return res.json(result.rows[0]);
+          return res.json((result as any).rows[0]);
           
         case 'skills':
           result = await db.execute(
             sql`SELECT * FROM skills WHERE user_id = ${decoded.userId}`
           );
           await client.end();
-          return res.json(result.rows);
+          return res.json((result as any).rows);
           
         case 'goals':
           result = await db.execute(
             sql`SELECT * FROM goals WHERE user_id = ${decoded.userId}`
           );
           await client.end();
-          return res.json(result.rows);
+          return res.json((result as any).rows);
           
         case 'tasks':
           result = await db.execute(
             sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`
           );
           await client.end();
-          return res.json(result.rows);
+          return res.json((result as any).rows);
           
         default:
           await client.end();
