@@ -1,8 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { eq, sql } from "drizzle-orm";
+import { storage } from './_lib/storage';
+import { sql } from "drizzle-orm";
 
 // 设置 CORS
 function setCORS(res: VercelResponse) {
@@ -81,42 +80,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     }
     
-    // 真实用户 - 连接数据库
-    const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL;
-    if (!connectionString) {
-      console.error("No database connection string found");
-      return res.status(500).json({ message: "服务器配置错误: 缺少数据库连接" });
-    }
-    
-    let client = null;
-    let result: any;
-    
+    // 真实用户 - 使用 storage 服务获取数据
     try {
-      client = postgres(connectionString, {
-        ssl: 'require',
-        max: 1,
-        idle_timeout: 20,
-        connect_timeout: 10,
-      });
-      
-      const db = drizzle(client);
-      
       switch (type) {
         case 'profile':
-          result = await db.execute(
-            sql`SELECT * FROM user_profiles WHERE user_id = ${decoded.userId} LIMIT 1`
-          );
-          const profileResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-          return res.json(profileResult || null);
+          const profile = await storage.getUserProfile(decoded.userId);
+          return res.json(profile || null);
           
         case 'stats':
-          result = await db.execute(
-            sql`SELECT * FROM user_stats WHERE user_id = ${decoded.userId} LIMIT 1`
-          );
-          const statsResult = Array.isArray(result) ? result[0] : result.rows?.[0];
-          if (!statsResult) {
-            return res.json({
-              id: 1,
+          let stats = await storage.getUserStats(decoded.userId);
+          if (!stats) {
+            // Create default stats if they don't exist
+            stats = await storage.createUserStats({
               userId: decoded.userId,
               level: 1,
               experience: 0,
@@ -124,52 +99,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               energyBalls: 18,
               maxEnergyBalls: 18,
               energyBallDuration: 15,
-              energyPeakStart: 9,
-              energyPeakEnd: 12,
               streak: 0,
               totalTasksCompleted: 0,
             });
           }
-          return res.json(statsResult);
+          return res.json(stats);
           
         case 'skills':
-          result = await db.execute(
-            sql`SELECT * FROM skills WHERE user_id = ${decoded.userId}`
-          );
-          const skillsRows = Array.isArray(result) ? result : (result.rows || []);
-          return res.json(skillsRows);
+          // Initialize core skills if they don't exist
+          await storage.initializeCoreSkills(decoded.userId);
+          const skills = await storage.getSkills(decoded.userId);
+          return res.json(skills);
           
         case 'goals':
-          result = await db.execute(
-            sql`SELECT * FROM goals WHERE user_id = ${decoded.userId}`
-          );
-          const goalsRows = Array.isArray(result) ? result : (result.rows || []);
-          return res.json(goalsRows);
+          const goals = await storage.getGoals(decoded.userId);
+          return res.json(goals);
           
         case 'tasks':
-          let query = sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId}`;
-          
-          // 如果指定了 taskType，添加过滤条件
+          const tasks = await storage.getTasks(decoded.userId);
+          // Filter tasks if taskType is specified
           if (taskType === 'main') {
-            query = sql`SELECT * FROM tasks WHERE user_id = ${decoded.userId} AND task_type = 'main' AND parent_task_id IS NULL`;
+            const filteredTasks = tasks.filter(task => task.taskType === 'main' && !task.parentTaskId);
+            return res.json(filteredTasks);
           }
-          
-          result = await db.execute(query);
-          const tasksRows = Array.isArray(result) ? result : (result.rows || []);
-          return res.json(tasksRows);
+          return res.json(tasks);
           
         case 'milestones':
           if (goalId) {
-            result = await db.execute(
-              sql`SELECT * FROM milestones WHERE goal_id = ${goalId}`
-            );
+            const goalMilestones = await storage.getMilestones(Number(goalId));
+            return res.json(goalMilestones);
           } else {
-            result = await db.execute(
-              sql`SELECT * FROM milestones WHERE goal_id IN (SELECT id FROM goals WHERE user_id = ${decoded.userId})`
-            );
+            const userMilestones = await storage.getMilestonesByUserId(decoded.userId);
+            return res.json(userMilestones);
           }
-          const milestonesRows = Array.isArray(result) ? result : (result.rows || []);
-          return res.json(milestonesRows);
           
         default:
           return res.status(400).json({ message: "未知的查询类型" });
@@ -182,14 +144,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         error: dbError instanceof Error ? dbError.message : String(dbError),
         details: process.env.NODE_ENV === 'development' ? dbError : undefined
       });
-    } finally {
-      if (client) {
-        try {
-          await client.end();
-        } catch (endError) {
-          console.error("Error closing database connection:", endError);
-        }
-      }
     }
     
   } catch (error) {

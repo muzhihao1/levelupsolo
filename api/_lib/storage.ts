@@ -190,6 +190,29 @@ export const storage = {
     });
   },
 
+  // User Profile
+  async getUserProfile(userId: string): Promise<UserProfile | undefined> {
+    const [profile] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return profile || undefined;
+  },
+
+  async upsertUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    const [result] = await db.insert(userProfiles).values(profile)
+      .onConflictDoUpdate({
+        target: userProfiles.userId,
+        set: {
+          name: profile.name,
+          age: profile.age,
+          occupation: profile.occupation,
+          mission: profile.mission,
+          onboardingCompleted: profile.onboardingCompleted,
+          updatedAt: new Date()
+        }
+      })
+      .returning();
+    return result;
+  },
+
   // Helper methods
   calculateLevelUp(totalExp: number, currentLevel: number): { level: number; experience: number; experienceToNext: number } {
     let level = 1;
@@ -234,6 +257,35 @@ export const storage = {
         });
       }
     }
+  },
+
+  // Milestones
+  async getMilestones(goalId: number): Promise<Milestone[]> {
+    return db.select().from(milestones).where(eq(milestones.goalId, goalId)).orderBy(asc(milestones.order));
+  },
+
+  async getMilestonesByUserId(userId: string): Promise<Milestone[]> {
+    const userGoals = await this.getGoals(userId);
+    if (userGoals.length === 0) return [];
+    
+    const goalIds = userGoals.map(g => g.id);
+    return db.select().from(milestones)
+      .where(inArray(milestones.goalId, goalIds))
+      .orderBy(asc(milestones.goalId), asc(milestones.order));
+  },
+
+  async createMilestone(milestone: InsertMilestone): Promise<Milestone> {
+    const [result] = await db.insert(milestones).values(milestone).returning();
+    return result;
+  },
+
+  // Goal with milestones
+  async getGoalWithMilestones(goalId: number): Promise<Goal & { milestones: Milestone[] } | undefined> {
+    const goal = await this.getGoal(goalId);
+    if (!goal) return undefined;
+    
+    const goalMilestones = await this.getMilestones(goalId);
+    return { ...goal, milestones: goalMilestones };
   },
 
   // Find or create skill
