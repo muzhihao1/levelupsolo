@@ -265,7 +265,6 @@ export default function UnifiedRPGTaskManager() {
     difficulty: "medium" as keyof typeof DIFFICULTY_LEVELS
   });
   const [activeTab, setActiveTab] = useState("goal");
-  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   // 将Font Awesome图标类名转换为emoji
   const getIconEmoji = (fontAwesomeClass: string): string => {
@@ -374,7 +373,7 @@ export default function UnifiedRPGTaskManager() {
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: Omit<InsertTask, 'userId'>) => {
       const difficulty = DIFFICULTY_LEVELS[taskData.difficulty as keyof typeof DIFFICULTY_LEVELS];
-      return apiRequest("POST", "/api/data?type=tasks", {
+      return apiRequest("POST", "/api/tasks", {
         ...taskData,
         expReward: difficulty.xp,
         requiredEnergyBalls: Math.ceil((taskData.estimatedDuration || 25) / 15), // 15 minutes per energy ball
@@ -927,45 +926,12 @@ export default function UnifiedRPGTaskManager() {
           />
 
           <Button 
-            onClick={async () => {
-              if (!newTask.title.trim() || isCreatingTask) {
-                return;
-              }
-              
-              setIsCreatingTask(true);
-              
-              try {
-                await apiRequest("POST", "/api/crud?resource=tasks", {
-                  title: newTask.title,
-                  description: newTask.description || "",
-                  taskCategory: newTask.category,
-                  difficulty: newTask.difficulty,
-                  expReward: 10
-                });
-                
-                queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
-                setNewTask({ title: "", description: "", category: "todo", difficulty: "medium" });
-                
-                toast({
-                  title: "任务创建成功",
-                  description: "AI已为您创建任务",
-                });
-              } catch (error) {
-                console.error("任务创建失败:", error);
-                toast({
-                  title: "创建失败",
-                  description: "任务创建失败，请重试",
-                  variant: "destructive",
-                });
-              } finally {
-                setIsCreatingTask(false);
-              }
-            }}
-            disabled={!newTask.title.trim() || isCreatingTask}
+            onClick={() => handleCreateTask()}
+            disabled={!newTask.title.trim() || createTaskMutation.isPending}
             className="w-full h-10 bg-purple-700 hover:bg-purple-800 text-sm font-medium text-white border-0 disabled:opacity-50"
             style={{ backgroundColor: '#7c3aed', color: '#ffffff', fontWeight: '600', border: 'none' }}
           >
-            {isCreatingTask ? (
+            {createTaskMutation.isPending ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                 创建中...
