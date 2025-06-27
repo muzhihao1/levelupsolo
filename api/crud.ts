@@ -93,11 +93,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     updated_at = NOW()
                     RETURNING *`
               );
-              const rows = (result as any)?.rows || (result as any) || [];
-              if (!rows || rows.length === 0) {
+              if (!result || (Array.isArray(result) && result.length === 0)) {
                 throw new Error('Failed to create/update profile: No data returned from database');
               }
-              return res.json(rows[0]);
+              const profileResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              return res.json(profileResult);
               
             case 'tasks':
               const taskData = {
@@ -105,16 +105,23 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 user_id: decoded.userId,
                 created_at: new Date()
               };
-              result = await db.execute(
-                sql`INSERT INTO tasks (user_id, title, description, skill_id, goal_id, exp_reward, task_category, task_type, parent_task_id, difficulty, required_energy_balls)
-                    VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description}, ${taskData.skillId || null}, ${taskData.goalId || null}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.parentTaskId || null}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1})
-                    RETURNING *`
-              );
-              const rows = (result as any)?.rows || (result as any) || [];
-              if (!rows || rows.length === 0) {
+              console.log('Creating task with data:', taskData);
+              try {
+                result = await db.execute(
+                  sql`INSERT INTO tasks (user_id, title, description, skill_id, goal_id, exp_reward, task_category, task_type, parent_task_id, difficulty, required_energy_balls, completed, estimated_duration, created_at)
+                      VALUES (${taskData.user_id}, ${taskData.title}, ${taskData.description || null}, ${taskData.skillId || null}, ${taskData.goalId || null}, ${taskData.expReward || 10}, ${taskData.taskCategory || 'todo'}, ${taskData.taskType || 'simple'}, ${taskData.parentTaskId || null}, ${taskData.difficulty || 'medium'}, ${taskData.requiredEnergyBalls || 1}, ${false}, ${taskData.estimatedDuration || 25}, ${new Date()})
+                      RETURNING *`
+                );
+                console.log('Task creation result:', result);
+              } catch (insertError) {
+                console.error('Task INSERT error:', insertError);
+                throw insertError;
+              }
+              if (!result || (Array.isArray(result) && result.length === 0)) {
                 throw new Error('Failed to create task: No data returned from database');
               }
-              return res.json(rows[0]);
+              const taskResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              return res.json(taskResult);
               
             case 'goals':
               const goalData = {
@@ -127,11 +134,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${goalData.user_id}, ${goalData.title}, ${goalData.description}, ${goalData.targetDate || null}, ${goalData.expReward || 50}, ${goalData.requiredEnergyBalls || 4})
                     RETURNING *`
               );
-              const rows = (result as any)?.rows || (result as any) || [];
-              if (!rows || rows.length === 0) {
+              if (!result || (Array.isArray(result) && result.length === 0)) {
                 throw new Error('Failed to create goal: No data returned from database');
               }
-              return res.json(rows[0]);
+              const goalResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              return res.json(goalResult);
               
             case 'skills':
               const skillData = {
@@ -143,11 +150,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${skillData.user_id}, ${skillData.name}, ${skillData.color || '#6366F1'}, ${skillData.icon || 'fas fa-star'}, ${skillData.category || 'general'})
                     RETURNING *`
               );
-              const rows = (result as any)?.rows || (result as any) || [];
-              if (!rows || rows.length === 0) {
+              if (!result || (Array.isArray(result) && result.length === 0)) {
                 throw new Error('Failed to create skill: No data returned from database');
               }
-              return res.json(rows[0]);
+              const skillResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              return res.json(skillResult);
               
             case 'milestones':
               const milestoneData = {
@@ -159,11 +166,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     VALUES (${milestoneData.goalId}, ${milestoneData.title}, ${milestoneData.description || ''}, ${false})
                     RETURNING *`
               );
-              const rows = (result as any)?.rows || (result as any) || [];
-              if (!rows || rows.length === 0) {
+              if (!result || (Array.isArray(result) && result.length === 0)) {
                 throw new Error('Failed to create milestone: No data returned from database');
               }
-              return res.json(rows[0]);
+              const milestoneResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              return res.json(milestoneResult);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -219,12 +226,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 );
               }
               
-              const updateRows = (result as any)?.rows || (result as any) || [];
-              if (updateRows.length === 0) {
+              if (!result) {
                 return res.status(404).json({ message: "Task not found" });
               }
-              
-              return res.json(updateRows[0]);
+              const updateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              if (!updateResult) {
+                return res.status(404).json({ message: "Task not found" });
+              }
+              return res.json(updateResult);
               
             case 'goals':
               const goalUpdate = req.body;
@@ -240,12 +249,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     RETURNING *`
               );
               
-              const goalUpdateRows = (result as any)?.rows || (result as any) || [];
-              if (goalUpdateRows.length === 0) {
+              if (!result) {
                 return res.status(404).json({ message: "Goal not found" });
               }
-              
-              return res.json(goalUpdateRows[0]);
+              const goalUpdateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              if (!goalUpdateResult) {
+                return res.status(404).json({ message: "Goal not found" });
+              }
+              return res.json(goalUpdateResult);
               
             case 'milestones':
               const milestoneUpdate = req.body;
@@ -259,12 +270,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     RETURNING *`
               );
               
-              const milestoneUpdateRows = (result as any)?.rows || (result as any) || [];
-              if (milestoneUpdateRows.length === 0) {
+              if (!result) {
                 return res.status(404).json({ message: "Milestone not found" });
               }
-              
-              return res.json(milestoneUpdateRows[0]);
+              const milestoneUpdateResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+              if (!milestoneUpdateResult) {
+                return res.status(404).json({ message: "Milestone not found" });
+              }
+              return res.json(milestoneUpdateResult);
               
             default:
               return res.status(400).json({ message: "Invalid resource" });
@@ -301,8 +314,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               return res.status(400).json({ message: "Invalid resource" });
           }
           
-          const deleteRows = (result as any)?.rows || (result as any) || [];
-          if (deleteRows.length === 0) {
+          if (!result) {
+            return res.status(404).json({ message: "Resource not found" });
+          }
+          const deleteResult = Array.isArray(result) ? result[0] : result.rows?.[0];
+          if (!deleteResult) {
             return res.status(404).json({ message: "Resource not found" });
           }
           
