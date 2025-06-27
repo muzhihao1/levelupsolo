@@ -37,7 +37,7 @@ export default function Goals() {
   });
 
   const { data: milestones = [] } = useQuery<Milestone[]>({
-    queryKey: [`/api/goals/${managingMilestones}/milestones`],
+    queryKey: [`/api/data?type=milestones&goalId=${managingMilestones}`],
     enabled: !!managingMilestones
   });
 
@@ -62,7 +62,7 @@ export default function Goals() {
 
   const updateGoalMutation = useMutation({
     mutationFn: async ({ id, ...goalData }: { id: number; completed?: boolean; title?: string; description?: string; expReward?: number; targetDate?: string | null; progress?: number }) => {
-      const response = await apiRequest('PATCH', `/api/goals/${id}`, {
+      const response = await apiRequest('PATCH', `/api/crud?resource=goals&id=${id}`, {
         ...goalData,
         targetDate: goalData.targetDate ? goalData.targetDate : null
       });
@@ -90,7 +90,7 @@ export default function Goals() {
 
   const deleteGoalMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/goals/${id}`);
+      await apiRequest('DELETE', `/api/crud?resource=goals&id=${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
@@ -103,11 +103,14 @@ export default function Goals() {
 
   const createMilestoneMutation = useMutation({
     mutationFn: async ({ goalId, ...milestoneData }: { goalId: number; title: string; description: string }) => {
-      const response = await apiRequest('POST', `/api/goals/${goalId}/milestones`, milestoneData);
+      const response = await apiRequest('POST', '/api/crud?resource=milestones', {
+        ...milestoneData,
+        goalId
+      });
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/data?type=milestones&goalId=${managingMilestones}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       setNewMilestone({ title: "", description: "" });
       toast({
@@ -119,11 +122,11 @@ export default function Goals() {
 
   const updateMilestoneMutation = useMutation({
     mutationFn: async ({ id, ...milestoneData }: { id: number; completed?: boolean }) => {
-      const response = await apiRequest('PATCH', `/api/milestones/${id}`, milestoneData);
+      const response = await apiRequest('PATCH', `/api/crud?resource=milestones&id=${id}`, milestoneData);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/data?type=milestones&goalId=${managingMilestones}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "里程碑已更新",
@@ -134,10 +137,10 @@ export default function Goals() {
 
   const deleteMilestoneMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/milestones/${id}`);
+      await apiRequest('DELETE', `/api/crud?resource=milestones&id=${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/goals/${managingMilestones}/milestones`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/data?type=milestones&goalId=${managingMilestones}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
       toast({
         title: "里程碑已删除",

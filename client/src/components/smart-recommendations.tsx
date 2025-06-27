@@ -30,7 +30,7 @@ export default function SmartRecommendations() {
   const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ['/api/data?type=tasks'] });
   const { data: goals = [] } = useQuery<Goal[]>({ queryKey: ['/api/data?type=goals'] });
   const { data: skills = [] } = useQuery<Skill[]>({ queryKey: ['/api/data?type=skills'] });
-  const { data: userStats } = useQuery<UserStats>({ queryKey: ['/api/user-stats'] });
+  const { data: userStats } = useQuery<UserStats>({ queryKey: ['/api/data?type=stats'] });
 
   const generateRecommendations = (): Recommendation[] => {
     const recommendations: Recommendation[] = [];

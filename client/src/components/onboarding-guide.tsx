@@ -16,20 +16,13 @@ export default function OnboardingGuide({ isOpen, onClose, onComplete }: Onboard
   const [currentStep, setCurrentStep] = useState(0);
   const queryClient = useQueryClient();
 
-  // Mutation to mark onboarding as completed
-  const completeOnboardingMutation = useMutation({
-    mutationFn: async () => {
-      return await apiRequest('PATCH', '/api/crud?resource=users', { hasCompletedOnboarding: true });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/data?type=profile'] });
-      onComplete();
-    },
-    onError: (error) => {
-      console.error('Failed to update onboarding status:', error);
-      onComplete(); // Still complete locally even if API fails
-    }
-  });
+  // Simple completion handler without API call
+  const handleComplete = () => {
+    // Mark onboarding as completed in local storage
+    localStorage.setItem('onboardingCompleted', 'true');
+    queryClient.invalidateQueries({ queryKey: ['/api/data?type=profile'] });
+    onComplete();
+  };
 
   const steps = [
     {
@@ -224,7 +217,7 @@ export default function OnboardingGuide({ isOpen, onClose, onComplete }: Onboard
             <Button
               variant="ghost"
               onClick={() => {
-                completeOnboardingMutation.mutate();
+                handleComplete();
               }}
               className="text-slate-400 hover:text-slate-300"
             >

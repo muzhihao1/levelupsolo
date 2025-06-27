@@ -53,7 +53,7 @@ export default function EnhancedTaskCard({ task, onEdit, onDelete, onStartTimer 
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=stats'] });
       toast({
         title: task.completed ? "任务重新打开" : "任务完成！",
         description: task.completed ? "任务已标记为未完成" : `获得 ${task.expReward || 10} 经验值`,

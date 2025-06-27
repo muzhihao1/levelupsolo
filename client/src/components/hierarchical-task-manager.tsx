@@ -52,7 +52,7 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
   });
 
   const { data: mainTasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks/main']
+    queryKey: ['/api/data?type=tasks&taskType=main']
   });
 
   const { data: allTasks = [] } = useQuery<Task[]>({
@@ -66,12 +66,15 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
 
   const createMainTaskMutation = useMutation({
     mutationFn: async (taskData: typeof mainTaskForm) => {
-      const response = await apiRequest('POST', '/api/tasks/create-main', taskData);
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', {
+        ...taskData,
+        taskType: 'main'
+      });
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks/main'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks&taskType=main'] });
       setMainTaskForm({ title: "", description: "", estimatedDuration: 25, tags: [] });
       setShowCreateMain(false);
       toast({
@@ -83,7 +86,11 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
 
   const createStageTaskMutation = useMutation({
     mutationFn: async ({ parentId, taskData }: { parentId: number; taskData: typeof stageTaskForm }) => {
-      const response = await apiRequest('POST', `/api/tasks/${parentId}/create-stage`, taskData);
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', {
+        ...taskData,
+        parentTaskId: parentId,
+        taskType: 'stage'
+      });
       return response.json();
     },
     onSuccess: (_, { parentId }) => {
@@ -101,7 +108,7 @@ export default function HierarchicalTaskManager({ onTaskComplete }: Hierarchical
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: number; completed: boolean }) => {
-      const response = await apiRequest('PUT', `/api/tasks/${id}`, { completed });
+      const response = await apiRequest('PATCH', `/api/crud?resource=tasks&id=${id}`, { completed });
       return response.json();
     },
     onSuccess: () => {

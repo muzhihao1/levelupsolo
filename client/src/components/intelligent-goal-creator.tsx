@@ -21,14 +21,16 @@ export default function IntelligentGoalCreator({ onGoalCreated }: IntelligentGoa
 
   const createGoalMutation = useMutation({
     mutationFn: async (goalDescription: string) => {
-      return await apiRequest("POST", "/api/goals/intelligent-create", {
-        description: goalDescription
+      return await apiRequest("POST", "/api/crud?resource=goals", {
+        title: goalDescription,
+        description: goalDescription,
+        expReward: 500
       });
     },
     onSuccess: (goal) => {
       setCreatedGoal(goal);
       setDescription("");
-      queryClient.invalidateQueries({ queryKey: ["/api/goals"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=goals"] });
       toast({
         title: "目标创建成功",
         description: "AI已为您智能分析并创建了结构化目标",

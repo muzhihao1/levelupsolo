@@ -33,11 +33,11 @@ export default function UnifiedTaskManager({ onTaskComplete }: UnifiedTaskManage
   });
 
   const { data: mainTasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/tasks/main']
+    queryKey: ['/api/data?type=tasks&taskType=main']
   });
 
   const { data: milestones = [] } = useQuery<Milestone[]>({
-    queryKey: ['/api/milestones']
+    queryKey: ['/api/data?type=milestones']
   });
 
   // 分类任务

@@ -25,15 +25,15 @@ export function HabiticaTaskManager({ className }: HabiticaTaskManagerProps) {
   const queryClient = useQueryClient();
 
   const { data: tasks = [], isLoading } = useQuery<Task[]>({
-    queryKey: ["/api/tasks"],
+    queryKey: ["/api/data?type=tasks"],
   });
 
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: InsertTask) => {
-      return apiRequest("POST", "/api/tasks", taskData);
+      return apiRequest("POST", "/api/crud?resource=tasks", taskData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
       setNewTaskTitle("");
       setNewTaskDescription("");
     },
@@ -41,10 +41,10 @@ export function HabiticaTaskManager({ className }: HabiticaTaskManagerProps) {
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, updates }: { id: number; updates: Partial<Task> }) => {
-      return apiRequest("PATCH", `/api/tasks/${id}`, updates);
+      return apiRequest("PATCH", `/api/crud?resource=tasks&id=${id}`, updates);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
     },
   });
 

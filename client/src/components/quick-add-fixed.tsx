@@ -234,7 +234,7 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=stats'] });
       toast({ title: "任务创建成功!", description: "新任务已添加到你的任务列表" });
       resetForm();
     },

@@ -325,22 +325,22 @@ export default function UnifiedRPGTaskManager() {
   const queryClient = useQueryClient();
   
   const { data: tasks = [], isLoading } = useQuery<Task[]>({
-    queryKey: ["/api/tasks"],
+    queryKey: ["/api/data?type=tasks"],
   });
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ["/api/skills"],
+    queryKey: ["/api/data?type=skills"],
   });
 
   const { toast } = useToast();
 
   const { data: goals = [] } = useQuery<any[]>({
-    queryKey: ["/api/goals"],
+    queryKey: ["/api/data?type=goals"],
   });
 
   // 获取用户状态数据（包含能量球信息）
   const { data: userStats } = useQuery<any>({
-    queryKey: ["/api/user-stats"],
+    queryKey: ["/api/data?type=stats"],
   });
 
   // Silent reset mutation for automatic daily reset
@@ -350,9 +350,9 @@ export default function UnifiedRPGTaskManager() {
     },
     onSuccess: () => {
       // Silently refresh data without showing notification
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=profile"] });
     },
     onError: (error) => {
       console.error("Silent habit reset failed:", error);
@@ -374,7 +374,7 @@ export default function UnifiedRPGTaskManager() {
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: Omit<InsertTask, 'userId'>) => {
       const difficulty = DIFFICULTY_LEVELS[taskData.difficulty as keyof typeof DIFFICULTY_LEVELS];
-      return apiRequest("POST", "/api/tasks", {
+      return apiRequest("POST", "/api/data?type=tasks", {
         ...taskData,
         expReward: difficulty.xp,
         requiredEnergyBalls: Math.ceil((taskData.estimatedDuration || 25) / 15), // 15 minutes per energy ball
@@ -383,10 +383,10 @@ export default function UnifiedRPGTaskManager() {
     },
     onMutate: async (taskData) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["/api/tasks"] });
+      await queryClient.cancelQueries({ queryKey: ["/api/data?type=tasks"] });
       
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(["/api/tasks"]);
+      const previousTasks = queryClient.getQueryData(["/api/data?type=tasks"]);
       
       // Optimistically update to the new value
       const difficulty = DIFFICULTY_LEVELS[taskData.difficulty as keyof typeof DIFFICULTY_LEVELS];
@@ -411,7 +411,7 @@ export default function UnifiedRPGTaskManager() {
         habitValue: 0
       };
       
-      queryClient.setQueryData(["/api/tasks"], (old: any[]) => 
+      queryClient.setQueryData(["/api/data?type=tasks"], (old: any[]) => 
         old ? [...old, optimisticTask] : [optimisticTask]
       );
       
@@ -423,7 +423,7 @@ export default function UnifiedRPGTaskManager() {
     onError: (err, taskData, context) => {
       // Rollback on error
       if (context?.previousTasks) {
-        queryClient.setQueryData(["/api/tasks"], context.previousTasks);
+        queryClient.setQueryData(["/api/data?type=tasks"], context.previousTasks);
       }
       // Restore form data
       setNewTask({
@@ -435,7 +435,7 @@ export default function UnifiedRPGTaskManager() {
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
     },
   });
 
@@ -445,15 +445,15 @@ export default function UnifiedRPGTaskManager() {
     },
     onMutate: async ({ id, updates }) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["/api/tasks"] });
-      await queryClient.cancelQueries({ queryKey: ["/api/user-stats"] });
+      await queryClient.cancelQueries({ queryKey: ["/api/data?type=tasks"] });
+      await queryClient.cancelQueries({ queryKey: ["/api/data?type=stats"] });
       
       // Snapshot the previous values
-      const previousTasks = queryClient.getQueryData(["/api/tasks"]);
-      const previousStats = queryClient.getQueryData(["/api/user-stats"]);
+      const previousTasks = queryClient.getQueryData(["/api/data?type=tasks"]);
+      const previousStats = queryClient.getQueryData(["/api/data?type=stats"]);
       
       // Optimistically update task
-      queryClient.setQueryData(["/api/tasks"], (old: Task[]) => 
+      queryClient.setQueryData(["/api/data?type=tasks"], (old: Task[]) => 
         old ? old.map(task => 
           task.id === id ? { ...task, ...updates } : task
         ) : []
@@ -467,10 +467,10 @@ export default function UnifiedRPGTaskManager() {
     onError: (err, { id, updates }, context) => {
       // Rollback on error
       if (context?.previousTasks) {
-        queryClient.setQueryData(["/api/tasks"], context.previousTasks);
+        queryClient.setQueryData(["/api/data?type=tasks"], context.previousTasks);
       }
       if (context?.previousStats) {
-        queryClient.setQueryData(["/api/user-stats"], context.previousStats);
+        queryClient.setQueryData(["/api/data?type=stats"], context.previousStats);
       }
     },
     onSuccess: (data, { id, updates }) => {
@@ -488,8 +488,8 @@ export default function UnifiedRPGTaskManager() {
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
     },
   });
 
@@ -499,13 +499,13 @@ export default function UnifiedRPGTaskManager() {
     },
     onMutate: async (id) => {
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["/api/tasks"] });
+      await queryClient.cancelQueries({ queryKey: ["/api/data?type=tasks"] });
       
       // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(["/api/tasks"]);
+      const previousTasks = queryClient.getQueryData(["/api/data?type=tasks"]);
       
       // Optimistically remove the task
-      queryClient.setQueryData(["/api/tasks"], (old: Task[]) => 
+      queryClient.setQueryData(["/api/data?type=tasks"], (old: Task[]) => 
         old ? old.filter(task => task.id !== id) : []
       );
       
@@ -514,12 +514,12 @@ export default function UnifiedRPGTaskManager() {
     onError: (err, id, context) => {
       // Rollback on error
       if (context?.previousTasks) {
-        queryClient.setQueryData(["/api/tasks"], context.previousTasks);
+        queryClient.setQueryData(["/api/data?type=tasks"], context.previousTasks);
       }
     },
     onSettled: () => {
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
     },
   });
 
@@ -581,9 +581,9 @@ export default function UnifiedRPGTaskManager() {
           `已重置 ${data.resetCount} 个习惯任务`,
       });
       // 刷新所有相关数据
-      queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user-stats"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=profile"] });
     },
     onError: () => {
       toast({
@@ -645,8 +645,8 @@ export default function UnifiedRPGTaskManager() {
                       console.log(`💎 获得奖励: +${reward.expGained} EXP, +${reward.goldGained} 金币`);
                     }
                     // 刷新用户数据
-                    queryClient.invalidateQueries({ queryKey: ["/api/user-stats"] });
-                    queryClient.invalidateQueries({ queryKey: ["/api/skills"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+                    queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
                   })
                   .catch(error => console.error("发放目标番茄钟奖励失败:", error));
               }
@@ -937,11 +937,15 @@ export default function UnifiedRPGTaskManager() {
               setIsCreatingTask(true);
               
               try {
-                await apiRequest("POST", "/api/tasks/intelligent-create", {
-                  description: newTask.title
+                await apiRequest("POST", "/api/crud?resource=tasks", {
+                  title: newTask.title,
+                  description: newTask.description || "",
+                  taskCategory: newTask.category,
+                  difficulty: newTask.difficulty,
+                  expReward: 10
                 });
                 
-                queryClient.invalidateQueries({ queryKey: ["/api/tasks"] });
+                queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
                 setNewTask({ title: "", description: "", category: "todo", difficulty: "medium" });
                 
                 toast({

@@ -28,7 +28,7 @@ export default function Navigation({ currentPage, onPageChange }: NavigationProp
 
   // Fetch user profile data to get the display name
   const { data: profile } = useQuery<UserProfile>({
-    queryKey: ["/api/profile"],
+    queryKey: ["/api/data?type=profile"],
     enabled: !!user,
   });
 

@@ -104,7 +104,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
   // Mutations
   const createMainGoalMutation = useMutation({
     mutationFn: async (goalData: typeof mainGoalForm) => {
-      const response = await apiRequest('POST', '/api/tasks/main', {
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', {
         ...goalData,
         taskType: 'main',
         expReward: 100
@@ -124,7 +124,8 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
 
   const createStageTaskMutation = useMutation({
     mutationFn: async ({ parentId, taskData }: { parentId: number; taskData: typeof stageTaskForm }) => {
-      const response = await apiRequest('POST', `/api/tasks/${parentId}/create-stage`, {
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', {
+        parentTaskId: parentId,
         ...taskData,
         taskType: 'stage',
         expReward: 50
@@ -145,7 +146,8 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
 
   const createDailyTaskMutation = useMutation({
     mutationFn: async ({ parentId, taskData }: { parentId: number; taskData: typeof dailyTaskForm }) => {
-      const response = await apiRequest('POST', `/api/tasks/${parentId}/create-daily`, {
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', {
+        parentTaskId: parentId,
         ...taskData,
         taskType: 'daily',
         expReward: 25
@@ -173,7 +175,7 @@ export default function EnhancedHierarchicalTaskManager({ onTaskComplete }: Enha
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, completed }: { id: number; completed: boolean }) => {
-      const response = await apiRequest('PUT', `/api/tasks/${id}`, { completed });
+      const response = await apiRequest('PATCH', `/api/crud?resource=tasks&id=${id}`, { completed });
       return response.json();
     },
     onSuccess: () => {

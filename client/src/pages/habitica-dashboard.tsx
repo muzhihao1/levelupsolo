@@ -7,7 +7,7 @@ import type { UserStats } from "@shared/schema";
 export default function HabiticaDashboard() {
   // 获取用户游戏统计数据
   const { data: userStats, isLoading: statsLoading } = useQuery<UserStats>({
-    queryKey: ['/api/user-stats'],
+    queryKey: ['/api/data?type=stats'],
     retry: false
   });
 
