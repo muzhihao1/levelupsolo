@@ -4,18 +4,7 @@ import bcrypt from 'bcryptjs';
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { eq } from "drizzle-orm";
-import { pgTable, varchar, text, timestamp } from "drizzle-orm/pg-core";
-
-// 简化的 users 表定义
-const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  hashedPassword: text("hashed_password"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
+import { users } from '../../shared/schema';
 
 // 设置 CORS
 export function setCORS(res: VercelResponse) {
@@ -201,8 +190,8 @@ export async function handleGetUser(req: VercelRequest, res: VercelResponse) {
     return res.json({
       id: decoded.userId,
       email: decoded.email,
-      firstName: decoded.firstName || "",
-      lastName: decoded.lastName || "",
+      firstName: "",
+      lastName: "",
       hasCompletedOnboarding: true,
     });
     
