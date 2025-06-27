@@ -14,12 +14,12 @@ export function useTaskMutations() {
 
   const createTaskMutation = useMutation({
     mutationFn: async (task: InsertTask) => {
-      const response = await apiRequest('POST', '/api/tasks', task);
+      const response = await apiRequest('POST', '/api/crud?resource=tasks', task);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       toast({
         title: "任务已添加",
         description: "新任务已成功创建",
@@ -29,21 +29,21 @@ export function useTaskMutations() {
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ id, ...task }: Partial<Task> & { id: number }) => {
-      const response = await apiRequest('PATCH', `/api/tasks/${id}`, task);
+      const response = await apiRequest('PATCH', `/api/crud?resource=tasks&id=${id}`, task);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
     }
   });
 
   const deleteTaskMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/tasks/${id}`);
+      await apiRequest('DELETE', `/api/crud?resource=tasks&id=${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       toast({
         title: "任务已删除",
         description: "任务已成功删除",

@@ -36,10 +36,10 @@ export default function Dashboard() {
   // Save user profile mutation
   const saveProfileMutation = useMutation({
     mutationFn: async (profile: InsertUserProfile) => {
-      return await apiRequest('POST', '/api/profile', profile);
+      return await apiRequest('POST', '/api/crud?resource=profile', profile);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/profile'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=profile'] });
       setShowProfileQuestionnaire(false);
     },
     onError: (error) => {
