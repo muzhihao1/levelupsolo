@@ -265,6 +265,7 @@ export default function UnifiedRPGTaskManager() {
     difficulty: "medium" as keyof typeof DIFFICULTY_LEVELS
   });
   const [activeTab, setActiveTab] = useState("goal");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // 将Font Awesome图标类名转换为emoji
   const getIconEmoji = (fontAwesomeClass: string): string => {
@@ -520,19 +521,49 @@ export default function UnifiedRPGTaskManager() {
     },
   });
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     if (!newTask.title.trim()) return;
     
-    const taskData = {
-      title: newTask.title,
-      description: newTask.description || null,
-      taskCategory: newTask.category,
-      difficulty: newTask.difficulty,
-      completed: false,
-      order: 0
-    };
+    setIsAnalyzing(true);
     
-    createTaskMutation.mutate(taskData);
+    try {
+      // First, analyze the task with AI
+      const analysisResponse = await apiRequest("POST", "/api/tasks/analyze-task", {
+        title: newTask.title,
+        description: newTask.description || ""
+      });
+      
+      const analysis = await analysisResponse.json();
+      
+      // Create task with AI suggestions
+      const taskData = {
+        title: newTask.title,
+        description: newTask.description || null,
+        taskCategory: analysis.category || newTask.category,
+        difficulty: analysis.difficulty || newTask.difficulty,
+        skills: analysis.skills || [],
+        estimatedDuration: analysis.estimatedDuration || 25,
+        completed: false,
+        order: 0
+      };
+      
+      createTaskMutation.mutate(taskData);
+    } catch (error) {
+      console.error("Error analyzing task:", error);
+      // Fallback to creating task without AI analysis
+      const taskData = {
+        title: newTask.title,
+        description: newTask.description || null,
+        taskCategory: newTask.category,
+        difficulty: newTask.difficulty,
+        completed: false,
+        order: 0
+      };
+      
+      createTaskMutation.mutate(taskData);
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleToggleComplete = (taskId: number) => {
@@ -927,11 +958,16 @@ export default function UnifiedRPGTaskManager() {
 
           <Button 
             onClick={() => handleCreateTask()}
-            disabled={!newTask.title.trim() || createTaskMutation.isPending}
+            disabled={!newTask.title.trim() || createTaskMutation.isPending || isAnalyzing}
             className="w-full h-10 bg-purple-700 hover:bg-purple-800 text-sm font-medium text-white border-0 disabled:opacity-50"
             style={{ backgroundColor: '#7c3aed', color: '#ffffff', fontWeight: '600', border: 'none' }}
           >
-            {createTaskMutation.isPending ? (
+            {isAnalyzing ? (
+              <>
+                <Brain className="w-4 h-4 mr-2 animate-pulse" />
+                AI 分析中...
+              </>
+            ) : createTaskMutation.isPending ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                 创建中...
