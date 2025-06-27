@@ -226,9 +226,9 @@ export default function Goals() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['goals'] });
-      queryClient.invalidateQueries({ queryKey: ['user-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=stats'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
 
       toast({
         title: "目标完成！",
