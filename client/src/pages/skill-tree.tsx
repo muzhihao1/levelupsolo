@@ -40,7 +40,7 @@ export default function SkillTree() {
   const queryClient = useQueryClient();
 
   const { data: skills, isLoading: skillsLoading } = useQuery({
-    queryKey: ["/api/skills"],
+    queryKey: ["/api/data?type=skills"],
   });
 
   // 天赋点使用功能
@@ -60,7 +60,7 @@ export default function SkillTree() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/skills"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
       toast({
         title: "天赋使用成功",
         description: "技能已获得增强效果",
