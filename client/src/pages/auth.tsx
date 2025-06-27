@@ -23,7 +23,7 @@ export default function AuthPage() {
 
     try {
       // 先尝试真实登录
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/simple-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
