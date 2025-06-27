@@ -18,3 +18,6 @@ vite.config.ts.*
 
 # Vercel
 .vercel/
+
+# 敏感配置文件
+VERCEL_ENV_SETUP.md
