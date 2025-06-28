@@ -20,4 +20,4 @@ vite.config.ts.*
 .vercel/
 
 # 敏感配置文件
-VERCEL_ENV_SETUP.md
+VERCEL_ENV_SETUP.md/public
