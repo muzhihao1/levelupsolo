@@ -1,8 +1,0 @@
-{
-  "buildCommand": "vite build --outDir public",
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "nodejs20.x"
-    }
-  }
-}
