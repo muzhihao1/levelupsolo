@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getDb } from '../_lib/db';
+import { getDb } from './_lib/db';
 import { sql } from 'drizzle-orm';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -9,6 +9,51 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(403).json({ message: 'Forbidden' });
   }
 
+  const { action } = req.query;
+
+  switch (action) {
+    case 'env':
+    case 'env-check':
+      return handleEnvCheck(req, res);
+    
+    case 'db-test':
+      return handleDbTest(req, res);
+    
+    default:
+      return res.status(200).json({
+        status: 'ok',
+        message: 'Debug endpoint. Available actions: env, env-check, db-test',
+        timestamp: new Date().toISOString()
+      });
+  }
+}
+
+function handleEnvCheck(req: VercelRequest, res: VercelResponse) {
+  // Check environment variables (hide sensitive values)
+  const envCheck = {
+    NODE_ENV: process.env.NODE_ENV || 'not set',
+    DATABASE_URL: process.env.DATABASE_URL ? '✓ Set' : '✗ Missing',
+    SUPABASE_DATABASE_URL: process.env.SUPABASE_DATABASE_URL ? '✓ Set' : '✗ Missing',
+    JWT_SECRET: process.env.JWT_SECRET ? '✓ Set' : '✗ Missing',
+    SESSION_SECRET: process.env.SESSION_SECRET ? '✓ Set' : '✗ Missing',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? '✓ Set' : '✗ Missing',
+  };
+
+  // Check if database URLs match (they should according to the deployment guide)
+  const dbUrlsMatch = process.env.DATABASE_URL === process.env.SUPABASE_DATABASE_URL;
+
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    environment: envCheck,
+    dbUrlsMatch,
+    recommendation: !process.env.SUPABASE_DATABASE_URL && process.env.DATABASE_URL 
+      ? 'Set SUPABASE_DATABASE_URL to the same value as DATABASE_URL'
+      : null
+  });
+}
+
+async function handleDbTest(req: VercelRequest, res: VercelResponse) {
   try {
     console.log("[DB Test] Starting database connection test...");
     
