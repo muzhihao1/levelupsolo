@@ -3,9 +3,9 @@
   "outputDirectory": "dist/public",
   "framework": null,
   "installCommand": "npm install --production=false",
-  "build": {
-    "env": {
-      "SKIP_TYPESCRIPT_CHECK": "true"
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
