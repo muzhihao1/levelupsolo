@@ -26,13 +26,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // Test 1: Can we import auth-handlers?
     diagnostics.importTest = "Starting import test...";
-    const authHandlers = await import('../_lib/auth-handlers');
+    const authHandlers = await import('../lib/auth-handlers');
     diagnostics.importTest = "Import successful";
     diagnostics.availableFunctions = Object.keys(authHandlers);
     
     // Test 2: Can we import db?
     diagnostics.dbImportTest = "Starting db import test...";
-    const dbModule = await import('../_lib/db');
+    const dbModule = await import('../lib/db');
     diagnostics.dbImportTest = "DB import successful";
     diagnostics.dbExports = Object.keys(dbModule);
     

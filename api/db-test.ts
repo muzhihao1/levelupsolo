@@ -15,7 +15,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Test 1: Try to import db module
   try {
     results.tests.push({ test: "import db module", status: "starting" });
-    const { getDb } = await import('./_lib/db');
+    const { getDb } = await import('./lib/db');
     results.tests.push({ test: "import db module", status: "success" });
     
     // Test 2: Try to get db instance

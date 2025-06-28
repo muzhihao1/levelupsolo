@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { setCORS, handleSuggestions } from '../_lib/ai-handlers';
+import { setCORS, handleSuggestions } from '../lib/ai-handlers';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCORS(res);

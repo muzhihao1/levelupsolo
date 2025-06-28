@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { storage } from './_lib/storage';
+import { storage } from './lib/storage';
 import { sql } from "drizzle-orm";
 
 // 设置 CORS
