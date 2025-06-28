@@ -1,16 +1,19 @@
 {
   "buildCommand": "npm run build:vercel",
   "outputDirectory": "dist/public",
-  "framework": null,
   "installCommand": "npm install --production=false",
   "functions": {
-    "api/**/*.ts": {
+    "api/**/*.{js,ts}": {
       "runtime": "nodejs20.x"
     }
   },
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/test-root",
+      "destination": "/test-root.js"
+    },
+    {
+      "source": "/((?!api/|test-root).*)",
       "destination": "/index.html"
     }
   ],
