@@ -25,7 +25,7 @@ async function fetchWithAuth(url: string) {
     // Try to refresh token
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken) {
-      const refreshResponse = await fetch("/api/auth?action=refresh", {
+      const refreshResponse = await fetch("/api/auth/refresh", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ refreshToken }),
@@ -73,7 +73,7 @@ export function useAuth() {
       
       // Handle real JWT tokens
       if (token && token !== "demo_token") {
-        const response = await fetchWithAuth("/api/auth?action=user");
+        const response = await fetchWithAuth("/api/auth/user");
         if (!response.ok) {
           throw new Error("Failed to fetch user");
         }
