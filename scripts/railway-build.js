@@ -45,10 +45,9 @@ const distDir = path.join(__dirname, '..', 'dist');
 fs.mkdirSync(distDir, { recursive: true });
 console.log('\n✅ Created dist directory\n');
 
-// Step 3: Build client (with custom cache dir to avoid conflicts)
-const viteConfigOverride = '--outDir dist/public --cacheDir /tmp/vite-cache';
+// Step 3: Build client
 const clientSuccess = runCommand(
-  `npx vite build ${viteConfigOverride}`,
+  `npx vite build`,
   'Building client (React app)',
   false // not critical
 );
@@ -60,4 +59,4 @@ console.log('✅ Server preparation completed\n');
 
 console.log('🎉 Railway build completed successfully!');
 console.log('📁 Client built to: dist/public');
-console.log('🚀 Server will start with: npx tsx server/index.ts');
+console.log('🚀 Server will start with: npm run start:railway');
