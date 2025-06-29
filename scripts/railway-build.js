@@ -46,9 +46,9 @@ fs.mkdirSync(distDir, { recursive: true });
 console.log('\n✅ Created dist directory\n');
 
 // Step 3: Build client
-// Explicitly use the root vite.config.ts instead of the one in client directory
+// Explicitly use the root vite.config.ts in the current directory
 const clientSuccess = runCommand(
-  `npx vite build --config ../vite.config.ts`,
+  `npx vite build --config ./vite.config.ts`,
   'Building client (React app)',
   true // critical - must succeed
 );
