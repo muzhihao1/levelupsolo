@@ -26,12 +26,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       'https://levelupsolo.net',
       'https://www.levelupsolo.net',
       'http://localhost:5173', // Local development
-      'http://localhost:5000'  // Local development
+      'http://localhost:5000', // Local development
+      'http://localhost:3000', // Local development
+      /^https:\/\/.*\.up\.railway\.app$/, // Railway domains
     ];
 
     const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin as string)) {
-      res.setHeader('Access-Control-Allow-Origin', origin as string);
+    const isAllowed = allowedOrigins.some(allowed => {
+      if (allowed instanceof RegExp) {
+        return allowed.test(origin || '');
+      }
+      return allowed === origin;
+    });
+    
+    if (isAllowed && origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin);
     }
 
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
