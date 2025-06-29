@@ -58,14 +58,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await setupAuth(app);
 
   // Simple health check endpoint
-  app.get('/api/health', (_req, res) => {
+  app.get('/api/health', async (_req, res) => {
+    let dbStatus = 'unknown';
+    let userCount = -1;
+    let dbError = null;
+    
+    try {
+      // Test database connection
+      const users = await storage.getUserByEmail('test@example.com');
+      dbStatus = 'connected';
+      
+      // Try to count users (optional)
+      try {
+        const testUser = await storage.getUser('test');
+        userCount = testUser ? 1 : 0;
+      } catch (e) {
+        // Ignore count error
+      }
+    } catch (error) {
+      dbStatus = 'error';
+      dbError = (error as any).message;
+      console.error('Database connection error:', error);
+    }
+    
     res.json({
-      status: 'ok',
+      status: dbStatus === 'connected' ? 'ok' : 'degraded',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
+      database: {
+        status: dbStatus,
+        error: dbError,
+        userCount: userCount
+      },
       env: {
         hasDatabase: !!process.env.DATABASE_URL,
+        databaseUrl: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + '...' : 'not set',
         hasOpenAI: !!process.env.OPENAI_API_KEY,
         hasJWT: !!process.env.JWT_SECRET,
         port: process.env.PORT || 3000

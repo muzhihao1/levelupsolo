@@ -123,29 +123,38 @@ export async function setupAuth(app: Express) {
   
   // Login handler function
   const loginHandler = async (req: any, res: any) => {
+    console.log("Login attempt for:", req.body?.email);
+    
     try {
       const data = loginSchema.parse(req.body);
       
+      console.log("Attempting to get user by email:", data.email);
       // Get user by email
       const user = await storage.getUserByEmail(data.email);
       if (!user) {
+        console.log("User not found for email:", data.email);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
       
+      console.log("User found, verifying password for user:", user.id);
       // Verify password
       const hashedPassword = await storage.getUserPassword(user.id);
       if (!hashedPassword) {
+        console.log("No password found for user:", user.id);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
       
       const isValid = await bcrypt.compare(data.password, hashedPassword);
       if (!isValid) {
+        console.log("Invalid password for user:", user.id);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
       
+      console.log("Password valid, generating tokens");
       // Generate tokens
       const tokens = auth.generateTokens(user.id, user.email);
       
+      console.log("Login successful for user:", user.id);
       res.json({
         message: "登录成功",
         ...tokens,
@@ -158,10 +167,15 @@ export async function setupAuth(app: Express) {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         return res.status(400).json({ message: "输入数据无效", errors: error.errors });
       }
-      console.error("Login error:", error);
-      res.status(500).json({ message: "登录失败" });
+      console.error("Login error - Full details:", error);
+      console.error("Error stack:", (error as any).stack);
+      res.status(500).json({ 
+        message: "登录失败",
+        error: process.env.NODE_ENV === 'development' ? (error as any).message : undefined
+      });
     }
   };
   
