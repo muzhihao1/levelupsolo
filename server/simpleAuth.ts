@@ -121,8 +121,8 @@ export async function setupAuth(app: Express) {
     }
   });
   
-  // Login endpoint
-  app.post("/api/auth/login", async (req, res) => {
+  // Login handler function
+  const loginHandler = async (req: any, res: any) => {
     try {
       const data = loginSchema.parse(req.body);
       
@@ -163,7 +163,11 @@ export async function setupAuth(app: Express) {
       console.error("Login error:", error);
       res.status(500).json({ message: "登录失败" });
     }
-  });
+  };
+  
+  // Register both login endpoints (for compatibility)
+  app.post("/api/auth/login", loginHandler);
+  app.post("/api/auth/simple-login", loginHandler);
   
   // Refresh token endpoint
   app.post("/api/auth/refresh", auth.refreshToken);
