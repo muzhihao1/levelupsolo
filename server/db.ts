@@ -12,7 +12,29 @@ if (!databaseUrl) {
   );
 }
 
-const sql = postgres(databaseUrl);
+console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
+
+// Parse the URL to check if it's using IPv6
+const urlObj = new URL(databaseUrl);
+const isIPv6 = urlObj.hostname.includes(':');
+
+if (isIPv6) {
+  console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');
+  console.warn('Consider using IPv4 address or hostname instead.');
+}
+
+// Create connection with additional options for better compatibility
+const sql = postgres(databaseUrl, {
+  connect_timeout: 30,  // 30 seconds timeout
+  idle_timeout: 20,     // Close idle connections after 20 seconds
+  max: 10,              // Maximum number of connections
+  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+  prepare: false,       // Disable prepared statements which can cause issues
+  connection: {
+    application_name: 'levelupsolo'
+  }
+});
+
 export const db = drizzle(sql, { schema });
 
 export const goals = pgTable('goals', {
