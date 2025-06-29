@@ -2,10 +2,10 @@
 nixPkgs = ["nodejs-18_x"]
 
 [phases.install]
-cmds = ["npm install --production=false --legacy-peer-deps"]
+cmds = ["npm install --production=false --legacy-peer-deps --no-save"]
 
 [phases.build]
-cmds = ["npm run build:simple"]
+cmds = ["npm run build:railway"]
 
 [start]
 cmd = "npm start"
