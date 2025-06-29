@@ -57,6 +57,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
   await setupAuth(app);
 
+  // Simple health check endpoint
+  app.get('/api/health', (_req, res) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      env: {
+        hasDatabase: !!process.env.DATABASE_URL,
+        hasOpenAI: !!process.env.OPENAI_API_KEY,
+        hasJWT: !!process.env.JWT_SECRET,
+        port: process.env.PORT || 3000
+      }
+    });
+  });
+
   // Security health check endpoint
   app.get('/api/security/status', (req, res) => {
     const securityCheck = {

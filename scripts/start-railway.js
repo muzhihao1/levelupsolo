@@ -29,6 +29,28 @@ dirs.forEach(dir => {
 });
 console.log('');
 
+// Check environment variables
+console.log('🔐 Environment Variables Check:');
+const requiredEnvVars = ['DATABASE_URL', 'OPENAI_API_KEY'];
+const optionalEnvVars = ['JWT_SECRET', 'REPLIT_CLIENT_ID', 'REPLIT_CLIENT_SECRET'];
+
+requiredEnvVars.forEach(varName => {
+  if (process.env[varName]) {
+    console.log(`  ✅ ${varName}: Set (${process.env[varName].substring(0, 20)}...)`);
+  } else {
+    console.log(`  ❌ ${varName}: NOT SET (REQUIRED!)`);
+  }
+});
+
+optionalEnvVars.forEach(varName => {
+  if (process.env[varName]) {
+    console.log(`  ✅ ${varName}: Set`);
+  } else {
+    console.log(`  ⚠️  ${varName}: Not set (optional)`);
+  }
+});
+console.log('');
+
 // Check if tsx is available
 const { execSync } = require('child_process');
 try {
