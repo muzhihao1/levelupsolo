@@ -80,15 +80,31 @@ const files = fs.readdirSync(process.cwd()).filter(f => !f.startsWith('.'));
 console.log(`  ${files.join(', ')}`);
 console.log('');
 
-// Step 4: Build client
-// Explicitly use the root vite.config.ts in the current directory
+// Step 4: Rename client vite config to avoid conflicts
+console.log('🔧 Preparing vite configuration...');
+const clientViteConfigPath = path.join(__dirname, '..', 'client', 'vite.config.ts');
+const clientViteConfigBackup = path.join(__dirname, '..', 'client', 'vite.config.ts.backup');
+
+if (fs.existsSync(clientViteConfigPath)) {
+  fs.renameSync(clientViteConfigPath, clientViteConfigBackup);
+  console.log('  ✅ Temporarily renamed client/vite.config.ts to avoid conflicts');
+}
+
+// Step 5: Build client
+// Let vite automatically find and use the root vite.config.ts
 const clientSuccess = runCommand(
-  `npx vite build --config ./vite.config.ts`,
+  `npx vite build`,
   'Building client (React app)',
   true // critical - must succeed
 );
 
-// Step 5: Verify build output
+// Restore client vite config
+if (fs.existsSync(clientViteConfigBackup)) {
+  fs.renameSync(clientViteConfigBackup, clientViteConfigPath);
+  console.log('  ✅ Restored client/vite.config.ts');
+}
+
+// Step 6: Verify build output
 console.log('🔍 Verifying build output...');
 const publicDir = path.join(__dirname, '..', 'dist', 'public');
 if (fs.existsSync(publicDir)) {
@@ -101,7 +117,7 @@ if (fs.existsSync(publicDir)) {
   process.exit(1);
 }
 
-// Step 6: Server preparation (no need to copy files since we'll run from source)
+// Step 7: Server preparation (no need to copy files since we'll run from source)
 console.log('\n📦 Server preparation...');
 console.log('  ℹ️  Server will run directly from source using tsx');
 console.log('✅ Server preparation completed\n');
