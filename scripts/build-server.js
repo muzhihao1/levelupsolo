@@ -11,26 +11,8 @@ async function buildServer() {
       platform: 'node',
       format: 'cjs',
       outfile: path.join(__dirname, '..', 'dist', 'index.js'),
-      external: [
-        'express',
-        'dotenv',
-        'cookie-parser',
-        'body-parser',
-        'express-session',
-        'connect-pg-simple',
-        'passport',
-        'passport-local',
-        'openai',
-        'zod',
-        'drizzle-orm',
-        '@neondatabase/serverless',
-        'ws',
-        'bcrypt',
-        'nanoid',
-        'jsonwebtoken',
-        'next-themes',
-        '@radix-ui/*'
-      ],
+      // Mark all node_modules as external to avoid bundling issues
+      packages: 'external',
       loader: {
         '.ts': 'ts',
         '.tsx': 'tsx'
