@@ -123,38 +123,65 @@ export async function setupAuth(app: Express) {
   
   // Login handler function
   const loginHandler = async (req: any, res: any) => {
-    console.log("Login attempt for:", req.body?.email);
+    console.log("=== LOGIN ATTEMPT START ===");
+    console.log("Request body:", JSON.stringify(req.body));
+    console.log("Environment:", process.env.NODE_ENV);
     
     try {
+      // Step 1: Validate input
+      console.log("Step 1: Validating input...");
       const data = loginSchema.parse(req.body);
+      console.log("Input validated successfully");
       
-      console.log("Attempting to get user by email:", data.email);
-      // Get user by email
+      // Step 2: Check database connection
+      console.log("Step 2: Testing database connection...");
+      try {
+        // Test query
+        const testQuery = await storage.getUserByEmail('test@test.com');
+        console.log("Database connection OK");
+      } catch (dbError) {
+        console.error("Database connection FAILED:", dbError);
+        console.error("Database error details:", {
+          message: (dbError as any).message,
+          code: (dbError as any).code,
+          detail: (dbError as any).detail
+        });
+      }
+      
+      // Step 3: Get user by email
+      console.log("Step 3: Getting user by email:", data.email);
       const user = await storage.getUserByEmail(data.email);
       if (!user) {
         console.log("User not found for email:", data.email);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
+      console.log("User found:", { id: user.id, email: user.email });
       
-      console.log("User found, verifying password for user:", user.id);
-      // Verify password
+      // Step 4: Get password
+      console.log("Step 4: Getting user password...");
       const hashedPassword = await storage.getUserPassword(user.id);
       if (!hashedPassword) {
         console.log("No password found for user:", user.id);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
+      console.log("Password hash retrieved");
       
+      // Step 5: Verify password
+      console.log("Step 5: Verifying password...");
       const isValid = await bcrypt.compare(data.password, hashedPassword);
       if (!isValid) {
         console.log("Invalid password for user:", user.id);
         return res.status(401).json({ message: "邮箱或密码错误" });
       }
+      console.log("Password verified successfully");
       
-      console.log("Password valid, generating tokens");
-      // Generate tokens
+      // Step 6: Generate tokens
+      console.log("Step 6: Generating tokens...");
       const tokens = auth.generateTokens(user.id, user.email);
+      console.log("Tokens generated successfully");
       
-      console.log("Login successful for user:", user.id);
+      // Step 7: Send response
+      console.log("Step 7: Sending success response");
       res.json({
         message: "登录成功",
         ...tokens,
@@ -165,16 +192,26 @@ export async function setupAuth(app: Express) {
           lastName: user.lastName,
         }
       });
+      console.log("=== LOGIN ATTEMPT SUCCESS ===");
     } catch (error) {
+      console.error("=== LOGIN ATTEMPT FAILED ===");
+      console.error("Error type:", error?.constructor?.name);
+      console.error("Error message:", (error as any)?.message);
+      console.error("Error code:", (error as any)?.code);
+      console.error("Error detail:", (error as any)?.detail);
+      console.error("Full error object:", JSON.stringify(error, null, 2));
+      console.error("Error stack:", (error as any)?.stack);
+      
       if (error instanceof z.ZodError) {
-        console.error("Validation error:", error.errors);
+        console.error("Validation error details:", error.errors);
         return res.status(400).json({ message: "输入数据无效", errors: error.errors });
       }
-      console.error("Login error - Full details:", error);
-      console.error("Error stack:", (error as any).stack);
+      
       res.status(500).json({ 
         message: "登录失败",
-        error: process.env.NODE_ENV === 'development' ? (error as any).message : undefined
+        error: (error as any)?.message || "Unknown error",
+        code: (error as any)?.code,
+        type: error?.constructor?.name
       });
     }
   };

@@ -175,9 +175,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple test endpoint
+  app.get('/api/test/simple', (req, res) => {
+    res.json({
+      message: 'Server is running',
+      timestamp: new Date().toISOString(),
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        hasDB: !!process.env.DATABASE_URL,
+        hasJWT: !!process.env.JWT_SECRET
+      }
+    });
+  });
+
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
+    console.log('=== CREATE TEST USER START ===');
     try {
+      // First check if table exists
+      console.log('Checking if users table exists...');
+      try {
+        const count = await storage.getUserByEmail('check@test.com');
+        console.log('Users table exists');
+      } catch (tableError) {
+        console.error('Users table might not exist:', tableError);
+        return res.status(500).json({
+          message: 'Database table might not exist',
+          error: (tableError as any).message,
+          hint: 'Run npm run db:push locally'
+        });
+      }
+
       // Create test user
       const testUser = {
         id: 'test_user_' + Date.now(),
@@ -188,20 +216,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         hashedPassword: await bcrypt.hash('password123', 10)
       };
       
+      console.log('Creating user:', testUser.email);
       await storage.upsertUser(testUser);
+      console.log('User created successfully');
+      
+      // Verify user was created
+      const verifyUser = await storage.getUserByEmail('test@example.com');
+      console.log('User verified:', !!verifyUser);
       
       res.json({
         message: 'Test user created successfully',
         email: 'test@example.com',
         password: 'password123',
+        userExists: !!verifyUser,
         note: 'This endpoint should be removed in production'
       });
+      console.log('=== CREATE TEST USER SUCCESS ===');
     } catch (error) {
-      console.error('Error creating test user:', error);
+      console.error('=== CREATE TEST USER FAILED ===');
+      console.error('Error:', error);
       res.status(500).json({ 
         message: 'Failed to create test user',
         error: (error as any).message,
-        stack: process.env.NODE_ENV === 'development' ? (error as any).stack : undefined
+        code: (error as any).code,
+        hint: (error as any).code === '42P01' ? 'Table does not exist. Run npm run db:push' : undefined
       });
     }
   });
