@@ -7,6 +7,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { skills, tasks, goals, activityLogs, microTasks } from "@shared/schema";
 import OpenAI from "openai";
 import { RecommendationEngine } from './recommendationEngine';
+import bcrypt from "bcryptjs";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -101,11 +102,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Database schema check endpoint
+  app.get('/api/test/db-check', async (req, res) => {
+    try {
+      const results: any = {};
+      
+      // Use drizzle's raw SQL query
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      // Check if tables exist
+      try {
+        const tables = await db.execute(sql`
+          SELECT table_name 
+          FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_type = 'BASE TABLE'
+        `);
+        results.tables = tables.map((r: any) => r.table_name);
+      } catch (e) {
+        results.tables = 'Error: ' + (e as any).message;
+      }
+      
+      // Check users table structure
+      try {
+        const userColumns = await db.execute(sql`
+          SELECT column_name, data_type, is_nullable
+          FROM information_schema.columns
+          WHERE table_name = 'users'
+          ORDER BY ordinal_position
+        `);
+        results.userColumns = userColumns;
+        
+        // Check if hashedPassword column exists
+        results.hasPasswordColumn = userColumns.some((col: any) => 
+          col.column_name === 'hashed_password'
+        );
+      } catch (e) {
+        results.userColumns = 'Error: ' + (e as any).message;
+      }
+      
+      // Try to count users
+      try {
+        const userCount = await db.execute(sql`SELECT COUNT(*) as count FROM users`);
+        results.userCount = userCount[0]?.count || 0;
+      } catch (e) {
+        results.userCount = 'Error: ' + (e as any).message;
+      }
+      
+      // Check if we can query with storage
+      try {
+        const testUser = await storage.getUserByEmail('test@example.com');
+        results.storageWorking = true;
+        results.testUserExists = !!testUser;
+      } catch (e) {
+        results.storageWorking = false;
+        results.storageError = (e as any).message;
+      }
+      
+      res.json({
+        success: true,
+        database: process.env.DATABASE_URL ? 'Connected' : 'Not configured',
+        results
+      });
+    } catch (error) {
+      console.error('Database check error:', error);
+      res.status(500).json({
+        success: false,
+        error: (error as any).message,
+        stack: process.env.NODE_ENV === 'development' ? (error as any).stack : undefined
+      });
+    }
+  });
+
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
     try {
-      const bcrypt = require('bcryptjs');
-      
       // Create test user
       const testUser = {
         id: 'test_user_' + Date.now(),
@@ -128,7 +200,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error creating test user:', error);
       res.status(500).json({ 
         message: 'Failed to create test user',
-        error: (error as any).message 
+        error: (error as any).message,
+        stack: process.env.NODE_ENV === 'development' ? (error as any).stack : undefined
       });
     }
   });

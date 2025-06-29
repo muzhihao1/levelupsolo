@@ -5,8 +5,15 @@ import { db } from './db';
 import { users, userStats, userProfiles } from '../shared/schema';
 import { eq } from 'drizzle-orm';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET!;
+const JWT_SECRET = process.env.JWT_SECRET || 'default-jwt-secret-change-in-production';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default-refresh-secret-change-in-production';
+
+if (!process.env.JWT_SECRET) {
+  console.warn('⚠️  JWT_SECRET not set in environment variables. Using default key (INSECURE!)');
+}
+if (!process.env.JWT_REFRESH_SECRET) {
+  console.warn('⚠️  JWT_REFRESH_SECRET not set in environment variables. Using default key (INSECURE!)');
+}
 
 // JWT Token 类型
 interface JWTPayload {
