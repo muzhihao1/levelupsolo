@@ -22,4 +22,15 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
   },
+  server: {
+    host: true,
+    allowedHosts: [
+      "localhost",
+      "levelupsolo-production.up.railway.app",
+      ".railway.app",
+      ".levelupsolo.net",
+      "levelupsolo.net",
+      "www.levelupsolo.net"
+    ]
+  }
 });
