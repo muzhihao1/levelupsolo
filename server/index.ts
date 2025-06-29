@@ -1,10 +1,33 @@
 import "dotenv/config";
+
+// Run startup diagnostics
+if (process.env.NODE_ENV === 'production') {
+  try {
+    require('./startup-check');
+  } catch (e) {
+    console.error("Startup check failed:", e);
+  }
+}
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import aiRoutes from "./ai";
 import { registerMobileRoutes } from "./mobile-routes";
 import { setupAuth } from "./simpleAuth";
+
+// Global error handlers
+process.on('uncaughtException', (error) => {
+  console.error('💥 Uncaught Exception:', error);
+  console.error('Stack:', error.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('💥 Unhandled Rejection at:', promise);
+  console.error('Reason:', reason);
+  process.exit(1);
+});
 
 const app = express();
 
@@ -80,39 +103,74 @@ app.use((req, res, next) => {
 });
 
 (async () => {
-  const server = await registerRoutes(app);
+  console.log('🚀 Server starting...');
+  console.log('Environment variables check:');
+  console.log('- NODE_ENV:', process.env.NODE_ENV);
+  console.log('- PORT:', process.env.PORT);
+  console.log('- DATABASE_URL:', process.env.DATABASE_URL ? '✅ Set' : '❌ Not set');
+  console.log('- JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set' : '❌ Not set');
+  console.log('- OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ Set' : '❌ Not set');
   
-  // Setup JWT authentication routes
-  await setupAuth(app);
-  
-  // Register mobile routes with JWT authentication
-  registerMobileRoutes(app);
+  try {
+    console.log('📝 Registering routes...');
+    const server = await registerRoutes(app);
+    console.log('✅ Routes registered successfully');
+    
+    console.log('🔐 Setting up authentication...');
+    // Setup JWT authentication routes
+    await setupAuth(app);
+    console.log('✅ Authentication setup complete');
+    
+    console.log('📱 Registering mobile routes...');
+    // Register mobile routes with JWT authentication
+    registerMobileRoutes(app);
+    console.log('✅ Mobile routes registered');
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+      
+      console.error('Express error handler:', {
+        status,
+        message,
+        error: err,
+        stack: err.stack
+      });
 
-    res.status(status).json({ message });
-    throw err;
-  });
+      res.status(status).json({ message });
+      // Don't throw the error, it will crash the server
+      // throw err;
+    });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  console.log(`🔧 Setting up ${process.env.NODE_ENV} environment`);
-  
-  if (process.env.NODE_ENV === "production") {
-    console.log("📦 Production mode: Serving static files");
-    serveStatic(app);
-  } else {
-    console.log("🔧 Development mode: Setting up Vite");
-    await setupVite(app, server);
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    console.log(`🔧 Setting up ${process.env.NODE_ENV} environment`);
+    
+    if (process.env.NODE_ENV === "production") {
+      console.log("📦 Production mode: Serving static files");
+      serveStatic(app);
+    } else {
+      console.log("🔧 Development mode: Setting up Vite");
+      await setupVite(app, server);
+    }
+
+    // Serve the app on port 3000 for development (5000 is in use)
+    // this serves both the API and the client.
+    const port = process.env.PORT || 3000;
+    server.listen(port, () => {
+      console.log(`✅ Server is running on port ${port}`);
+      console.log(`🌐 Visit http://localhost:${port}`);
+      console.log('🔍 Health check: /api/health');
+      console.log('🔍 Simple test: /api/test/simple');
+    });
+  } catch (error) {
+    console.error('💥 Server startup failed:', error);
+    console.error('Error details:', {
+      message: (error as any).message,
+      stack: (error as any).stack,
+      code: (error as any).code
+    });
+    process.exit(1);
   }
-
-  // Serve the app on port 3000 for development (5000 is in use)
-  // this serves both the API and the client.
-  const port = process.env.PORT || 3000;
-  server.listen(port, () => {
-    log(`serving on port ${port}`);
-  });
 })();

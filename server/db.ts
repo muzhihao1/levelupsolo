@@ -7,35 +7,53 @@ import { pgTable, serial, text, json, integer, boolean } from 'drizzle-orm/pg-co
 const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+  console.error("🚨 DATABASE_URL is not set!");
+  console.error("Available environment variables:", Object.keys(process.env).filter(k => k.includes('DATABASE') || k.includes('SUPABASE')));
+  // Don't throw during module load - let the app start and show proper error
+  console.error("Server will start but database operations will fail");
 }
 
-console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
+// Initialize these variables
+let sql: any;
+let db: any;
 
-// Parse the URL to check if it's using IPv6
-const urlObj = new URL(databaseUrl);
-const isIPv6 = urlObj.hostname.includes(':');
-
-if (isIPv6) {
-  console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');
-  console.warn('Consider using IPv4 address or hostname instead.');
-}
-
-// Create connection with additional options for better compatibility
-const sql = postgres(databaseUrl, {
-  connect_timeout: 30,  // 30 seconds timeout
-  idle_timeout: 20,     // Close idle connections after 20 seconds
-  max: 10,              // Maximum number of connections
-  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
-  prepare: false,       // Disable prepared statements which can cause issues
-  connection: {
-    application_name: 'levelupsolo'
+try {
+  if (databaseUrl) {
+    console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
+    
+    // Parse the URL to check if it's using IPv6
+    const urlObj = new URL(databaseUrl);
+    const isIPv6 = urlObj.hostname.includes(':');
+    
+    if (isIPv6) {
+      console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');
+      console.warn('Consider using IPv4 address or hostname instead.');
+    }
+    
+    // Create connection with additional options for better compatibility
+    sql = postgres(databaseUrl, {
+      connect_timeout: 30,  // 30 seconds timeout
+      idle_timeout: 20,     // Close idle connections after 20 seconds
+      max: 10,              // Maximum number of connections
+      ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+      prepare: false,       // Disable prepared statements which can cause issues
+      connection: {
+        application_name: 'levelupsolo'
+      }
+    });
+    
+    db = drizzle(sql, { schema });
   }
-});
+} catch (error) {
+  console.error("🚨 Failed to initialize database connection:", error);
+  console.error("Error details:", {
+    message: (error as any).message,
+    code: (error as any).code,
+    stack: (error as any).stack
+  });
+}
 
-export const db = drizzle(sql, { schema });
+export { db, sql };
 
 export const goals = pgTable('goals', {
   id: serial('id').primaryKey(),

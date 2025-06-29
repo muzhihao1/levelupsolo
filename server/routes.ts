@@ -107,9 +107,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const results: any = {};
       
-      // Use drizzle's raw SQL query
-      const { sql } = require('drizzle-orm');
-      const { db } = require('./db');
+      // Import at the top of the file instead of dynamic require
+      // These are already imported, just use them
+      const { sql } = await import('drizzle-orm');
+      const { db } = await import('./db').then(m => ({ db: m.db }));
       
       // Check if tables exist
       try {

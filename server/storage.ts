@@ -14,6 +14,7 @@ import {
 import { db } from "./db";
 import { eq, desc, and, asc } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
+import { isDatabaseInitialized, getDatabaseError } from "./db-check";
 
 export interface IStorage {
   // User operations (required for authentication)
@@ -93,16 +94,34 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User operations (required for authentication)
   async getUser(id: string): Promise<User | undefined> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in getUser");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in getUserByEmail");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user || undefined;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in upsertUser");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
     const [user] = await db
       .insert(users)
       .values(userData)
@@ -118,6 +137,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async setUserPassword(userId: string, hashedPassword: string): Promise<void> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in setUserPassword");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
     await db
       .update(users)
       .set({
@@ -128,6 +153,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserPassword(userId: string): Promise<string | undefined> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in getUserPassword");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
     const [user] = await db
       .select({ hashedPassword: users.hashedPassword })
       .from(users)
