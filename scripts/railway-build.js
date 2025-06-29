@@ -4,8 +4,8 @@ const path = require('path');
 
 console.log('🚂 Railway Build Process Starting...\n');
 
-// Helper function to run commands safely
-function runCommand(command, description) {
+// Helper to run commands with proper error handling
+function runCommand(command, description, critical = false) {
   console.log(`📦 ${description}...`);
   try {
     execSync(command, { stdio: 'inherit' });
@@ -13,78 +13,101 @@ function runCommand(command, description) {
     return true;
   } catch (error) {
     console.error(`❌ ${description} failed:`, error.message);
+    if (critical) {
+      process.exit(1);
+    }
     return false;
   }
 }
 
-// Clean any existing cache issues
+// Step 1: Clean problematic directories
 console.log('🧹 Cleaning cache directories...');
-try {
-  const cacheDir = path.join(__dirname, '..', 'node_modules', '.cache');
-  if (fs.existsSync(cacheDir)) {
-    fs.rmSync(cacheDir, { recursive: true, force: true });
-  }
-  const viteCache = path.join(__dirname, '..', 'node_modules', '.vite');
-  if (fs.existsSync(viteCache)) {
-    fs.rmSync(viteCache, { recursive: true, force: true });
-  }
-} catch (e) {
-  console.log('⚠️  Could not clean cache, continuing...');
-}
+const dirs = [
+  'node_modules/.cache',
+  'node_modules/.vite',
+  'dist'
+];
 
-// Ensure dist directory exists
+dirs.forEach(dir => {
+  const fullPath = path.join(__dirname, '..', dir);
+  if (fs.existsSync(fullPath)) {
+    try {
+      fs.rmSync(fullPath, { recursive: true, force: true });
+      console.log(`  ✓ Cleaned ${dir}`);
+    } catch (e) {
+      console.log(`  ⚠️  Could not clean ${dir}`);
+    }
+  }
+});
+
+// Step 2: Create dist directory
 const distDir = path.join(__dirname, '..', 'dist');
-if (!fs.existsSync(distDir)) {
-  fs.mkdirSync(distDir, { recursive: true });
-}
+fs.mkdirSync(distDir, { recursive: true });
+console.log('\n✅ Created dist directory\n');
 
-// Step 1: Build client
+// Step 3: Build client (with custom cache dir to avoid conflicts)
+const viteConfigOverride = '--outDir dist/public --cacheDir /tmp/vite-cache';
 const clientSuccess = runCommand(
-  'npx vite build --clearScreen false', 
-  'Building client application'
+  `npx vite build ${viteConfigOverride}`,
+  'Building client (React app)',
+  false // not critical
 );
 
-if (!clientSuccess) {
-  console.log('⚠️  Client build failed, but continuing with server build...\n');
-}
-
-// Step 2: Build server
-console.log('📦 Building server...');
+// Step 4: Copy server files directly (skip complex bundling)
+console.log('📦 Preparing server files...');
 try {
-  const serverEntry = path.join(__dirname, '..', 'server', 'index.ts');
-  const outFile = path.join(__dirname, '..', 'dist', 'index.js');
-  
-  // Simple esbuild command with all externals
-  execSync(
-    `npx esbuild "${serverEntry}" --bundle --platform=node --format=cjs --outfile="${outFile}" --external:* --log-level=warning`,
-    { stdio: 'inherit' }
-  );
-  
-  console.log('✅ Server build completed\n');
-} catch (error) {
-  console.error('❌ Server build failed:', error.message);
-  
-  // Fallback: Copy TypeScript files as-is for tsx runtime
-  console.log('\n🔄 Attempting fallback build method...');
-  try {
-    const serverDir = path.join(__dirname, '..', 'server');
-    const distServerDir = path.join(__dirname, '..', 'dist', 'server');
-    
-    execSync(`cp -r "${serverDir}" "${distServerDir}"`, { stdio: 'inherit' });
-    
-    // Create a simple start script
-    const startScript = `
-require('dotenv').config();
-require('tsx/register');
-require('./server/index.ts');
+  // Copy essential directories
+  const copyDirs = ['server', 'shared'];
+  copyDirs.forEach(dir => {
+    const src = path.join(__dirname, '..', dir);
+    const dest = path.join(distDir, dir);
+    execSync(`cp -r "${src}" "${dest}"`, { stdio: 'pipe' });
+    console.log(`  ✓ Copied ${dir}`);
+  });
+
+  // Copy package files
+  const files = ['package.json', 'package-lock.json', '.env'];
+  files.forEach(file => {
+    const src = path.join(__dirname, '..', file);
+    const dest = path.join(distDir, file);
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, dest);
+      console.log(`  ✓ Copied ${file}`);
+    }
+  });
+
+  // Create start script that uses tsx
+  const startScript = `#!/usr/bin/env node
+const { spawn } = require('child_process');
+const path = require('path');
+
+console.log('Starting Level Up Solo...');
+
+// Use tsx to run TypeScript directly
+const tsx = spawn('npx', ['tsx', path.join(__dirname, 'server', 'index.ts')], {
+  stdio: 'inherit',
+  env: { ...process.env, NODE_ENV: 'production' }
+});
+
+tsx.on('error', (err) => {
+  console.error('Failed to start:', err);
+  process.exit(1);
+});
+
+tsx.on('exit', (code) => {
+  process.exit(code);
+});
 `;
-    fs.writeFileSync(path.join(distDir, 'index.js'), startScript);
-    
-    console.log('✅ Fallback build completed');
-  } catch (fallbackError) {
-    console.error('❌ Fallback build also failed');
-    process.exit(1);
-  }
+
+  fs.writeFileSync(path.join(distDir, 'start.js'), startScript);
+  fs.chmodSync(path.join(distDir, 'start.js'), '755');
+  
+  console.log('✅ Server preparation completed\n');
+} catch (error) {
+  console.error('❌ Server preparation failed:', error.message);
+  process.exit(1);
 }
 
-console.log('🎉 Railway build process completed!');
+console.log('🎉 Railway build completed successfully!');
+console.log('📁 Output directory: dist/');
+console.log('🚀 Ready to start with: node dist/start.js');

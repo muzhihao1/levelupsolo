@@ -15,6 +15,7 @@
     "build:server": "node scripts/build-server.js",
     "start": "NODE_ENV=production node dist/index.js",
     "start:tsx": "NODE_ENV=production tsx server/index.ts",
+    "start:railway": "cd dist && npm install --production && node start.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "deploy": "vercel --prod",
