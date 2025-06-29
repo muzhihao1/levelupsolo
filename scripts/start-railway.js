@@ -1,11 +1,32 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
+const path = require('path');
+
 console.log('🚂 Railway Start Script');
 console.log('======================');
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
 console.log(`PORT: ${process.env.PORT || 'not set (will use 3000)'}`);
 console.log(`Current directory: ${process.cwd()}`);
 console.log(`Node version: ${process.version}`);
+console.log('');
+
+// Check what directories exist
+console.log('📁 Directory structure:');
+const dirs = ['dist', 'dist/public', 'client', 'server'];
+dirs.forEach(dir => {
+  if (fs.existsSync(dir)) {
+    console.log(`  ✅ ${dir} exists`);
+    if (dir.startsWith('dist')) {
+      try {
+        const files = fs.readdirSync(dir).slice(0, 5);
+        console.log(`     Files: ${files.join(', ')}${files.length >= 5 ? '...' : ''}`);
+      } catch (e) {}
+    }
+  } else {
+    console.log(`  ❌ ${dir} missing`);
+  }
+});
 console.log('');
 
 // Check if tsx is available

@@ -84,11 +84,22 @@ export function serveStatic(app: Express) {
   const distPath = path.resolve(process.cwd(), "dist", "public");
 
   if (!fs.existsSync(distPath)) {
+    console.error(`❌ Static files directory not found: ${distPath}`);
+    console.error('Current working directory:', process.cwd());
+    console.error('Available directories:', fs.readdirSync(process.cwd()));
+    
+    // Try to provide helpful debug info
+    const distDir = path.resolve(process.cwd(), "dist");
+    if (fs.existsSync(distDir)) {
+      console.error('Contents of dist/:', fs.readdirSync(distDir));
+    }
+    
     throw new Error(
       `Could not find the build directory: ${distPath}, make sure to build the client first`,
     );
   }
 
+  console.log(`✅ Serving static files from: ${distPath}`);
   app.use(express.static(distPath));
 
   // fall through to index.html if the file doesn't exist

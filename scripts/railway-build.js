@@ -46,14 +46,28 @@ fs.mkdirSync(distDir, { recursive: true });
 console.log('\n✅ Created dist directory\n');
 
 // Step 3: Build client
+// Use the root vite.config.ts which already specifies the correct output directory
 const clientSuccess = runCommand(
   `npx vite build`,
   'Building client (React app)',
-  false // not critical
+  true // critical - must succeed
 );
 
-// Step 4: Server preparation (no need to copy files since we'll run from source)
-console.log('📦 Server preparation...');
+// Step 4: Verify build output
+console.log('🔍 Verifying build output...');
+const publicDir = path.join(__dirname, '..', 'dist', 'public');
+if (fs.existsSync(publicDir)) {
+  const files = fs.readdirSync(publicDir);
+  console.log(`  ✅ Found ${files.length} files in dist/public`);
+  console.log(`  📄 Files: ${files.slice(0, 5).join(', ')}${files.length > 5 ? '...' : ''}`);
+} else {
+  console.error('  ❌ ERROR: dist/public directory not found!');
+  console.error('  Build may have failed or output to wrong location');
+  process.exit(1);
+}
+
+// Step 5: Server preparation (no need to copy files since we'll run from source)
+console.log('\n📦 Server preparation...');
 console.log('  ℹ️  Server will run directly from source using tsx');
 console.log('✅ Server preparation completed\n');
 
