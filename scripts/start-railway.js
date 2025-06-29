@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+console.log('🚂 Railway Start Script');
+console.log('======================');
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`PORT: ${process.env.PORT || 'not set (will use 3000)'}`);
+console.log(`Current directory: ${process.cwd()}`);
+console.log(`Node version: ${process.version}`);
+console.log('');
+
+// Check if tsx is available
+const { execSync } = require('child_process');
+try {
+  const tsxVersion = execSync('npx tsx --version', { encoding: 'utf-8' });
+  console.log(`tsx version: ${tsxVersion.trim()}`);
+} catch (e) {
+  console.error('❌ tsx not found!');
+  process.exit(1);
+}
+
+console.log('Starting server with tsx...\n');
+
+// Start the server
+const { spawn } = require('child_process');
+const server = spawn('npx', ['tsx', 'server/index.ts'], {
+  stdio: 'inherit',
+  env: process.env
+});
+
+server.on('error', (err) => {
+  console.error('❌ Failed to start server:', err);
+  process.exit(1);
+});
+
+server.on('exit', (code) => {
+  console.log(`Server exited with code ${code}`);
+  process.exit(code);
+});

@@ -2,13 +2,13 @@
 nixPkgs = ["nodejs-18_x"]
 
 [phases.install]
-cmds = ["npm install --production=false --legacy-peer-deps || true"]
+cmds = ["npm install --production=false --legacy-peer-deps"]
 
 [phases.build]
-cmds = ["echo 'Build skipped'"]
+cmds = ["npm run build:railway"]
 
 [start]
-cmd = "npx tsx server/index.ts"
+cmd = "npm run start:railway"
 
 [variables]
 NODE_ENV = "production"
