@@ -101,6 +101,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Test endpoint to create a test user (REMOVE IN PRODUCTION)
+  app.post('/api/test/create-user', async (req, res) => {
+    try {
+      const bcrypt = require('bcryptjs');
+      
+      // Create test user
+      const testUser = {
+        id: 'test_user_' + Date.now(),
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        profileImageUrl: null,
+        hashedPassword: await bcrypt.hash('password123', 10)
+      };
+      
+      await storage.upsertUser(testUser);
+      
+      res.json({
+        message: 'Test user created successfully',
+        email: 'test@example.com',
+        password: 'password123',
+        note: 'This endpoint should be removed in production'
+      });
+    } catch (error) {
+      console.error('Error creating test user:', error);
+      res.status(500).json({ 
+        message: 'Failed to create test user',
+        error: (error as any).message 
+      });
+    }
+  });
+
   // Security health check endpoint
   app.get('/api/security/status', (req, res) => {
     const securityCheck = {
