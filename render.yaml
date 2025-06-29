@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: levelupsolo
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: postgresql://postgres:zbrGHpuON0CNfZBt@db.ooepnnsbmtyrcqlqykkr.supabase.co:5432/postgres
+      - key: JWT_SECRET
+        value: qW3eR5tY7uI9oP0aS2dF4gH6jK8lZ1xC
+      - key: SESSION_SECRET
+        value: xK8mP9nQ3vB5wY2tL6hF4jR7sE1cA0dG
+      - key: OPENAI_API_KEY
+        sync: false # 需要在Render dashboard手动添加
