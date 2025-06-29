@@ -3,6 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 
+// Force production environment
+process.env.NODE_ENV = 'production';
+
 console.log('🚂 Railway Start Script');
 console.log('======================');
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -67,7 +70,10 @@ console.log('Starting server with tsx...\n');
 const { spawn } = require('child_process');
 const server = spawn('npx', ['tsx', 'server/index.ts'], {
   stdio: 'inherit',
-  env: process.env
+  env: {
+    ...process.env,
+    NODE_ENV: 'production'  // Ensure production mode
+  }
 });
 
 server.on('error', (err) => {

@@ -99,10 +99,14 @@ app.use((req, res, next) => {
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
+  console.log(`🔧 Setting up ${process.env.NODE_ENV} environment`);
+  
+  if (process.env.NODE_ENV === "production") {
+    console.log("📦 Production mode: Serving static files");
     serveStatic(app);
+  } else {
+    console.log("🔧 Development mode: Setting up Vite");
+    await setupVite(app, server);
   }
 
   // Serve the app on port 3000 for development (5000 is in use)
