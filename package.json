@@ -39,7 +39,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "health-check": "tsx scripts/route-health-check.ts",
+    "pre-deploy": "npm run health-check && npm run test:run && npm run check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

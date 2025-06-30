@@ -9,6 +9,7 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, beforeAll, afterAll, vi } from 'vitest';
 import createFetchMock from 'vitest-fetch-mock';
 import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 
 /**
  * Initialize fetch mock
@@ -21,7 +22,66 @@ fetchMocker.enableMocks();
  * MSW (Mock Service Worker) server setup
  * Used for mocking API endpoints
  */
-export const server = setupServer();
+export const server = setupServer(
+  // AI解析端点 - 解决中文字符处理问题
+  rest.post('/api/ai/parse-input', (req, res, ctx) => {
+    return res(
+      ctx.json({
+        parsed: {
+          type: 'task',
+          category: 'side_quest',
+          title: '测试任务',
+          description: '测试任务描述',
+          priority: 'medium',
+          estimatedDuration: 30,
+          confidence: 0.9
+        },
+        aiGenerated: true,
+        timestamp: new Date().toISOString()
+      })
+    );
+  }),
+
+  // CRUD端点 - 防止任务创建失败
+  rest.post('/api/crud', (req, res, ctx) => {
+    const { resource } = req.url.searchParams;
+    
+    if (resource === 'tasks') {
+      return res(
+        ctx.json({
+          id: 1,
+          title: '新建任务',
+          description: '任务描述',
+          completed: false,
+          userId: 'test-user-123',
+          createdAt: new Date().toISOString()
+        })
+      );
+    }
+    
+    return res(ctx.status(400), ctx.json({ message: 'Invalid resource' }));
+  }),
+
+  // 认证端点
+  rest.post('/api/auth/login', (req, res, ctx) => {
+    return res(
+      ctx.json({
+        user: { id: 'test-user-123', email: 'test@example.com' },
+        token: 'test-jwt-token'
+      })
+    );
+  }),
+
+  // 健康检查端点
+  rest.get('/api/health', (req, res, ctx) => {
+    return res(
+      ctx.json({
+        status: 'ok',
+        timestamp: new Date().toISOString()
+      })
+    );
+  })
+);
 
 /**
  * Global test lifecycle hooks
