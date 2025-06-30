@@ -78,6 +78,10 @@ npm install
 cp .env.example .env
 # 编辑 .env 文件，添加必要的API密钥
 
+# ⚠️ Railway 部署重要提醒
+# DATABASE_URL 必须使用 Supabase Session Pooler 格式：
+# postgresql://postgres.PROJECT_REF:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres
+
 # 4. 数据库迁移
 npm run db:push
 
@@ -220,6 +224,51 @@ level-up-solo/
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
+
+## 🛠️ 故障排除
+
+### Railway 部署问题
+如果遇到部署后登录失败或前端 404 错误：
+
+1. **快速诊断** (2分钟内)：
+   ```bash
+   # 检查数据库连接
+   curl https://your-app.up.railway.app/api/health | jq '.database.status'
+   
+   # 检查前端状态
+   curl -I https://your-app.up.railway.app | head -1
+   ```
+
+2. **常见问题速查**：
+   - `"database": "disabled"` → 检查 DATABASE_URL 格式
+   - `HTTP/1.1 404` → 前端文件构建失败
+   - `"Tenant or user not found"` → 数据库连接字符串错误
+
+3. **详细文档**：
+   - 📚 [完整故障排除指南](docs/RAILWAY_DEPLOYMENT_TROUBLESHOOTING.md)
+   - ⚡ [快速修复检查清单](docs/RAILWAY_QUICK_FIX_CHECKLIST.md)
+
+### 数据库连接问题
+正确的 DATABASE_URL 格式（Supabase Session Pooler）：
+```
+postgresql://postgres.PROJECT_REF:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres
+```
+
+**常见错误**：
+- ❌ 区域错误：`ap-southeast-1` → 应该是 `ap-northeast-1`
+- ❌ 端口错误：`6543` → 应该是 `5432`
+- ❌ 域名错误：`ap-northeast1` → 应该是 `ap-northeast-1`（注意连字符）
+
+### 构建问题
+如果前端无法访问：
+```bash
+# 本地验证构建
+npm run build:railway
+ls -la server/public/index.html
+
+# 强制 Railway 重新部署
+git commit --allow-empty -m "Force rebuild" && git push
+```
 
 ## 🙏 致谢
 
