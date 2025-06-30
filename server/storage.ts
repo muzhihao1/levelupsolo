@@ -115,10 +115,20 @@ export class DatabaseStorage implements IStorage {
     parentTaskId: tasks.parentTaskId,
     order: tasks.order,
     tags: tasks.tags,
+    skills: tasks.skills,
     difficulty: tasks.difficulty,
     requiredEnergyBalls: tasks.requiredEnergyBalls,
-    lastCompletedAt: tasks.lastCompletedAt,
-    completionCount: tasks.completionCount,
+    // Habit-specific fields
+    habitDirection: tasks.habitDirection,
+    habitStreak: tasks.habitStreak,
+    habitValue: tasks.habitValue,
+    // Daily task fields
+    isDailyTask: tasks.isDailyTask,
+    dailyStreak: tasks.dailyStreak,
+    // Recurring fields
+    isRecurring: tasks.isRecurring,
+    recurringPattern: tasks.recurringPattern,
+    lastCompletedDate: tasks.lastCompletedDate,
   };
 
   // User operations (required for authentication)
@@ -450,10 +460,9 @@ export class DatabaseStorage implements IStorage {
           .where(eq(microTasks.taskId, task.id))
           .orderBy(microTasks.order);
         
-        // Add skills array as empty for compatibility (since DB doesn't have this column)
+        // Add microTasks to the task object
         return { 
           ...task, 
-          skills: [], // Default empty array since column doesn't exist
           microTasks: taskMicroTasks 
         };
       })
@@ -467,8 +476,7 @@ export class DatabaseStorage implements IStorage {
     
     if (!task) return undefined;
     
-    // Add skills array for compatibility
-    return { ...task, skills: [] };
+    return task;
   }
 
   async createTask(task: InsertTask): Promise<Task> {
@@ -528,7 +536,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(tasks.userId, userId), eq(tasks.taskType, taskType)))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
     
-    return result.map(task => ({ ...task, skills: [] }));
+    return result;
   }
 
   async getSubTasks(parentTaskId: number): Promise<Task[]> {
@@ -538,7 +546,7 @@ export class DatabaseStorage implements IStorage {
       .where(eq(tasks.parentTaskId, parentTaskId))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
     
-    return result.map(task => ({ ...task, skills: [] }));
+    return result;
   }
 
   async getMainTasks(userId: string): Promise<Task[]> {
@@ -548,7 +556,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(tasks.userId, userId), eq(tasks.taskType, 'main')))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
     
-    return result.map(task => ({ ...task, skills: [] }));
+    return result;
   }
 
   async getDailyTasks(userId: string): Promise<Task[]> {
@@ -559,7 +567,7 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(tasks.userId, userId), eq(tasks.taskCategory, 'habit')))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
     
-    return result.map(task => ({ ...task, skills: [] }));
+    return result;
   }
 
   async getTasksByTag(userId: string, tag: string): Promise<Task[]> {
