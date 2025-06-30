@@ -237,48 +237,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Debug endpoint for tasks - direct SQL only to avoid schema issues
-  app.get('/api/debug/tasks', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      console.log('Debug tasks - userId:', userId);
-      
-      if (!userId) {
-        return res.status(401).json({ message: "User not authenticated", userId: null });
-      }
-
-      // Use direct SQL query to bypass any schema issues
-      const postgres = require('postgres');
-      const connectionString = process.env.DATABASE_URL;
-      const sql = postgres(connectionString);
-      
-      const basicTasks = await sql`
-        SELECT id, user_id, title, description, completed, created_at, task_category, task_type
-        FROM tasks
-        WHERE user_id = ${userId}
-        ORDER BY created_at DESC
-        LIMIT 10
-      `;
-      
-      await sql.end();
-      
-      res.json({
-        userId,
-        directSqlUsed: true,
-        tasksCount: basicTasks.length,
-        tasks: basicTasks,
-        debugTimestamp: new Date().toISOString(),
-        message: "Direct SQL query bypassing storage layer"
-      });
-    } catch (error) {
-      console.error("Debug tasks error:", error);
-      res.status(500).json({ 
-        message: "Debug failed", 
-        error: (error as any).message,
-        stack: (error as any).stack?.split('\n').slice(0, 3)
-      });
-    }
-  });
 
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
@@ -1072,8 +1030,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      const goals = await storage.getGoals(userId);
-      res.json(goals);
+      try {
+        const goals = await storage.getGoals(userId);
+        res.json(goals);
+      } catch (error) {
+        console.error("Storage getGoals failed, trying direct SQL:", error);
+        
+        // Fallback: Direct SQL query to bypass schema issues
+        const { sql } = require('drizzle-orm');
+        const { db } = require('./db');
+        
+        try {
+          const userGoals = await sql`
+            SELECT 
+              id, user_id as "userId", title, description, completed, 
+              target_date as "targetDate", priority, status, 
+              created_at as "createdAt", updated_at as "updatedAt"
+            FROM goals
+            WHERE user_id = ${userId}
+            ORDER BY created_at DESC
+          `;
+          
+          // Add empty arrays for frontend compatibility
+          const goalsWithDefaults = userGoals.map((goal: any) => ({
+            ...goal,
+            milestones: [],
+            microTasks: []
+          }));
+          
+          res.json(goalsWithDefaults);
+        } catch (sqlError) {
+          console.error("Direct SQL query also failed:", sqlError);
+          res.status(500).json({ message: "Failed to fetch goals" });
+        }
+      }
     } catch (error) {
       console.error("Error fetching goals:", error);
       res.status(500).json({ message: "Failed to fetch goals" });
