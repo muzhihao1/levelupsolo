@@ -1442,8 +1442,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid goal ID" });
       }
 
-      await storage.deleteGoal(goalId, userId);
-      res.json({ message: "Goal deleted successfully" });
+      try {
+        await storage.deleteGoal(goalId, userId);
+        res.json({ message: "Goal deleted successfully" });
+      } catch (error) {
+        console.error("Storage deleteGoal failed, using SQL fallback:", error);
+        
+        // SQL fallback for goal deletion
+        const { sql } = require('drizzle-orm');
+        const { db } = require('./db');
+        
+        try {
+          // First verify the goal belongs to the user
+          const goalCheck = await db.execute(sql`
+            SELECT id FROM goals WHERE id = ${goalId} AND user_id = ${userId}
+          `);
+          
+          if (!(goalCheck.rows || goalCheck).length) {
+            return res.status(404).json({ message: "Goal not found or not owned by user" });
+          }
+          
+          // Delete the goal
+          await db.execute(sql`
+            DELETE FROM goals WHERE id = ${goalId} AND user_id = ${userId}
+          `);
+          
+          res.json({ message: "Goal deleted successfully" });
+        } catch (sqlError) {
+          console.error("SQL fallback also failed:", sqlError);
+          res.status(500).json({ message: "Failed to delete goal" });
+        }
+      }
     } catch (error) {
       console.error("Error deleting goal:", error);
       res.status(500).json({ message: "Failed to delete goal" });
