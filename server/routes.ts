@@ -629,66 +629,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // AI-powered task creation with automatic type classification
   app.post("/api/tasks/intelligent-create", isAuthenticated, async (req: any, res) => {
+    console.log("=== AI Task Creation Started ===");
     try {
       const { description } = req.body;
       const userId = (req.user as any)?.claims?.sub;
 
+      console.log("User ID:", userId);
+      console.log("Task description:", description);
+
       if (!description) {
+        console.error("No task description provided");
         return res.status(400).json({ message: "Task description is required" });
+      }
+
+      if (!userId) {
+        console.error("User not authenticated properly");
+        return res.status(401).json({ message: "User not authenticated" });
       }
 
       // Check if OpenAI API key is configured
       if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.trim() === '') {
         console.warn("OpenAI API key not configured, using simple task creation");
         
-        // Simple rule-based task creation without AI
-        const taskCategory = description.includes("每天") || description.includes("坚持") || description.includes("养成") 
-          ? "habit" 
-          : "todo";
-        
-        const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
-        const energyBalls = difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1;
-        
-        const taskData = {
-          userId,
-          title: description.trim(),
-          description: null,
-          taskCategory: taskCategory,
-          taskType: taskCategory,
-          difficulty: difficulty,
-          expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
-          estimatedDuration: energyBalls * 15,
-          requiredEnergyBalls: energyBalls,
-          tags: [],
-          skills: [],
-          skillId: null,
-          completed: false,
-          ...(taskCategory === "habit" && {
-            isRecurring: true,
-            recurringPattern: "daily",
-            habitStreak: 0,
-            habitValue: 0,
-            habitDirection: "positive"
-          })
-        };
-
-        const newTask = await storage.createTask(taskData);
-        return res.json({ 
-          task: newTask, 
-          analysis: {
-            category: taskCategory,
+        try {
+          // Simple rule-based task creation without AI
+          const taskCategory = description.includes("每天") || description.includes("坚持") || description.includes("养成") 
+            ? "habit" 
+            : "todo";
+          
+          const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
+          const energyBalls = difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1;
+          
+          const taskData = {
+            userId,
             title: description.trim(),
+            description: null,
+            taskCategory: taskCategory,
+            taskType: taskCategory,
             difficulty: difficulty,
-            skillName: null,
-            energyBalls: energyBalls
-          }
-        });
+            expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
+            estimatedDuration: energyBalls * 15,
+            requiredEnergyBalls: energyBalls,
+            tags: [],
+            skills: [],
+            skillId: null,
+            completed: false,
+            ...(taskCategory === "habit" && {
+              isRecurring: true,
+              recurringPattern: "daily",
+              habitStreak: 0,
+              habitValue: 0,
+              habitDirection: "positive"
+            })
+          };
+
+          console.log("Creating simple task with data:", JSON.stringify(taskData, null, 2));
+          const newTask = await storage.createTask(taskData);
+          console.log("Simple task created successfully:", newTask.id);
+          
+          return res.json({ 
+            task: newTask, 
+            analysis: {
+              category: taskCategory,
+              title: description.trim(),
+              difficulty: difficulty,
+              skillName: null,
+              energyBalls: energyBalls
+            }
+          });
+        } catch (simpleTaskError) {
+          console.error("Error in simple task creation:", simpleTaskError);
+          throw simpleTaskError;
+        }
       }
 
-      const OpenAI = (await import("openai")).default;
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      console.log("Starting AI-powered task creation");
+      
+      let analysis;
+      try {
+        const OpenAI = (await import("openai")).default;
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-      const prompt = `分析以下任务描述，判断是习惯还是支线任务，并分配合适的核心技能和能量球需求：
+        const prompt = `分析以下任务描述，判断是习惯还是支线任务，并分配合适的核心技能和能量球需求：
 
 任务描述："${description}"
 
@@ -727,14 +749,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   "energyBalls": 1-6
 }`;
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [{ role: "user", content: prompt }],
-        response_format: { type: "json_object" },
-        max_tokens: 200
-      });
+        console.log("Calling OpenAI API...");
+        const response = await openai.chat.completions.create({
+          model: "gpt-4o",
+          messages: [{ role: "user", content: prompt }],
+          response_format: { type: "json_object" },
+          max_tokens: 200
+        });
 
-      const analysis = JSON.parse(response.choices[0].message.content || "{}");
+        console.log("OpenAI API response received");
+        const rawContent = response.choices[0].message.content || "{}";
+        console.log("Raw OpenAI response:", rawContent);
+        
+        analysis = JSON.parse(rawContent);
+        console.log("Parsed AI analysis:", analysis);
+      } catch (aiError) {
+        console.error("OpenAI API Error:", aiError);
+        console.warn("Falling back to simple rule-based task creation");
+        
+        // Fall back to simple rule-based task creation
+        const taskCategory = description.includes("每天") || description.includes("坚持") || description.includes("养成") 
+          ? "habit" 
+          : "todo";
+        
+        const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
+        
+        analysis = {
+          category: taskCategory,
+          title: description.trim(),
+          difficulty: difficulty,
+          skillName: "意志执行力", // Default core skill
+          energyBalls: difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1
+        };
+        
+        console.log("Using fallback analysis:", analysis);
+      }
 
       const difficultyRewards = {
         easy: { xp: 10 },
@@ -756,23 +805,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       })();
 
+      console.log("AI Analysis completed:", analysis);
+
       // Map AI response to core skills and find matching skill
       let skillId = null;
       if (skillName) {
-        // Initialize core skills if they don't exist
-        await (storage as any).initializeCoreSkills(userId);
+        try {
+          console.log("Initializing core skills for user:", userId);
+          // Initialize core skills if they don't exist
+          await (storage as any).initializeCoreSkills(userId);
+          console.log("Core skills initialized successfully");
 
-        // Get user's core skills
-        const userSkills = await storage.getSkills(userId);
-        let skill = userSkills.find(s => s.name === skillName);
+          // Get user's core skills
+          console.log("Fetching user skills...");
+          const userSkills = await storage.getSkills(userId);
+          console.log("User skills found:", userSkills.length);
+          
+          let skill = userSkills.find(s => s.name === skillName);
+          console.log("Exact skill match found:", !!skill);
 
-        // If exact match not found, use core skill mapping
-        if (!skill) {
-          skill = await (storage as any).findOrCreateSkill(skillName, userId);
-        }
+          // If exact match not found, use core skill mapping
+          if (!skill) {
+            console.log("Finding or creating skill:", skillName);
+            skill = await (storage as any).findOrCreateSkill(skillName, userId);
+            console.log("Skill found/created:", skill ? skill.name : "none");
+          }
 
-        if (skill) {
-          skillId = skill.id;
+          if (skill) {
+            skillId = skill.id;
+            console.log("Using skill ID:", skillId);
+          }
+        } catch (skillError) {
+          console.error("Error handling skills:", skillError);
+          // Continue without skill assignment rather than failing entirely
+          console.warn("Continuing task creation without skill assignment");
         }
       }
 
@@ -801,12 +867,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         })
       };
 
+      console.log("Creating AI task with data:", JSON.stringify(taskData, null, 2));
       const newTask = await storage.createTask(taskData);
+      console.log("AI task created successfully:", newTask.id);
 
       res.json({ task: newTask, analysis });
     } catch (error) {
-      console.error("Error creating intelligent task:", error);
-      res.status(500).json({ message: "Failed to create intelligent task" });
+      console.error("=== AI Task Creation Error ===");
+      console.error("Error type:", error?.constructor?.name);
+      console.error("Error message:", error?.message);
+      console.error("Error stack:", error?.stack);
+      console.error("Full error object:", error);
+      
+      // Provide more specific error messages based on error type
+      let errorMessage = "Failed to create intelligent task";
+      let statusCode = 500;
+      
+      if (error?.message?.includes("OpenAI")) {
+        errorMessage = "AI service is temporarily unavailable";
+        statusCode = 503;
+      } else if (error?.message?.includes("database") || error?.message?.includes("Database")) {
+        errorMessage = "Database error occurred while creating task";
+        statusCode = 500;
+      } else if (error?.message?.includes("authentication") || error?.message?.includes("user")) {
+        errorMessage = "Authentication error";
+        statusCode = 401;
+      }
+      
+      res.status(statusCode).json({ 
+        message: errorMessage,
+        error: process.env.NODE_ENV === 'development' ? error?.message : undefined
+      });
     }
   });
 
