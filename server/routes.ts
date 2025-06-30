@@ -58,6 +58,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware is now set up in index.ts
   // await setupAuth(app);
 
+  // Test route to verify this is the complete server
+  app.get('/api/server-info', (_req, res) => {
+    res.json({
+      server: 'complete-server-routes-ts',
+      timestamp: new Date().toISOString(),
+      version: '2.0-debug',
+      routes: 'loaded-from-routes-ts'
+    });
+  });
+
   // Simple health check endpoint
   app.get('/api/health', async (_req, res) => {
     let dbStatus = 'unknown';
