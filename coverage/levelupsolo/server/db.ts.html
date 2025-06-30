@@ -1,0 +1,385 @@
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Code coverage report for levelupsolo/server/db.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+    
+<body>
+<div class='wrapper'>
+    <div class='pad1'>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">levelupsolo/server</a> db.ts</h1>
+        <div class='clearfix'>
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Statements</span>
+                <span class='fraction'>0/101</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Branches</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>0/1</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">0% </span>
+                <span class="quiet">Lines</span>
+                <span class='fraction'>0/101</span>
+            </div>
+        
+            
+        </div>
+        <p class="quiet">
+            Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
+        </p>
+        <template id="filterTemplate">
+            <div class="quiet">
+                Filter:
+                <input type="search" id="fileSearch">
+            </div>
+        </template>
+    </div>
+    <div class='status-line low'></div>
+    <pre><table class="coverage">
+<tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
+<a name='L2'></a><a href='#L2'>2</a>
+<a name='L3'></a><a href='#L3'>3</a>
+<a name='L4'></a><a href='#L4'>4</a>
+<a name='L5'></a><a href='#L5'>5</a>
+<a name='L6'></a><a href='#L6'>6</a>
+<a name='L7'></a><a href='#L7'>7</a>
+<a name='L8'></a><a href='#L8'>8</a>
+<a name='L9'></a><a href='#L9'>9</a>
+<a name='L10'></a><a href='#L10'>10</a>
+<a name='L11'></a><a href='#L11'>11</a>
+<a name='L12'></a><a href='#L12'>12</a>
+<a name='L13'></a><a href='#L13'>13</a>
+<a name='L14'></a><a href='#L14'>14</a>
+<a name='L15'></a><a href='#L15'>15</a>
+<a name='L16'></a><a href='#L16'>16</a>
+<a name='L17'></a><a href='#L17'>17</a>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a>
+<a name='L39'></a><a href='#L39'>39</a>
+<a name='L40'></a><a href='#L40'>40</a>
+<a name='L41'></a><a href='#L41'>41</a>
+<a name='L42'></a><a href='#L42'>42</a>
+<a name='L43'></a><a href='#L43'>43</a>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a>
+<a name='L101'></a><a href='#L101'>101</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import postgres from "postgres";</span></span></span>
+<span class="cstat-no" title="statement not covered" >import { drizzle } from "drizzle-orm/postgres-js";</span>
+<span class="cstat-no" title="statement not covered" >import * as schema from "@shared/schema";</span>
+<span class="cstat-no" title="statement not covered" >import { pgTable, serial, text, json, integer, boolean } from 'drizzle-orm/pg-core';</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// 优先使用 Supabase 数据库，如果没有则使用原 DATABASE_URL</span>
+<span class="cstat-no" title="statement not covered" >const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >if (!databaseUrl) {</span>
+<span class="cstat-no" title="statement not covered" >  console.error("🚨 DATABASE_URL is not set!");</span>
+<span class="cstat-no" title="statement not covered" >  console.error("Available environment variables:", Object.keys(process.env).filter(k =&gt; k.includes('DATABASE') || k.includes('SUPABASE')));</span>
+<span class="cstat-no" title="statement not covered" >  // Don't throw during module load - let the app start and show proper error</span>
+<span class="cstat-no" title="statement not covered" >  console.error("Server will start but database operations will fail");</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// Initialize these variables</span>
+<span class="cstat-no" title="statement not covered" >let sql: any = null;</span>
+<span class="cstat-no" title="statement not covered" >let db: any = null;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// In development, allow the server to start without a database</span>
+<span class="cstat-no" title="statement not covered" >if (process.env.NODE_ENV === 'development' &amp;&amp; !databaseUrl) {</span>
+<span class="cstat-no" title="statement not covered" >  console.warn('⚠️  No DATABASE_URL set in development mode. Using mock storage.');</span>
+<span class="cstat-no" title="statement not covered" >} else if (databaseUrl) {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Parse the URL to check if it's using IPv6</span>
+<span class="cstat-no" title="statement not covered" >    const urlObj = new URL(databaseUrl);</span>
+<span class="cstat-no" title="statement not covered" >    const isIPv6 = urlObj.hostname.includes(':');</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    if (isIPv6) {</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('Consider using IPv4 address or hostname instead.');</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // Create connection with additional options for better compatibility</span>
+<span class="cstat-no" title="statement not covered" >    sql = postgres(databaseUrl, {</span>
+<span class="cstat-no" title="statement not covered" >      connect_timeout: 30,  // 30 seconds timeout</span>
+<span class="cstat-no" title="statement not covered" >      idle_timeout: 20,     // Close idle connections after 20 seconds</span>
+<span class="cstat-no" title="statement not covered" >      max: 10,              // Maximum number of connections</span>
+<span class="cstat-no" title="statement not covered" >      ssl: process.env.NODE_ENV === 'production' ? 'require' : false,</span>
+<span class="cstat-no" title="statement not covered" >      prepare: false,       // Disable prepared statements which can cause issues</span>
+<span class="cstat-no" title="statement not covered" >      connection: {</span>
+<span class="cstat-no" title="statement not covered" >        application_name: 'levelupsolo'</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    db = drizzle(sql, { schema });</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error("🚨 Failed to initialize database connection:", error);</span>
+<span class="cstat-no" title="statement not covered" >    console.error("Error details:", {</span>
+<span class="cstat-no" title="statement not covered" >      message: (error as any).message,</span>
+<span class="cstat-no" title="statement not covered" >      code: (error as any).code,</span>
+<span class="cstat-no" title="statement not covered" >      stack: (error as any).stack</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    </span>
+<span class="cstat-no" title="statement not covered" >    // In development, don't crash the server</span>
+<span class="cstat-no" title="statement not covered" >    if (process.env.NODE_ENV === 'development') {</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('⚠️  Continuing without database in development mode.');</span>
+<span class="cstat-no" title="statement not covered" >      sql = null;</span>
+<span class="cstat-no" title="statement not covered" >      db = null;</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export { db, sql };</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export const goals = pgTable('goals', {</span>
+<span class="cstat-no" title="statement not covered" >  id: serial('id').primaryKey(),</span>
+<span class="cstat-no" title="statement not covered" >  userId: text('user_id').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  title: text('title').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  description: text('description').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  category: text('category').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  milestones: json('milestones').$type&lt;string[]&gt;().notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  expReward: integer('exp_reward').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  coinReward: integer('coin_reward').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  skills: json('skills').$type&lt;string[]&gt;().notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  completed: boolean('completed').notNull().default(false),</span>
+<span class="cstat-no" title="statement not covered" >  createdAt: text('created_at').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  microTasks: json('micro_tasks').$type&lt;any[]&gt;().default([]),</span>
+<span class="cstat-no" title="statement not covered" >  warmupTasks: json('warmup_tasks').$type&lt;any[]&gt;().default([]),</span>
+<span class="cstat-no" title="statement not covered" >});</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export const userStates = pgTable('user_states', {</span>
+<span class="cstat-no" title="statement not covered" >  id: serial('id').primaryKey(),</span>
+<span class="cstat-no" title="statement not covered" >  userId: text('user_id').notNull().unique(),</span>
+<span class="cstat-no" title="statement not covered" >  energyLevel: text('energy_level').notNull().default('medium'),</span>
+<span class="cstat-no" title="statement not covered" >  availableTime: integer('available_time').notNull().default(30),</span>
+<span class="cstat-no" title="statement not covered" >  mood: text('mood').notNull().default('neutral'),</span>
+<span class="cstat-no" title="statement not covered" >  focusLevel: integer('focus_level').notNull().default(5),</span>
+<span class="cstat-no" title="statement not covered" >  lastUpdated: text('last_updated').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >});</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export const microTaskCompletions = pgTable('micro_task_completions', {</span>
+<span class="cstat-no" title="statement not covered" >  id: serial('id').primaryKey(),</span>
+<span class="cstat-no" title="statement not covered" >  userId: text('user_id').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  goalId: integer('goal_id').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  microTaskId: text('micro_task_id').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  completedAt: text('completed_at').notNull(),</span>
+<span class="cstat-no" title="statement not covered" >  timeSpent: integer('time_spent'), // actual time spent in minutes</span>
+<span class="cstat-no" title="statement not covered" >});</span></pre></td></tr></table></pre>
+
+                <div class='push'></div><!-- for sticky footer -->
+            </div><!-- /wrapper -->
+            <div class='footer quiet pad2 space-top1 center small'>
+                Code coverage generated by
+                <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
+                at 2025-06-30T10:48:10.226Z
+            </div>
+        <script src="../../prettify.js"></script>
+        <script>
+            window.onload = function () {
+                prettyPrint();
+            };
+        </script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
+    </body>
+</html>
+    

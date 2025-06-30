@@ -38,10 +38,8 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
   const parseInputMutation = useMutation({
     mutationFn: async (text: string) => {
       try {
-        const response = await fetch('/api/ai/parse-input', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input: text })
+        const response = await apiRequest('POST', '/api/ai/parse-input', {
+          input: text
         });
         const data = await response.json();
         return data;
@@ -298,16 +296,14 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
       const goalData: InsertGoal = {
         title: customTitle,
         description: customDescription || "",
-        targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        userId: ""
+        targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       };
       createGoalMutation.mutate(goalData);
     } else {
       const taskData: InsertTask = {
         title: customTitle,
         description: customDescription || "",
-        estimatedDuration: parsedSuggestion?.estimatedDuration || 30,
-        userId: ""
+        estimatedDuration: parsedSuggestion?.estimatedDuration || 30
       };
       createTaskMutation.mutate(taskData);
     }
