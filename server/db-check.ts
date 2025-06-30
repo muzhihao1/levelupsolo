@@ -2,6 +2,10 @@
 import { db } from "./db";
 
 export function isDatabaseInitialized(): boolean {
+  // In development mode without database, return false to use mock storage
+  if (process.env.NODE_ENV === 'development' && db === null) {
+    return false;
+  }
   return db !== undefined && db !== null;
 }
 

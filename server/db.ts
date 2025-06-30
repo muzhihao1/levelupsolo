@@ -14,11 +14,14 @@ if (!databaseUrl) {
 }
 
 // Initialize these variables
-let sql: any;
-let db: any;
+let sql: any = null;
+let db: any = null;
 
-try {
-  if (databaseUrl) {
+// In development, allow the server to start without a database
+if (process.env.NODE_ENV === 'development' && !databaseUrl) {
+  console.warn('⚠️  No DATABASE_URL set in development mode. Using mock storage.');
+} else if (databaseUrl) {
+  try {
     console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
     
     // Parse the URL to check if it's using IPv6
@@ -43,14 +46,21 @@ try {
     });
     
     db = drizzle(sql, { schema });
+  } catch (error) {
+    console.error("🚨 Failed to initialize database connection:", error);
+    console.error("Error details:", {
+      message: (error as any).message,
+      code: (error as any).code,
+      stack: (error as any).stack
+    });
+    
+    // In development, don't crash the server
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('⚠️  Continuing without database in development mode.');
+      sql = null;
+      db = null;
+    }
   }
-} catch (error) {
-  console.error("🚨 Failed to initialize database connection:", error);
-  console.error("Error details:", {
-    message: (error as any).message,
-    code: (error as any).code,
-    stack: (error as any).stack
-  });
 }
 
 export { db, sql };

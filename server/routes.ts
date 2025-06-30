@@ -55,31 +55,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // Auth middleware
-  await setupAuth(app);
+  // Auth middleware is now set up in index.ts
+  // await setupAuth(app);
 
   // Simple health check endpoint
   app.get('/api/health', async (_req, res) => {
     let dbStatus = 'unknown';
     let userCount = -1;
     let dbError = null;
+    let tablesExist = false;
+    let tableList: string[] = [];
     
     try {
-      // Test database connection
-      const users = await storage.getUserByEmail('test@example.com');
-      dbStatus = 'connected';
-      
-      // Try to count users (optional)
-      try {
-        const testUser = await storage.getUser('test');
-        userCount = testUser ? 1 : 0;
-      } catch (e) {
-        // Ignore count error
+      // First check if db is initialized
+      const { isDatabaseInitialized } = require('./db-check');
+      if (!isDatabaseInitialized()) {
+        dbStatus = 'not_configured';
+        dbError = 'Database URL not set or invalid';
+      } else {
+        // Test database connection
+        try {
+          const users = await storage.getUserByEmail('test@example.com');
+          dbStatus = 'connected';
+          tablesExist = true;
+          
+          // Try to count users (optional)
+          try {
+            const testUser = await storage.getUser('test');
+            userCount = testUser ? 1 : 0;
+          } catch (e) {
+            // Ignore count error
+          }
+        } catch (error) {
+          const errorMessage = (error as any).message;
+          if (errorMessage.includes('relation') && errorMessage.includes('does not exist')) {
+            dbStatus = 'no_tables';
+            dbError = 'Database connected but tables not created. Run: npm run db:push';
+            tablesExist = false;
+          } else {
+            dbStatus = 'error';
+            dbError = errorMessage;
+          }
+          console.error('Database operation error:', error);
+        }
       }
     } catch (error) {
       dbStatus = 'error';
       dbError = (error as any).message;
-      console.error('Database connection error:', error);
+      console.error('Health check error:', error);
     }
     
     res.json({
@@ -90,10 +113,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       database: {
         status: dbStatus,
         error: dbError,
-        userCount: userCount
+        tablesExist: tablesExist,
+        userCount: userCount,
+        recommendation: dbStatus === 'no_tables' ? 
+          'Run "npm run db:push" locally with DATABASE_URL set to create tables' : null
       },
       env: {
-        hasDatabase: !!process.env.DATABASE_URL,
+        hasDatabase: !!process.env.DATABASE_URL || !!process.env.SUPABASE_DATABASE_URL,
         databaseUrl: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) + '...' : 'not set',
         hasOpenAI: !!process.env.OPENAI_API_KEY,
         hasJWT: !!process.env.JWT_SECRET,
@@ -107,10 +133,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const results: any = {};
       
+      // First check if database is initialized
+      const { isDatabaseInitialized, getDatabaseError } = require('./db-check');
+      if (!isDatabaseInitialized()) {
+        const error = getDatabaseError();
+        return res.json({
+          success: false,
+          database: 'Not configured',
+          error: error.error,
+          details: error.details,
+          recommendation: 'Set DATABASE_URL in Railway environment variables'
+        });
+      }
+      
       // Import at the top of the file instead of dynamic require
       // These are already imported, just use them
       const { sql } = await import('drizzle-orm');
       const { db } = await import('./db').then(m => ({ db: m.db }));
+      
+      if (!db) {
+        return res.json({
+          success: false,
+          database: 'Not initialized',
+          error: 'Database connection not established',
+          recommendation: 'Check DATABASE_URL format'
+        });
+      }
       
       // Check if tables exist
       try {

@@ -1763,4 +1763,23 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Use mock storage if database is not available
+import { MockStorage } from "./mock-storage";
+
+let storageInstance: IStorage;
+
+try {
+  // Try to use database storage first
+  if (isDatabaseInitialized()) {
+    console.log("Using DatabaseStorage");
+    storageInstance = new DatabaseStorage();
+  } else {
+    console.log("Database not available, using MockStorage");
+    storageInstance = new MockStorage();
+  }
+} catch (error) {
+  console.error("Failed to initialize DatabaseStorage, falling back to MockStorage:", error);
+  storageInstance = new MockStorage();
+}
+
+export const storage = storageInstance;

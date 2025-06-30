@@ -1,0 +1,227 @@
+// Simplified authentication system
+import { Express } from "express";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import { db } from "./db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
+
+// Simple JWT secret with fallback
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
+
+// Login schema
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
+
+// Register schema  
+const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  firstName: z.string().min(1),
+  lastName: z.string().min(1),
+});
+
+// Generate JWT token
+function generateToken(userId: string, email: string) {
+  return jwt.sign(
+    { userId, email },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+}
+
+// Verify JWT token
+export function verifyToken(token: string): { userId: string; email: string } | null {
+  try {
+    return jwt.verify(token, JWT_SECRET) as any;
+  } catch {
+    return null;
+  }
+}
+
+// Simple auth middleware
+export async function simpleAuth(req: any, res: any, next: any) {
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    const decoded = verifyToken(token);
+    
+    if (decoded) {
+      req.user = decoded;
+      return next();
+    }
+  }
+  
+  // For demo purposes, allow unauthenticated access
+  req.user = { userId: 'demo', email: 'demo@levelupsolo.net' };
+  next();
+}
+
+export function setupSimpleAuth(app: Express) {
+  // Health check for auth
+  app.get('/api/auth/status', (req, res) => {
+    res.json({
+      healthy: true,
+      hasJWT: !!process.env.JWT_SECRET,
+      hasDB: !!process.env.DATABASE_URL || !!process.env.SUPABASE_DATABASE_URL,
+    });
+  });
+
+  // Login endpoint
+  app.post('/api/auth/simple-login', async (req, res) => {
+    console.log('=== SIMPLE LOGIN START ===');
+    
+    try {
+      // 1. Parse input
+      const { email, password } = loginSchema.parse(req.body);
+      console.log('Login attempt for:', email);
+      
+      // 2. Check if database is available
+      if (!db) {
+        console.log('No database connection, using demo mode');
+        if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
+          const token = generateToken('demo', email);
+          return res.json({
+            success: true,
+            token,
+            user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
+          });
+        }
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+      
+      // 3. Find user in database
+      try {
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, email))
+          .limit(1);
+        
+        if (!user || !user.hashedPassword) {
+          console.log('User not found or no password');
+          return res.status(401).json({ error: '邮箱或密码错误' });
+        }
+        
+        // 4. Verify password
+        const valid = await bcrypt.compare(password, user.hashedPassword);
+        if (!valid) {
+          console.log('Invalid password');
+          return res.status(401).json({ error: '邮箱或密码错误' });
+        }
+        
+        // 5. Generate token
+        const token = generateToken(user.id, user.email!);
+        console.log('Login successful');
+        
+        res.json({
+          success: true,
+          token,
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          }
+        });
+      } catch (dbError) {
+        console.error('Database error:', dbError);
+        
+        // Fallback to demo mode if database fails
+        if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
+          const token = generateToken('demo', email);
+          return res.json({
+            success: true,
+            token,
+            user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
+          });
+        }
+        
+        return res.status(500).json({ 
+          error: 'Database error',
+          details: process.env.NODE_ENV === 'development' ? (dbError as any).message : undefined
+        });
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: '输入数据无效' });
+      }
+      return res.status(500).json({ error: '登录失败' });
+    }
+  });
+
+  // Register endpoint
+  app.post('/api/auth/register', async (req, res) => {
+    console.log('=== REGISTER START ===');
+    
+    try {
+      const data = registerSchema.parse(req.body);
+      
+      if (!db) {
+        return res.status(500).json({ error: 'Database not available' });
+      }
+      
+      // Check if user exists
+      const [existing] = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, data.email))
+        .limit(1);
+      
+      if (existing) {
+        return res.status(400).json({ error: '该邮箱已被注册' });
+      }
+      
+      // Hash password
+      const hashedPassword = await bcrypt.hash(data.password, 10);
+      
+      // Create user
+      const userId = `user_${Date.now()}`;
+      const [newUser] = await db
+        .insert(users)
+        .values({
+          id: userId,
+          email: data.email,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          hashedPassword,
+        })
+        .returning();
+      
+      // Generate token
+      const token = generateToken(newUser.id, newUser.email!);
+      
+      res.json({
+        success: true,
+        token,
+        user: {
+          id: newUser.id,
+          email: newUser.email,
+          firstName: newUser.firstName,
+          lastName: newUser.lastName,
+        }
+      });
+    } catch (error) {
+      console.error('Register error:', error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: '输入数据无效' });
+      }
+      return res.status(500).json({ error: '注册失败' });
+    }
+  });
+
+  // Get current user
+  app.get('/api/auth/user', simpleAuth, (req: any, res) => {
+    res.json({ user: req.user });
+  });
+
+  // Logout (client-side only)
+  app.post('/api/auth/logout', (req, res) => {
+    res.json({ success: true });
+  });
+}
