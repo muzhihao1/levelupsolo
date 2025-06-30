@@ -240,54 +240,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Debug endpoint to check database structure
   app.get('/api/debug/database-structure', async (req, res) => {
     try {
+      const { db } = require('./db');
       const { sql } = require('drizzle-orm');
       
       // Check all existing tables
-      const allTables = await sql`
+      const allTables = await db.execute(sql`
         SELECT table_name 
         FROM information_schema.tables 
         WHERE table_schema = 'public'
         ORDER BY table_name
-      `;
+      `);
       
       // Check if goals table exists and its structure
-      const goalsTableInfo = await sql`
+      const goalsTableInfo = await db.execute(sql`
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'goals'
         ORDER BY ordinal_position
-      `;
+      `);
       
       // Check tasks table structure for comparison
-      const tasksTableInfo = await sql`
+      const tasksTableInfo = await db.execute(sql`
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'tasks'
         ORDER BY ordinal_position
-      `;
+      `);
       
       // Check if there are any tasks that could be main quests
       let mainQuestTasks = [];
       try {
-        mainQuestTasks = await sql`
+        const result = await db.execute(sql`
           SELECT id, title, task_category, task_type, goal_id
           FROM tasks 
           WHERE task_category = 'main' OR task_type = 'main' OR goal_id IS NOT NULL
           LIMIT 5
-        `;
+        `);
+        mainQuestTasks = result.rows || result;
       } catch (e) {
         mainQuestTasks = { error: (e as any).message };
       }
       
       res.json({
-        allTables: Array.isArray(allTables) ? allTables.map(t => t.table_name) : allTables,
+        allTables: (allTables.rows || allTables).map((t: any) => t.table_name),
         goalsTable: {
-          exists: goalsTableInfo.length > 0,
-          columns: goalsTableInfo
+          exists: (goalsTableInfo.rows || goalsTableInfo).length > 0,
+          columns: goalsTableInfo.rows || goalsTableInfo
         },
         tasksTable: {
-          exists: tasksTableInfo.length > 0,
-          columns: tasksTableInfo
+          exists: (tasksTableInfo.rows || tasksTableInfo).length > 0,
+          columns: tasksTableInfo.rows || tasksTableInfo
         },
         mainQuestTasks
       });
