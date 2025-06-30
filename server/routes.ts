@@ -237,6 +237,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Debug endpoint to check goals table structure
+  app.get('/api/debug/goals-structure', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      
+      // Check if goals table exists and its structure
+      const tableInfo = await sql`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'goals'
+        ORDER BY ordinal_position
+      `;
+      
+      // Check if there are any goals
+      const goalCount = await sql`SELECT COUNT(*) as count FROM goals`;
+      
+      // Try to get one sample goal
+      let sampleGoal = null;
+      try {
+        const sample = await sql`SELECT * FROM goals LIMIT 1`;
+        sampleGoal = sample[0] || null;
+      } catch (e) {
+        sampleGoal = { error: (e as any).message };
+      }
+      
+      res.json({
+        tableExists: tableInfo.length > 0,
+        columns: tableInfo,
+        goalCount: goalCount[0]?.count || 0,
+        sampleGoal
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: (error as any).message,
+        stack: (error as any).stack
+      });
+    }
+  });
+
 
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
