@@ -1,0 +1,323 @@
+# Performance Monitoring Configuration
+# 性能监控配置文件
+
+# Performance Budgets
+budgets:
+  # Web Vitals
+  web_vitals:
+    lcp:
+      target: 2500  # ms
+      warning: 2500
+      critical: 4000
+    fid:
+      target: 100   # ms
+      warning: 100
+      critical: 300
+    cls:
+      target: 0.1
+      warning: 0.1
+      critical: 0.25
+    fcp:
+      target: 1800  # ms
+      warning: 1800
+      critical: 3000
+    ttfb:
+      target: 600   # ms
+      warning: 600
+      critical: 1000
+
+  # API Performance
+  api:
+    response_time:
+      p50: 100      # ms
+      p95: 500      # ms
+      p99: 1000     # ms
+    error_rate:
+      target: 0.001  # 0.1%
+      warning: 0.005 # 0.5%
+      critical: 0.01 # 1%
+    throughput:
+      min: 100      # req/s
+
+  # Database Performance
+  database:
+    query_time:
+      p50: 10       # ms
+      p95: 50       # ms
+      p99: 100      # ms
+    connection_pool:
+      max_usage: 80 # %
+    slow_query_threshold: 1000 # ms
+
+  # Resource Usage
+  resources:
+    cpu:
+      warning: 70   # %
+      critical: 90  # %
+    memory:
+      warning: 80   # %
+      critical: 95  # %
+    disk_io:
+      warning: 70   # %
+      critical: 90  # %
+
+  # iOS App Performance
+  ios:
+    launch_time:
+      cold: 2000    # ms
+      warm: 500     # ms
+    memory_usage:
+      warning: 200  # MB
+      critical: 300 # MB
+    crash_rate:
+      target: 0.001 # 0.1%
+      critical: 0.01 # 1%
+
+# Monitoring Endpoints
+endpoints:
+  health:
+    - path: /api/health
+      method: GET
+      timeout: 5000
+      expected_status: 200
+  
+  critical:
+    - path: /api/auth/login
+      method: POST
+      timeout: 3000
+      priority: high
+    
+    - path: /api/tasks
+      method: GET
+      timeout: 2000
+      priority: high
+    
+    - path: /api/users/me
+      method: GET
+      timeout: 2000
+      priority: high
+  
+  secondary:
+    - path: /api/skills
+      method: GET
+      timeout: 3000
+      priority: medium
+    
+    - path: /api/goals
+      method: GET
+      timeout: 3000
+      priority: medium
+
+# Alert Rules
+alerts:
+  # Response Time Alerts
+  high_response_time:
+    condition: "p95_response_time > 500ms"
+    duration: 5m
+    severity: warning
+    channels: ["slack"]
+  
+  very_high_response_time:
+    condition: "p95_response_time > 1000ms"
+    duration: 5m
+    severity: critical
+    channels: ["slack", "pagerduty"]
+
+  # Error Rate Alerts
+  elevated_error_rate:
+    condition: "error_rate > 0.5%"
+    duration: 5m
+    severity: warning
+    channels: ["slack"]
+  
+  high_error_rate:
+    condition: "error_rate > 1%"
+    duration: 5m
+    severity: critical
+    channels: ["slack", "pagerduty", "email"]
+
+  # Database Alerts
+  slow_queries:
+    condition: "slow_query_rate > 5%"
+    duration: 10m
+    severity: warning
+    channels: ["slack"]
+  
+  database_connection_pool_exhausted:
+    condition: "connection_pool_usage > 90%"
+    duration: 5m
+    severity: critical
+    channels: ["slack", "pagerduty"]
+
+  # Resource Alerts
+  high_cpu:
+    condition: "cpu_usage > 80%"
+    duration: 10m
+    severity: warning
+    channels: ["slack"]
+  
+  high_memory:
+    condition: "memory_usage > 90%"
+    duration: 10m
+    severity: critical
+    channels: ["slack", "pagerduty"]
+
+  # iOS App Alerts
+  ios_crash_spike:
+    condition: "crash_rate > 1%"
+    duration: 30m
+    severity: critical
+    channels: ["slack", "pagerduty", "email"]
+
+# Notification Channels
+channels:
+  slack:
+    webhook: "${SLACK_WEBHOOK_URL}"
+    channel: "#alerts"
+    username: "Performance Bot"
+    icon_emoji: ":chart_with_upwards_trend:"
+  
+  pagerduty:
+    integration_key: "${PAGERDUTY_KEY}"
+    severity_mapping:
+      warning: "warning"
+      critical: "error"
+      emergency: "critical"
+  
+  email:
+    smtp_host: "${SMTP_HOST}"
+    smtp_port: 587
+    from: "alerts@levelupsolo.net"
+    to:
+      - "team@levelupsolo.net"
+    subject_prefix: "[LevelUpSolo Alert]"
+
+# Data Retention
+retention:
+  raw_metrics: 7d
+  aggregated_metrics: 30d
+  performance_reports: 90d
+  alert_history: 180d
+
+# Synthetic Monitoring
+synthetic:
+  enabled: true
+  locations:
+    - us-east-1
+    - eu-west-1
+    - ap-southeast-1
+  
+  user_journeys:
+    - name: "User Login"
+      steps:
+        - action: navigate
+          url: "/"
+        - action: click
+          selector: "[data-testid='login-button']"
+        - action: type
+          selector: "[name='email']"
+          text: "test@example.com"
+        - action: type
+          selector: "[name='password']"
+          text: "password123"
+        - action: click
+          selector: "[type='submit']"
+        - action: wait_for_url
+          pattern: "/dashboard"
+      
+    - name: "Complete Task"
+      authenticated: true
+      steps:
+        - action: navigate
+          url: "/tasks"
+        - action: click
+          selector: ".task-item:first-child"
+        - action: click
+          selector: "[data-testid='complete-task']"
+        - action: wait_for_element
+          selector: ".success-message"
+
+# Performance Testing
+performance_tests:
+  load_test:
+    enabled: true
+    schedule: "0 2 * * *"  # Daily at 2 AM
+    scenarios:
+      - name: "Normal Load"
+        users: 100
+        duration: 300s
+        ramp_up: 60s
+      
+      - name: "Peak Load"
+        users: 500
+        duration: 600s
+        ramp_up: 120s
+  
+  stress_test:
+    enabled: false
+    schedule: "0 3 * * 0"  # Weekly on Sunday at 3 AM
+    max_users: 1000
+    duration: 1800s
+
+# Dashboard Configuration
+dashboards:
+  - name: "Overview"
+    refresh: 30s
+    panels:
+      - type: gauge
+        metric: "current_response_time_p95"
+        title: "Response Time (P95)"
+        thresholds:
+          - value: 0
+            color: green
+          - value: 500
+            color: yellow
+          - value: 1000
+            color: red
+      
+      - type: line_chart
+        metrics:
+          - "response_time_p50"
+          - "response_time_p95"
+          - "response_time_p99"
+        title: "Response Time Trends"
+        period: 1h
+      
+      - type: counter
+        metric: "error_rate"
+        title: "Error Rate"
+        format: percentage
+      
+      - type: heatmap
+        metric: "endpoint_performance"
+        title: "Endpoint Performance"
+        group_by: ["endpoint", "hour"]
+
+# Integrations
+integrations:
+  github:
+    enabled: true
+    repo: "levelupsolo/levelupsolo"
+    checks:
+      - name: "Performance Check"
+        required: true
+        thresholds:
+          - metric: "bundle_size"
+            max: 1500000  # 1.5MB
+          - metric: "lighthouse_performance"
+            min: 90
+  
+  datadog:
+    enabled: false
+    api_key: "${DATADOG_API_KEY}"
+    app_key: "${DATADOG_APP_KEY}"
+    tags:
+      - "env:production"
+      - "service:levelupsolo"
+  
+  sentry:
+    enabled: true
+    dsn: "${SENTRY_DSN}"
+    environment: "production"
+    traces_sample_rate: 0.1
+    profiles_sample_rate: 0.1
