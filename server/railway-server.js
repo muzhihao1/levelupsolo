@@ -22,14 +22,39 @@ let db = null;
 if (process.env.DATABASE_URL) {
   try {
     const postgres = require("postgres");
-    const sql = postgres(process.env.DATABASE_URL, {
-      ssl: 'require',
-      connect_timeout: 30
+    
+    // Parse the DATABASE_URL to add sslmode
+    let connectionString = process.env.DATABASE_URL;
+    
+    // Ensure SSL mode is set for Supabase
+    if (!connectionString.includes('sslmode=')) {
+      connectionString += connectionString.includes('?') ? '&sslmode=require' : '?sslmode=require';
+    }
+    
+    console.log("Connecting to database...");
+    console.log("Connection preview:", connectionString.substring(0, 60) + "...");
+    
+    const sql = postgres(connectionString, {
+      ssl: { rejectUnauthorized: false },
+      connect_timeout: 30,
+      idle_timeout: 20,
+      max: 10,
+      prepare: false
     });
+    
     db = sql;
     console.log("✅ Database connection initialized");
+    
+    // Test the connection immediately
+    db`SELECT 1`
+      .then(() => console.log("✅ Database connection verified"))
+      .catch(err => {
+        console.error("❌ Database connection test failed:", err.message);
+        db = null;
+      });
   } catch (error) {
     console.error("❌ Database connection failed:", error.message);
+    console.error("Error details:", error);
   }
 } else {
   console.log("⚠️  No DATABASE_URL, running in demo mode only");
@@ -99,6 +124,44 @@ app.get("/api/health", async (req, res) => {
 // Test endpoint
 app.get("/api/test", (req, res) => {
   res.json({ message: "Server is working!" });
+});
+
+// Database connection test endpoint
+app.get("/api/test/db-connection", async (req, res) => {
+  const result = {
+    hasUrl: !!process.env.DATABASE_URL,
+    urlFormat: null,
+    connectionTest: null,
+    error: null
+  };
+  
+  if (process.env.DATABASE_URL) {
+    // Check URL format
+    const url = process.env.DATABASE_URL;
+    if (url.includes('.pooler.supabase.com:6543')) {
+      result.urlFormat = "✅ Session Pooler format detected";
+    } else if (url.includes('.supabase.co:5432')) {
+      result.urlFormat = "❌ Direct Connection format (wrong)";
+    } else {
+      result.urlFormat = "⚠️ Unknown format";
+    }
+    
+    // Test connection
+    if (db) {
+      try {
+        const testResult = await db`SELECT current_database() as db, current_user as user, version() as version`;
+        result.connectionTest = "✅ Connected";
+        result.database = testResult[0];
+      } catch (error) {
+        result.connectionTest = "❌ Failed";
+        result.error = error.message;
+      }
+    } else {
+      result.connectionTest = "❌ Database client not initialized";
+    }
+  }
+  
+  res.json(result);
 });
 
 // Debug endpoint to check directory structure

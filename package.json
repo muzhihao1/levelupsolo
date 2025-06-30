@@ -23,6 +23,7 @@
     "db:studio": "drizzle-kit studio",
     "seed:test": "tsx scripts/seed-test-data.ts",
     "seed:test:clean": "tsx scripts/seed-test-data.ts --clean",
+    "check:env": "tsx scripts/check-env-config.ts",
     "deploy": "vercel --prod",
     "test": "vitest",
     "test:ui": "vitest --ui",
