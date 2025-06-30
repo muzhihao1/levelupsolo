@@ -2289,8 +2289,13 @@ ${activeGoals.map((goal: any) => `- ${goal.title} (完成度: ${Math.round((goal
 
   app.delete('/api/crud', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = (req.user as any)?.claims?.sub;
       const resource = req.query.resource;
       const id = parseInt(req.query.id);
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
 
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid ID" });
@@ -2298,11 +2303,69 @@ ${activeGoals.map((goal: any) => `- ${goal.title} (完成度: ${Math.round((goal
 
       switch (resource) {
         case 'tasks':
-          const success = await storage.deleteTask(id);
-          if (!success) {
-            return res.status(404).json({ message: "Task not found" });
+          try {
+            const success = await storage.deleteTask(id);
+            if (!success) {
+              return res.status(404).json({ message: "Task not found" });
+            }
+            return res.json({ message: "Task deleted successfully" });
+          } catch (error) {
+            console.error("Storage deleteTask failed, using SQL fallback:", error);
+            
+            // SQL fallback for task deletion
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            try {
+              const taskCheck = await db.execute(sql`
+                SELECT id FROM tasks WHERE id = ${id} AND user_id = ${userId}
+              `);
+              
+              if (!(taskCheck.rows || taskCheck).length) {
+                return res.status(404).json({ message: "Task not found or not owned by user" });
+              }
+              
+              await db.execute(sql`
+                DELETE FROM tasks WHERE id = ${id} AND user_id = ${userId}
+              `);
+              
+              return res.json({ message: "Task deleted successfully" });
+            } catch (sqlError) {
+              console.error("SQL fallback also failed:", sqlError);
+              return res.status(500).json({ message: "Failed to delete task" });
+            }
           }
-          return res.json({ message: "Task deleted successfully" });
+        
+        case 'goals':
+          try {
+            await storage.deleteGoal(id, userId);
+            return res.json({ message: "Goal deleted successfully" });
+          } catch (error) {
+            console.error("Storage deleteGoal failed, using SQL fallback:", error);
+            
+            // SQL fallback for goal deletion
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            try {
+              const goalCheck = await db.execute(sql`
+                SELECT id FROM goals WHERE id = ${id} AND user_id = ${userId}
+              `);
+              
+              if (!(goalCheck.rows || goalCheck).length) {
+                return res.status(404).json({ message: "Goal not found or not owned by user" });
+              }
+              
+              await db.execute(sql`
+                DELETE FROM goals WHERE id = ${id} AND user_id = ${userId}
+              `);
+              
+              return res.json({ message: "Goal deleted successfully" });
+            } catch (sqlError) {
+              console.error("SQL fallback also failed:", sqlError);
+              return res.status(500).json({ message: "Failed to delete goal" });
+            }
+          }
         
         default:
           return res.status(400).json({ message: "Invalid resource type" });
