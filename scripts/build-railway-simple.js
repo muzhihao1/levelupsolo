@@ -14,49 +14,46 @@ try {
   process.exit(1);
 }
 
-// Step 2: Copy server file
-console.log('🔧 Copying server...');
+// Step 2: Copy client files to server/public directory
+console.log('🔧 Copying client files to server/public...');
 try {
-  // Copy the simplified server (no database)
-  const serverPath = path.join(__dirname, '../server/railway-server-simple.js');
-  if (fs.existsSync(serverPath)) {
-    fs.copyFileSync(
-      serverPath,
-      path.join(__dirname, '../dist/railway-server.js')
-    );
-    console.log('✅ Using simplified server (no database)');
-  } else {
-    // Fallback to original server
-    fs.copyFileSync(
-      path.join(__dirname, '../server/railway-server.js'),
-      path.join(__dirname, '../dist/railway-server.js')
-    );
-    console.log('✅ Using standard server');
+  const distPath = path.join(__dirname, '../dist');
+  const serverPublicPath = path.join(__dirname, '../server/public');
+  
+  // Remove existing public directory
+  if (fs.existsSync(serverPublicPath)) {
+    fs.rmSync(serverPublicPath, { recursive: true, force: true });
   }
   
-  console.log('✅ Server copy complete\n');
+  // Create server/public directory
+  fs.mkdirSync(serverPublicPath, { recursive: true });
+  
+  // Copy all files from dist/public to server/public
+  const distPublicPath = path.join(distPath, 'public');
+  if (fs.existsSync(distPublicPath)) {
+    const files = fs.readdirSync(distPublicPath);
+    for (const file of files) {
+      const srcPath = path.join(distPublicPath, file);
+      const destPath = path.join(serverPublicPath, file);
+      
+      if (fs.statSync(srcPath).isDirectory()) {
+        // Copy directory recursively
+        fs.cpSync(srcPath, destPath, { recursive: true });
+      } else {
+        // Copy file
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+    console.log('✅ Client files copied to server/public');
+  } else {
+    console.error('❌ Dist/public directory not found');
+    process.exit(1);
+  }
 } catch (error) {
-  console.error('❌ Server copy failed:', error.message);
+  console.error('❌ Client copy failed:', error.message);
   process.exit(1);
 }
 
-// Step 3: Create package.json for dist
-console.log('📝 Creating dist/package.json...');
-const distPackageJson = {
-  name: "levelupsolo-server",
-  version: "1.0.0",
-  main: "railway-server.js",
-  scripts: {
-    start: "node railway-server.js"
-  },
-  engines: {
-    node: ">=18.0.0"
-  }
-};
-
-fs.writeFileSync(
-  path.join(__dirname, '../dist/package.json'),
-  JSON.stringify(distPackageJson, null, 2)
-);
-
-console.log('✅ Build complete! Ready for Railway deployment.');
+console.log('\n✅ Build complete! Ready for Railway deployment.');
+console.log('🚀 Frontend files are now available at server/public/');
+console.log('🚀 Server will run from server/railway-server.js');
