@@ -113,9 +113,33 @@ app.use((req, res, next) => {
   console.log('- OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ Set' : '❌ Not set');
   
   try {
+    // Add a simple test route before registering other routes
+    app.get('/api/debug/simple', (req, res) => {
+      res.json({
+        message: 'Simple debug route works',
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV,
+        server: 'complete-server'
+      });
+    });
+    console.log('✅ Debug route added');
+    
     console.log('📝 Registering routes...');
-    const server = await registerRoutes(app);
-    console.log('✅ Routes registered successfully');
+    let server;
+    try {
+      server = await registerRoutes(app);
+      console.log('✅ Routes registered successfully');
+    } catch (routeError) {
+      console.error('💥 Route registration failed:', routeError);
+      console.error('Route error details:', {
+        message: (routeError as any).message,
+        stack: (routeError as any).stack,
+        code: (routeError as any).code
+      });
+      // Continue without routes for debugging
+      const { createServer } = await import('http');
+      server = createServer(app);
+    }
     
     console.log('🔐 Setting up authentication...');
     // Setup new simple authentication
@@ -126,6 +150,12 @@ app.use((req, res, next) => {
     // Register mobile routes with JWT authentication
     registerMobileRoutes(app);
     console.log('✅ Mobile routes registered');
+    
+    if (!server) {
+      console.log('Creating server due to route registration failure');
+      const { createServer } = await import('http');
+      server = createServer(app);
+    }
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
