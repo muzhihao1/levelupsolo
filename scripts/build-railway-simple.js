@@ -14,19 +14,18 @@ try {
   process.exit(1);
 }
 
-// Step 2: Compile TypeScript server
-console.log('🔧 Compiling server...');
+// Step 2: Copy server file
+console.log('🔧 Copying server...');
 try {
-  const esbuildPath = path.join(__dirname, '../node_modules/.bin/esbuild');
+  // Just copy the CommonJS server file
+  fs.copyFileSync(
+    path.join(__dirname, '../server/railway-server.js'),
+    path.join(__dirname, '../dist/railway-server.js')
+  );
   
-  // Compile the simplified Railway server
-  execSync(`${esbuildPath} server/railway-server.ts --bundle --platform=node --target=node18 --outfile=dist/railway-server.js --format=esm --external:express --external:dotenv`, {
-    stdio: 'inherit'
-  });
-  
-  console.log('✅ Server compilation complete\n');
+  console.log('✅ Server copy complete\n');
 } catch (error) {
-  console.error('❌ Server compilation failed:', error.message);
+  console.error('❌ Server copy failed:', error.message);
   process.exit(1);
 }
 
@@ -35,10 +34,12 @@ console.log('📝 Creating dist/package.json...');
 const distPackageJson = {
   name: "levelupsolo-server",
   version: "1.0.0",
-  type: "module",
   main: "railway-server.js",
   scripts: {
     start: "node railway-server.js"
+  },
+  engines: {
+    node: ">=18.0.0"
   }
 };
 
