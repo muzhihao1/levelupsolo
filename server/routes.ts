@@ -2043,8 +2043,44 @@ ${activeGoals.map((goal: any) => `- ${goal.title} (完成度: ${Math.round((goal
 
       switch (type) {
         case 'tasks':
-          const tasks = await storage.getTasks(userId);
-          return res.json(tasks);
+          try {
+            const tasks = await storage.getTasks(userId);
+            return res.json(tasks);
+          } catch (error) {
+            console.error("Storage getTasks failed, using SQL fallback:", error);
+            // Use same SQL fallback as /api/tasks endpoint
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            try {
+              const userTasks = await db.execute(sql`
+                SELECT 
+                  id, user_id as "userId", title, description, completed, 
+                  skill_id as "skillId", goal_id as "goalId", exp_reward as "expReward",
+                  estimated_duration as "estimatedDuration", actual_duration as "actualDuration",
+                  accumulated_time as "accumulatedTime", pomodoro_session_id as "pomodoroSessionId",
+                  started_at as "startedAt", created_at as "createdAt", completed_at as "completedAt",
+                  task_category as "taskCategory", task_type as "taskType", 
+                  parent_task_id as "parentTaskId", "order", tags, difficulty,
+                  required_energy_balls as "requiredEnergyBalls", 
+                  last_completed_at as "lastCompletedAt", completion_count as "completionCount"
+                FROM tasks
+                WHERE user_id = ${userId}
+                ORDER BY created_at DESC
+              `);
+              
+              const tasksWithDefaults = (userTasks.rows || userTasks).map((task: any) => ({
+                ...task,
+                skills: [],
+                microTasks: []
+              }));
+              
+              return res.json(tasksWithDefaults);
+            } catch (sqlError) {
+              console.error("SQL fallback also failed:", sqlError);
+              return res.status(500).json({ message: "Failed to fetch tasks" });
+            }
+          }
         
         case 'skills':
           await (storage as any).initializeCoreSkills(userId);
@@ -2052,8 +2088,41 @@ ${activeGoals.map((goal: any) => `- ${goal.title} (完成度: ${Math.round((goal
           return res.json(skills);
         
         case 'goals':
-          const goals = await storage.getGoals(userId);
-          return res.json(goals);
+          try {
+            const goals = await storage.getGoals(userId);
+            return res.json(goals);
+          } catch (error) {
+            console.error("Storage getGoals failed, using SQL fallback:", error);
+            // Use same SQL fallback as /api/goals endpoint
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            try {
+              const userGoals = await db.execute(sql`
+                SELECT 
+                  id, user_id as "userId", title, description, progress, status, priority,
+                  target_date as "targetDate", parent_goal_id as "parentGoalId", 
+                  exp_reward as "expReward", skill_id as "skillId",
+                  created_at as "createdAt", updated_at as "updatedAt", 
+                  completed_at as "completedAt"
+                FROM goals
+                WHERE user_id = ${userId}
+                ORDER BY created_at DESC
+              `);
+              
+              const goalsWithDefaults = (userGoals.rows || userGoals).map((goal: any) => ({
+                ...goal,
+                completed: !!goal.completedAt,
+                milestones: [],
+                microTasks: []
+              }));
+              
+              return res.json(goalsWithDefaults);
+            } catch (sqlError) {
+              console.error("SQL fallback also failed:", sqlError);
+              return res.status(500).json({ message: "Failed to fetch goals" });
+            }
+          }
         
         case 'stats':
           let stats = await storage.getUserStats(userId);
