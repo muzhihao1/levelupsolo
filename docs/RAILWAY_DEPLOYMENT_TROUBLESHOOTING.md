@@ -7,9 +7,29 @@
 **影响范围**：完整的 Web 应用功能
 **最终状态**：✅ 完全解决
 
+**🚨 重大更新 (2025-06-30)**：发现并解决关键问题 - Railway 运行错误的服务器文件 ✅  
 **更新 (2024-01-30)**：登录认证问题也已成功解决 ✅
 
 ## 🚨 问题现象
+
+### 0. 🔥 CRITICAL: 错误的服务器文件（2025-06-30 发现）
+```bash
+# 症状：API 端点返回 HTML 而非 JSON
+curl https://levelupsolo-production.up.railway.app/api/skills
+# 返回 HTML 页面而不是技能数据
+
+# 但健康检查正常
+curl https://levelupsolo-production.up.railway.app/api/health
+# 正常返回 JSON
+```
+
+**前端错误**：
+```javascript
+// 浏览器控制台错误
+GlobalFloatingTimer: not rendering because Object
+Cannot read properties of undefined (reading 'filter')
+// 技能树组件无法正常工作
+```
 
 ### 1. 数据库相关
 ```json
@@ -34,6 +54,28 @@ levelupsolo-production.up.railway.app/:1 Failed to load resource: 404
 - ❌ 前端界面完全不可访问
 
 ## 🔍 根本原因分析
+
+### 🔥 问题 0：CRITICAL - Railway 运行错误的服务器文件（新发现）
+**原因**：Railway 运行 `server/railway-server.js`（简化版）而非 `server/index.ts`（完整版）
+```bash
+# 简化服务器只有基础端点
+server/railway-server.js:
+- /api/health ✅ (存在)
+- /api/auth/* ✅ (存在)
+- /api/skills ❌ (不存在)
+- /api/tasks ❌ (不存在)
+- /api/goals ❌ (不存在)
+
+# 完整服务器有所有端点
+server/index.ts + routes.ts:
+- /api/health ✅
+- /api/skills ✅
+- /api/tasks ✅
+- /api/goals ✅
+- 所有其他API端点 ✅
+```
+
+**影响**：前端调用不存在的API端点，导致JavaScript运行时错误
 
 ### 问题 1：错误的服务器文件
 **原因**：Railway 启动脚本指向错误的文件
@@ -65,6 +107,28 @@ if (fs.existsSync(serverPath)) {
 - 服务器期望：`server/public/`
 
 ## ✅ 解决方案
+
+### 🔥 0. CRITICAL: 强制使用完整服务器（2025-06-30）
+```bash
+# 步骤 1: 删除简化服务器文件
+rm server/railway-server.js
+# 或重命名备份
+mv server/railway-server.js server/railway-server.js.backup
+
+# 步骤 2: 确保正确的启动脚本
+# package.json
+"start": "NODE_ENV=production tsx server/index.ts"
+
+# 步骤 3: 验证部署
+curl https://your-app.up.railway.app/api/server-info
+# 应该返回: {"server": "complete-server-routes-ts", ...}
+
+# 步骤 4: 测试关键端点
+curl https://your-app.up.railway.app/api/skills
+# 应该返回技能数据 JSON，不是 HTML
+```
+
+**重要提示**：删除或重命名 `server/railway-server.js` 是关键，否则 Railway 可能会继续使用简化版本。
 
 ### 1. 修复服务器启动路径
 ```json
@@ -142,6 +206,24 @@ ls -la server/public/  # 确认文件存在
 ```
 
 ## 🔧 快速诊断工具
+
+### 🔥 0. CRITICAL: 服务器版本检查（最重要）
+```bash
+# 检查运行的服务器版本
+curl https://your-app.up.railway.app/api/server-info | jq
+
+# 正确输出（完整服务器）:
+{
+  "server": "complete-server-routes-ts",
+  "version": "2.0-debug",
+  "routes": "loaded-from-routes-ts"
+}
+
+# 错误输出（简化服务器）:
+{"message":"Not found"}
+
+# 如果是错误输出，立即删除 server/railway-server.js 并重新部署
+```
 
 ### 1. 健康检查
 ```bash
