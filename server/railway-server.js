@@ -17,44 +17,43 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 console.log("DATABASE_URL:", process.env.DATABASE_URL ? "✅ Configured" : "❌ Not configured");
 console.log("Current directory:", __dirname);
 
-// Database connection (simple postgres client)
+// Database connection
 let db = null;
 if (process.env.DATABASE_URL) {
+  console.log("Attempting database connection...");
+  
   try {
     const postgres = require("postgres");
     
-    // Parse the DATABASE_URL to add sslmode
-    let connectionString = process.env.DATABASE_URL;
+    // Use the DATABASE_URL exactly as provided, no modifications
+    const connectionString = process.env.DATABASE_URL;
     
-    // Ensure SSL mode is set for Supabase
-    if (!connectionString.includes('sslmode=')) {
-      connectionString += connectionString.includes('?') ? '&sslmode=require' : '?sslmode=require';
+    // Log connection details (safely)
+    if (connectionString.includes('pooler.supabase.com')) {
+      console.log("✅ Using Supabase Session Pooler");
     }
     
-    console.log("Connecting to database...");
-    console.log("Connection preview:", connectionString.substring(0, 60) + "...");
-    
-    const sql = postgres(connectionString, {
-      ssl: { rejectUnauthorized: false },
-      connect_timeout: 30,
-      idle_timeout: 20,
-      max: 10,
-      prepare: false
-    });
+    // Create connection with minimal options
+    // Let postgres handle everything based on the connection string
+    const sql = postgres(connectionString);
     
     db = sql;
-    console.log("✅ Database connection initialized");
+    console.log("Database client created, testing connection...");
     
-    // Test the connection immediately
-    db`SELECT 1`
-      .then(() => console.log("✅ Database connection verified"))
+    // Simple connection test
+    db`SELECT 1 as test`
+      .then(() => {
+        console.log("✅ Database connection successful!");
+      })
       .catch(err => {
-        console.error("❌ Database connection test failed:", err.message);
+        console.error("❌ Connection test failed:", err.message);
+        console.error("Full error:", err);
         db = null;
       });
+      
   } catch (error) {
-    console.error("❌ Database connection failed:", error.message);
-    console.error("Error details:", error);
+    console.error("❌ Failed to create database client:", error.message);
+    db = null;
   }
 } else {
   console.log("⚠️  No DATABASE_URL, running in demo mode only");
