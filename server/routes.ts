@@ -237,6 +237,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Debug endpoint for tasks
+  app.get('/api/debug/tasks', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      console.log('Debug tasks - userId:', userId);
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated", userId: null });
+      }
+
+      // Test basic tasks query without micro tasks
+      const { sql } = await import('drizzle-orm');
+      const { db } = await import('./db').then(m => ({ db: m.db }));
+      const { tasks } = await import('@shared/schema');
+      const { eq, desc } = await import('drizzle-orm');
+      
+      const basicTasks = await db.select().from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.createdAt));
+      console.log('Debug - Basic tasks count:', basicTasks.length);
+      
+      res.json({
+        userId,
+        basicTasksCount: basicTasks.length,
+        basicTasks: basicTasks.slice(0, 3), // First 3 tasks for debug
+        debugTimestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Debug tasks error:", error);
+      res.status(500).json({ 
+        message: "Debug failed", 
+        error: (error as any).message,
+        stack: (error as any).stack
+      });
+    }
+  });
+
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
     console.log('=== CREATE TEST USER START ===');
