@@ -24,6 +24,8 @@
     "seed:test": "tsx scripts/seed-test-data.ts",
     "seed:test:clean": "tsx scripts/seed-test-data.ts --clean",
     "check:env": "tsx scripts/check-env-config.ts",
+    "validate:data": "tsx tools/cross-platform-validator.ts",
+    "validate:db": "tsx tools/cross-platform-validator.ts --db",
     "deploy": "vercel --prod",
     "test": "vitest",
     "test:ui": "vitest --ui",

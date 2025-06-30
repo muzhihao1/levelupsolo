@@ -17,11 +17,22 @@ try {
 // Step 2: Copy server file
 console.log('🔧 Copying server...');
 try {
-  // Just copy the CommonJS server file
-  fs.copyFileSync(
-    path.join(__dirname, '../server/railway-server.js'),
-    path.join(__dirname, '../dist/railway-server.js')
-  );
+  // Copy the simplified server (no database)
+  const serverPath = path.join(__dirname, '../server/railway-server-simple.js');
+  if (fs.existsSync(serverPath)) {
+    fs.copyFileSync(
+      serverPath,
+      path.join(__dirname, '../dist/railway-server.js')
+    );
+    console.log('✅ Using simplified server (no database)');
+  } else {
+    // Fallback to original server
+    fs.copyFileSync(
+      path.join(__dirname, '../server/railway-server.js'),
+      path.join(__dirname, '../dist/railway-server.js')
+    );
+    console.log('✅ Using standard server');
+  }
   
   console.log('✅ Server copy complete\n');
 } catch (error) {
