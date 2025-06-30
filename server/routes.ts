@@ -506,64 +506,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Task not found" });
       }
 
-      // Handle habit completion logic
-      if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
-        const now = new Date();
-        const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
-        const lastCompleted = currentTask.lastCompletedDate ? new Date(currentTask.lastCompletedDate).toISOString().split('T')[0] : null;
-
-        if (updates.completed) {
-          // Completing a habit
-          if (lastCompleted !== today) {
-            // First completion today - award experience and update streak
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toISOString().split('T')[0];
-            const wasCompletedYesterday = lastCompleted === yesterdayStr;
-
-            updates.habitStreak = wasCompletedYesterday ? (currentTask.habitStreak || 0) + 1 : 1;
-            updates.lastCompletedDate = now;
-            updates.habitValue = Math.min((currentTask.habitValue || 0) + 0.25, 3);
-
-            // Award experience for habit completion
-            const baseExp = currentTask.expReward || 20;
-            const streakBonus = updates.habitStreak > 7 ? Math.floor(updates.habitStreak / 7) * 5 : 0;
-            const totalExp = baseExp + streakBonus;
-
-            // Add experience to user
-            await storage.addExperience(userId, totalExp);
-
-            // Update related skill if exists
-            if (currentTask.skillId) {
-              await storage.updateSkillExp(currentTask.skillId, Math.floor(totalExp * 0.8));
-            }
-
-            // Log the activity
-            await storage.addActivityLog({
-              userId,
-              taskId: currentTask.id,
-              skillId: currentTask.skillId,
-              expGained: totalExp,
-              action: "habit_complete",
-              description: `完成习惯: ${currentTask.title} (连续${updates.habitStreak}天)`
-            });
-          } else {
-            // Already completed today - don't allow multiple completions
-            return res.status(400).json({ message: "今天已经完成过这个习惯了" });
-          }
-        } else {
-          // Uncompleting a habit - only allow if completed today
-          if (lastCompleted === today) {
-            updates.completed = false;
-            // Reset last completed date when uncompleting
-            const yesterday = new Date(now);
-            yesterday.setDate(yesterday.getDate() - 1);
-            updates.lastCompletedDate = lastCompleted === today ? null : currentTask.lastCompletedDate;
-          } else {
-            return res.status(400).json({ message: "只能取消今天完成的习惯" });
-          }
-        }
-      }
+      // Handle habit completion logic - TEMPORARILY DISABLED until database schema is updated
+      // TODO: Re-enable once habit-related columns (habitStreak, habitValue, lastCompletedDate) are added to database
+      // if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
+      //   // Habit-specific logic commented out due to missing database columns
+      // }
 
       const task = await storage.updateTask(taskId, updates);
 
@@ -613,7 +560,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user?.claims?.sub;
       const taskId = parseInt(req.params.id);
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (isNaN(taskId)) {
+        return res.status(400).json({ message: "Invalid task ID" });
+      }
+
+      // First verify the task belongs to the user
+      const task = await storage.getTask(taskId);
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      if (task.userId !== userId) {
+        return res.status(403).json({ message: "Task not found" }); // Don't reveal task exists for other users
+      }
+
       const success = await storage.deleteTask(taskId);
 
       if (!success) {
@@ -671,16 +638,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             estimatedDuration: energyBalls * 15,
             requiredEnergyBalls: energyBalls,
             tags: [],
-            skills: [],
             skillId: null,
-            completed: false,
-            ...(taskCategory === "habit" && {
-              isRecurring: true,
-              recurringPattern: "daily",
-              habitStreak: 0,
-              habitValue: 0,
-              habitDirection: "positive"
-            })
+            completed: false
           };
 
           console.log("Creating simple task with data:", JSON.stringify(taskData, null, 2));
@@ -854,17 +813,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         estimatedDuration: requiredEnergyBalls * 15, // Energy balls * 15 minutes
         requiredEnergyBalls: requiredEnergyBalls,
         tags: skillName ? [skillName] : [],
-        skills: skillName ? [skillName] : [],
         skillId: skillId,
-        completed: false,
-        // Add habit-specific properties for habit tasks
-        ...(taskCategory === "habit" && {
-          isRecurring: true,
-          recurringPattern: "daily",
-          habitStreak: 0,
-          habitValue: 0,
-          habitDirection: "positive"
-        })
+        completed: false
       };
 
       console.log("Creating AI task with data:", JSON.stringify(taskData, null, 2));
@@ -969,8 +919,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             if (skill) {
               await storage.updateTask(task.id, {
                 skillId: skill.id,
-                tags: [skillName],
-                skills: [skillName]
+                tags: [skillName]
               });
             }
 
@@ -2012,8 +1961,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expReward: 10,
         estimatedDuration: 15,
         requiredEnergyBalls: 1,
-        tags: [],
-        skills: []
+        tags: []
       };
       
       console.log("Attempting to create test task with data:", testTaskData);

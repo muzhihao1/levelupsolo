@@ -99,21 +99,10 @@ export const tasks = pgTable("tasks", {
   parentTaskId: integer("parent_task_id"), // 父任务ID
   order: integer("order").notNull().default(0), // 在同级任务中的排序
   tags: text("tags").array().default([]), // 任务标签（写作、编程、生活等）
-  skills: text("skills").array().default([]), // 关联的技能名称
-
-  // Habit-specific fields
-  habitDirection: text("habit_direction").default("positive"), // 'positive', 'negative', 'both'
-  habitStreak: integer("habit_streak").default(0), // 连续执行天数
-  habitValue: real("habit_value").default(0), // 习惯强度值 (-3到+3)
-
-  // Daily task fields
-  isDailyTask: boolean("is_daily_task").notNull().default(false),
-  dailyStreak: integer("daily_streak").default(0),
-
-  // Recurring settings
-  isRecurring: boolean("is_recurring").notNull().default(false), // 是否为重复任务
-  recurringPattern: text("recurring_pattern"), // 重复模式：'daily', 'weekly', 'weekdays'
-  lastCompletedDate: timestamp("last_completed_date"), // 最后完成日期
+  
+  // Actual database fields that exist (matching production database):
+  lastCompletedAt: timestamp("last_completed_at"), // 最后完成时间
+  completionCount: integer("completion_count").notNull().default(0), // 完成次数
 
   // Task difficulty and rewards
   difficulty: text("difficulty").notNull().default("medium"), // 'trivial', 'easy', 'medium', 'hard'

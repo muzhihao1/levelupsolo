@@ -92,7 +92,7 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // Reusable task selector (only includes columns that exist in DB)
+  // Reusable task selector (ONLY includes columns that actually exist in DB)
   private readonly taskSelectColumns = {
     id: tasks.id,
     userId: tasks.userId,
@@ -115,20 +115,10 @@ export class DatabaseStorage implements IStorage {
     parentTaskId: tasks.parentTaskId,
     order: tasks.order,
     tags: tasks.tags,
-    skills: tasks.skills,
     difficulty: tasks.difficulty,
     requiredEnergyBalls: tasks.requiredEnergyBalls,
-    // Habit-specific fields
-    habitDirection: tasks.habitDirection,
-    habitStreak: tasks.habitStreak,
-    habitValue: tasks.habitValue,
-    // Daily task fields
-    isDailyTask: tasks.isDailyTask,
-    dailyStreak: tasks.dailyStreak,
-    // Recurring fields
-    isRecurring: tasks.isRecurring,
-    recurringPattern: tasks.recurringPattern,
-    lastCompletedDate: tasks.lastCompletedDate,
+    lastCompletedAt: tasks.lastCompletedAt,
+    completionCount: tasks.completionCount,
   };
 
   // User operations (required for authentication)
@@ -579,8 +569,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(tasks.createdAt));
 
     return allTasks
-      .filter(task => task.tags && task.tags.includes(tag))
-      .map(task => ({ ...task, skills: [] }));
+      .filter(task => task.tags && task.tags.includes(tag));
   }
 
   // Goals
