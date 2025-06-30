@@ -474,7 +474,7 @@ app.get("/api/auth/user", async (req, res) => {
 
 // Serve static files in production
 if (process.env.NODE_ENV === "production") {
-  // Client files are in dist/public, but server is in dist/
+  // Client files should be in server/public
   const clientPath = path.join(__dirname, "public");
   
   console.log("Serving static files from:", clientPath);
@@ -483,7 +483,29 @@ if (process.env.NODE_ENV === "production") {
   const fs = require("fs");
   if (!fs.existsSync(clientPath)) {
     console.error("⚠️  Client build directory not found:", clientPath);
-    console.error("Make sure to run 'npm run build:client' first");
+    console.error("Attempting to build client files...");
+    
+    try {
+      // Try to run the build process
+      const { execSync } = require('child_process');
+      const buildScript = path.join(__dirname, '../scripts/build-railway-simple.js');
+      
+      if (fs.existsSync(buildScript)) {
+        console.log("Running build script...");
+        execSync(`node ${buildScript}`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
+        
+        if (fs.existsSync(clientPath)) {
+          console.log("✅ Build successful! Client files are now available");
+        } else {
+          console.error("❌ Build completed but files not found");
+        }
+      } else {
+        console.error("❌ Build script not found at:", buildScript);
+      }
+    } catch (buildError) {
+      console.error("❌ Build failed:", buildError.message);
+      console.error("Continuing without static files - API endpoints will still work");
+    }
   } else {
     console.log("✅ Client directory found with files:", fs.readdirSync(clientPath).slice(0, 5).join(", "), "...");
   }
