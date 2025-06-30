@@ -9,8 +9,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --production=false --legacy-peer-deps
+# Install dependencies with timeout and retry
+RUN npm install --production=false --legacy-peer-deps --fetch-timeout=600000 --fetch-retries=5
 
 # Copy all source files
 COPY . .
@@ -22,4 +22,4 @@ RUN npm run build:railway
 EXPOSE ${PORT:-3000}
 
 # Start the application
-CMD ["npm", "run", "start:railway"]
+CMD ["npm", "start"]

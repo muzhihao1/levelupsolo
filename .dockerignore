@@ -1,0 +1,27 @@
+node_modules
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+.vscode
+.idea
+coverage
+.nyc_output
+.DS_Store
+*.log
+dist
+build
+.next
+.nuxt
+.cache
+.parcel-cache
+.vercel
+*.test.ts
+*.test.tsx
+README.md
+SECURITY_GUIDE.md
+DATABASE_SETUP.md
+RAILWAY_FINAL_DIAGNOSIS.md
+RAILWAY_LOGIN_DEBUG.md
+Level up solo-ios

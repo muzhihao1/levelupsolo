@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["nodejs-18_x", "npm-9_x"]
+
+[phases.install]
+cmds = ["npm install --production=false --legacy-peer-deps"]
+
+[phases.build]
+cmds = ["npm run build:railway"]
+
+[start]
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
