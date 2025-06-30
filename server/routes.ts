@@ -237,6 +237,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Debug endpoint to verify routes are working
+  app.get('/api/debug/routes', (req, res) => {
+    res.json({
+      message: 'Routes file loaded successfully',
+      timestamp: new Date().toISOString(),
+      server: 'complete-routes-file',
+      routesLoaded: true
+    });
+  });
+
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
   app.post('/api/test/create-user', async (req, res) => {
     console.log('=== CREATE TEST USER START ===');
