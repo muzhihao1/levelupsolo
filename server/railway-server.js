@@ -39,14 +39,19 @@ if (process.env.DATABASE_URL) {
     console.log("   - Database:", url.pathname.substring(1));
     
     // Validate Supabase Session Pooler format
-    if (url.hostname.includes('pooler.supabase.com') && url.port === '6543') {
-      console.log("✅ Using Supabase Session Pooler (correct)");
+    if (url.hostname.includes('pooler.supabase.com')) {
+      console.log("✅ Using Supabase Session Pooler");
+      // Note: Supabase Session Pooler can use either port 5432 or 6543
     } else if (url.hostname.includes('supabase.co') && url.port === '5432') {
       console.log("❌ Using Direct Connection - this won't work on Railway!");
       console.log("   Please use Session Pooler connection string instead");
-    } else if (url.hostname.includes('pooler.supabase.com') && url.port === '5432') {
-      console.log("❌ Wrong port for Session Pooler!");
-      console.log("   Session Pooler uses port 6543, not 5432");
+    }
+    
+    // Check username format
+    if (!url.username.startsWith('postgres.')) {
+      console.log("⚠️  Username format might be incorrect");
+      console.log("   Expected: postgres.xxxxx");
+      console.log("   Got: " + url.username);
     }
     
     // Create connection with minimal options
