@@ -87,7 +87,8 @@ export function setupSimpleAuth(app: Express) {
           const token = generateToken('demo', email);
           return res.json({
             success: true,
-            token,
+            accessToken: token,
+            refreshToken: token, // Same token for simplicity
             user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
           });
         }
@@ -120,7 +121,8 @@ export function setupSimpleAuth(app: Express) {
         
         res.json({
           success: true,
-          token,
+          accessToken: token,
+          refreshToken: token, // Same token for simplicity
           user: {
             id: user.id,
             email: user.email,
@@ -136,7 +138,8 @@ export function setupSimpleAuth(app: Express) {
           const token = generateToken('demo', email);
           return res.json({
             success: true,
-            token,
+            accessToken: token,
+            refreshToken: token, // Same token for simplicity
             user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
           });
         }
@@ -198,7 +201,8 @@ export function setupSimpleAuth(app: Express) {
       
       res.json({
         success: true,
-        token,
+        accessToken: token,
+        refreshToken: token, // Same token for simplicity
         user: {
           id: newUser.id,
           email: newUser.email,
@@ -216,8 +220,56 @@ export function setupSimpleAuth(app: Express) {
   });
 
   // Get current user
-  app.get('/api/auth/user', simpleAuth, (req: any, res) => {
-    res.json({ user: req.user });
+  app.get('/api/auth/user', simpleAuth, async (req: any, res) => {
+    try {
+      const { userId, email } = req.user;
+      
+      // For demo user, return static data
+      if (userId === 'demo') {
+        return res.json({
+          id: 'demo',
+          email: 'demo@levelupsolo.net',
+          firstName: 'Demo',
+          lastName: 'User',
+          profileImageUrl: null
+        });
+      }
+      
+      // For real users, fetch from database
+      if (db) {
+        try {
+          const [user] = await db
+            .select()
+            .from(users)
+            .where(eq(users.id, userId))
+            .limit(1);
+          
+          if (user) {
+            return res.json({
+              id: user.id,
+              email: user.email,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              profileImageUrl: user.profileImageUrl
+            });
+          }
+        } catch (dbError) {
+          console.error('Error fetching user from DB:', dbError);
+        }
+      }
+      
+      // Fallback response
+      res.json({
+        id: userId,
+        email: email,
+        firstName: 'User',
+        lastName: '',
+        profileImageUrl: null
+      });
+    } catch (error) {
+      console.error('Error in /api/auth/user:', error);
+      res.status(500).json({ error: 'Failed to fetch user' });
+    }
   });
 
   // Logout (client-side only)
