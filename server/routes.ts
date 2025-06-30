@@ -237,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Debug endpoint for tasks - pure SQL approach
+  // Debug endpoint for tasks - direct SQL only to avoid schema issues
   app.get('/api/debug/tasks', isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
@@ -247,57 +247,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated", userId: null });
       }
 
-      // Use storage method directly to avoid schema issues
-      const allTasks = await storage.getTasks(userId);
+      // Use direct SQL query to bypass any schema issues
+      const postgres = require('postgres');
+      const connectionString = process.env.DATABASE_URL;
+      const sql = postgres(connectionString);
+      
+      const basicTasks = await sql`
+        SELECT id, user_id, title, description, completed, created_at, task_category, task_type
+        FROM tasks
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 10
+      `;
+      
+      await sql.end();
       
       res.json({
         userId,
-        tasksCount: allTasks.length,
-        tasks: allTasks.slice(0, 3), // First 3 tasks
+        directSqlUsed: true,
+        tasksCount: basicTasks.length,
+        tasks: basicTasks,
         debugTimestamp: new Date().toISOString(),
-        message: "Using storage.getTasks method"
+        message: "Direct SQL query bypassing storage layer"
       });
     } catch (error) {
       console.error("Debug tasks error:", error);
-      
-      // Fallback: try raw database query
-      try {
-        const postgres = require('postgres');
-        const connectionString = process.env.DATABASE_URL;
-        const sql = postgres(connectionString);
-        
-        const tableInfo = await sql`
-          SELECT column_name, data_type, is_nullable
-          FROM information_schema.columns
-          WHERE table_name = 'tasks'
-          ORDER BY ordinal_position
-        `;
-        
-        const basicTasks = await sql`
-          SELECT id, user_id, title, description, completed, created_at
-          FROM tasks
-          WHERE user_id = ${userId}
-          ORDER BY created_at DESC
-          LIMIT 5
-        `;
-        
-        await sql.end();
-        
-        res.json({
-          userId,
-          fallbackUsed: true,
-          tasksCount: basicTasks.length,
-          tasks: basicTasks,
-          tableColumns: tableInfo,
-          debugTimestamp: new Date().toISOString()
-        });
-      } catch (fallbackError) {
-        res.status(500).json({ 
-          message: "Both storage and fallback failed", 
-          storageError: (error as any).message,
-          fallbackError: (fallbackError as any).message
-        });
-      }
+      res.status(500).json({ 
+        message: "Debug failed", 
+        error: (error as any).message,
+        stack: (error as any).stack?.split('\n').slice(0, 3)
+      });
     }
   });
 
@@ -490,8 +469,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      const tasks = await storage.getTasks(userId);
-      res.json(tasks);
+      // Temporary fix: use direct SQL to bypass schema issues
+      const postgres = require('postgres');
+      const connectionString = process.env.DATABASE_URL;
+      const sql = postgres(connectionString);
+      
+      const userTasks = await sql`
+        SELECT 
+          id, user_id as "userId", title, description, completed, 
+          skill_id as "skillId", goal_id as "goalId", exp_reward as "expReward",
+          estimated_duration as "estimatedDuration", actual_duration as "actualDuration",
+          accumulated_time as "accumulatedTime", pomodoro_session_id as "pomodoroSessionId",
+          started_at as "startedAt", created_at as "createdAt", completed_at as "completedAt",
+          task_category as "taskCategory", task_type as "taskType", 
+          parent_task_id as "parentTaskId", "order", tags, difficulty,
+          required_energy_balls as "requiredEnergyBalls", 
+          last_completed_at as "lastCompletedAt", completion_count as "completionCount"
+        FROM tasks
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC
+      `;
+      
+      await sql.end();
+      
+      // Add skills array for compatibility and transform dates
+      const tasksWithSkills = userTasks.map(task => ({
+        ...task,
+        skills: [], // Add empty skills array for compatibility
+        createdAt: new Date(task.createdAt),
+        completedAt: task.completedAt ? new Date(task.completedAt) : null,
+        startedAt: task.startedAt ? new Date(task.startedAt) : null,
+        lastCompletedAt: task.lastCompletedAt ? new Date(task.lastCompletedAt) : null,
+        microTasks: [] // Add empty microTasks for now
+      }));
+      
+      res.json(tasksWithSkills);
     } catch (error) {
       console.error("Error fetching tasks:", error);
       res.status(500).json({ message: "Failed to fetch tasks" });
