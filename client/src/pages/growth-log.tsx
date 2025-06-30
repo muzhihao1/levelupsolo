@@ -10,16 +10,24 @@ export default function GrowthLog() {
   const [filter, setFilter] = useState("daily");
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data: logs = [] } = useQuery<ActivityLog[]>({
-    queryKey: ['/api/activity-logs']
+  const { data: logs = [], isLoading: logsLoading, error: logsError } = useQuery<ActivityLog[]>({
+    queryKey: ['/api/activity-logs'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000, // 10 minutes
+    retry: 2,
+    retryDelay: 1000
   });
 
   const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/data?type=skills']
+    queryKey: ['/api/data?type=skills'],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    cacheTime: 15 * 60 * 1000 // 15 minutes
   });
 
   const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/data?type=tasks']
+    queryKey: ['/api/data?type=tasks'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000 // 10 minutes
   });
 
   const getSkillName = (skillId?: number) => {
@@ -191,7 +199,25 @@ export default function GrowthLog() {
 
       {/* Daily Logs */}
       <div className="space-y-6">
-        {logs.length === 0 ? (
+        {logsLoading ? (
+          <Card className="bg-card border-border">
+            <CardContent className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">加载日志中...</p>
+            </CardContent>
+          </Card>
+        ) : logsError ? (
+          <Card className="bg-card border-border">
+            <CardContent className="text-center py-12">
+              <i className="fas fa-exclamation-triangle text-4xl text-destructive mb-4"></i>
+              <h3 className="text-xl font-semibold text-foreground mb-2">加载失败</h3>
+              <p className="text-muted-foreground mb-4">无法加载活动日志，请稍后重试</p>
+              <Button onClick={() => window.location.reload()} variant="outline">
+                重新加载
+              </Button>
+            </CardContent>
+          </Card>
+        ) : logs.length === 0 ? (
           <Card className="bg-card border-border">
             <CardContent className="text-center py-12">
               <i className="fas fa-book text-4xl text-muted-foreground mb-4"></i>

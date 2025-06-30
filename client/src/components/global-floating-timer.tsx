@@ -42,11 +42,10 @@ export function GlobalFloatingTimer() {
   };
 
   if (!timerData || !timerData.isRunning) {
-    console.log('GlobalFloatingTimer: not rendering because', { timerData });
+    console.log('GlobalFloatingTimer: not rendering -', 
+      !timerData ? 'timerData is null' : `isRunning: ${timerData.isRunning}`);
     return null;
   }
-
-  console.log('GlobalFloatingTimer: rendering timer');
 
   return createPortal(
     <div 

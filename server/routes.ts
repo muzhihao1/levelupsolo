@@ -506,11 +506,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Task not found" });
       }
 
-      // Handle habit completion logic - TEMPORARILY DISABLED until database schema is updated
-      // TODO: Re-enable once habit-related columns (habitStreak, habitValue, lastCompletedDate) are added to database
-      // if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
-      //   // Habit-specific logic commented out due to missing database columns
-      // }
+      // Handle habit completion logic using existing database fields
+      if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
+        const now = new Date();
+        
+        if (updates.completed) {
+          // For habits, update lastCompletedAt and increment completionCount
+          updates.lastCompletedAt = now;
+          updates.completionCount = (currentTask.completionCount || 0) + 1;
+          
+          // Don't actually mark habits as "completed" - they're repeatable
+          delete updates.completed;
+          
+          console.log(`Habit task ${taskId} completed, count: ${updates.completionCount}`);
+        }
+      }
 
       const task = await storage.updateTask(taskId, updates);
 
@@ -544,6 +554,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         } catch (error) {
           console.error("Error handling energy balls:", error);
+        }
+      }
+
+      // Create activity log for task completion
+      if (updates.completed && !currentTask.completed) {
+        try {
+          const expGained = task.expReward || 20;
+          await storage.createActivityLog({
+            userId,
+            taskId: task.id,
+            skillId: task.skillId || null,
+            expGained,
+            action: 'task_completed',
+            description: `完成任务: ${task.title}`
+          });
+          console.log(`Activity log created for task ${task.id} completion`);
+        } catch (error) {
+          console.error("Error creating activity log:", error);
         }
       }
 
@@ -1111,6 +1139,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching goals:", error);
       res.status(500).json({ message: "Failed to fetch goals" });
+    }
+  });
+
+  // Debug endpoint for activity_logs table
+  app.get('/api/debug/activity-logs', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      // Check table structure
+      const tableInfo = await db.execute(sql`
+        SELECT column_name, data_type, is_nullable, column_default
+        FROM information_schema.columns
+        WHERE table_name = 'activity_logs'
+        ORDER BY ordinal_position
+      `);
+      
+      // Get sample data
+      const sampleData = await db.execute(sql`
+        SELECT * FROM activity_logs
+        ORDER BY date DESC
+        LIMIT 5
+      `);
+      
+      // Count total logs
+      const count = await db.execute(sql`
+        SELECT COUNT(*) as count FROM activity_logs
+      `);
+      
+      res.json({
+        tableStructure: tableInfo,
+        sampleData: sampleData,
+        totalCount: count[0]?.count || 0
+      });
+    } catch (error) {
+      console.error('Debug activity logs error:', error);
+      res.status(500).json({ 
+        error: error.message,
+        stack: error.stack
+      });
     }
   });
 
@@ -1779,16 +1847,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/activity-logs", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user?.claims?.sub;
+      console.log("Activity logs request - userId:", userId);
+      console.log("Activity logs request - user:", req.user);
 
       if (!userId) {
+        console.error("No userId found in request.user:", req.user);
         return res.status(401).json({ message: "User not authenticated" });
       }
 
       const logs = await storage.getActivityLogs(userId);
+      console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
       res.json(logs);
     } catch (error) {
       console.error("Error fetching activity logs:", error);
-      res.status(500).json({ message: "Failed to fetch activity logs" });
+      console.error("Stack trace:", error.stack);
+      res.status(500).json({ message: "Failed to fetch activity logs", error: error.message });
     }
   });
 
