@@ -48,19 +48,37 @@ app.use((req, res, next) => {
 app.get("/api/health", async (req, res) => {
   let dbStatus = "unknown";
   let dbError = null;
+  let tableCheck = null;
   
   if (db) {
     try {
+      // Basic connection test
       await db`SELECT 1 as test`;
       dbStatus = "connected";
+      
+      // Check if users table exists
+      try {
+        const tableResult = await db`
+          SELECT EXISTS (
+            SELECT FROM information_schema.tables 
+            WHERE table_schema = 'public' 
+            AND table_name = 'users'
+          ) as exists
+        `;
+        tableCheck = tableResult[0].exists ? "users table exists" : "users table NOT found";
+      } catch (tableError) {
+        tableCheck = "Error checking tables: " + tableError.message;
+      }
     } catch (error) {
       dbStatus = "error";
       dbError = error.message;
     }
   } else if (!process.env.DATABASE_URL) {
     dbStatus = "not configured";
+    dbError = "DATABASE_URL environment variable not set";
   } else {
     dbStatus = "initialization failed";
+    dbError = "Database client failed to initialize";
   }
   
   res.json({
@@ -71,7 +89,9 @@ app.get("/api/health", async (req, res) => {
     database: {
       status: dbStatus,
       error: dbError,
-      hasUrl: !!process.env.DATABASE_URL
+      hasUrl: !!process.env.DATABASE_URL,
+      urlPreview: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 50) + "..." : null,
+      tableCheck: tableCheck
     }
   });
 });
@@ -205,6 +225,70 @@ app.post("/api/auth/simple-login", async (req, res) => {
     // No database connection
     console.log("No database connection available");
     res.status(401).json({ error: "Invalid credentials (database not connected)" });
+  }
+});
+
+// Register endpoint
+app.post("/api/auth/register", async (req, res) => {
+  const { email, password, firstName, lastName } = req.body;
+  
+  console.log("Register attempt:", email);
+  
+  if (!email || !password || !firstName || !lastName) {
+    return res.status(400).json({ error: "所有字段都是必填的" });
+  }
+  
+  if (password.length < 8) {
+    return res.status(400).json({ error: "密码至少需要8个字符" });
+  }
+  
+  if (!db) {
+    return res.status(500).json({ error: "数据库未连接" });
+  }
+  
+  try {
+    // Check if user exists
+    const existing = await db`
+      SELECT id FROM users WHERE email = ${email} LIMIT 1
+    `;
+    
+    if (existing.length > 0) {
+      return res.status(400).json({ error: "该邮箱已被注册" });
+    }
+    
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    // Create user
+    const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    await db`
+      INSERT INTO users (id, email, first_name, last_name, hashed_password, created_at, updated_at)
+      VALUES (${userId}, ${email}, ${firstName}, ${lastName}, ${hashedPassword}, NOW(), NOW())
+    `;
+    
+    console.log("User registered successfully:", email);
+    
+    // Generate token
+    const token = jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: '7d' });
+    
+    res.json({
+      success: true,
+      accessToken: token,
+      refreshToken: token,
+      user: {
+        id: userId,
+        email: email,
+        firstName: firstName,
+        lastName: lastName
+      }
+    });
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ 
+      error: "注册失败", 
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+    });
   }
 });
 
