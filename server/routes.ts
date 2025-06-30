@@ -237,36 +237,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Debug endpoint to check goals table structure
-  app.get('/api/debug/goals-structure', async (req, res) => {
+  // Debug endpoint to check database structure
+  app.get('/api/debug/database-structure', async (req, res) => {
     try {
       const { sql } = require('drizzle-orm');
       
+      // Check all existing tables
+      const allTables = await sql`
+        SELECT table_name 
+        FROM information_schema.tables 
+        WHERE table_schema = 'public'
+        ORDER BY table_name
+      `;
+      
       // Check if goals table exists and its structure
-      const tableInfo = await sql`
+      const goalsTableInfo = await sql`
         SELECT column_name, data_type 
         FROM information_schema.columns 
         WHERE table_name = 'goals'
         ORDER BY ordinal_position
       `;
       
-      // Check if there are any goals
-      const goalCount = await sql`SELECT COUNT(*) as count FROM goals`;
+      // Check tasks table structure for comparison
+      const tasksTableInfo = await sql`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'tasks'
+        ORDER BY ordinal_position
+      `;
       
-      // Try to get one sample goal
-      let sampleGoal = null;
+      // Check if there are any tasks that could be main quests
+      let mainQuestTasks = [];
       try {
-        const sample = await sql`SELECT * FROM goals LIMIT 1`;
-        sampleGoal = sample[0] || null;
+        mainQuestTasks = await sql`
+          SELECT id, title, task_category, task_type, goal_id
+          FROM tasks 
+          WHERE task_category = 'main' OR task_type = 'main' OR goal_id IS NOT NULL
+          LIMIT 5
+        `;
       } catch (e) {
-        sampleGoal = { error: (e as any).message };
+        mainQuestTasks = { error: (e as any).message };
       }
       
       res.json({
-        tableExists: tableInfo.length > 0,
-        columns: tableInfo,
-        goalCount: goalCount[0]?.count || 0,
-        sampleGoal
+        allTables: allTables.map(t => t.table_name),
+        goalsTable: {
+          exists: goalsTableInfo.length > 0,
+          columns: goalsTableInfo
+        },
+        tasksTable: {
+          exists: tasksTableInfo.length > 0,
+          columns: tasksTableInfo
+        },
+        mainQuestTasks
       });
     } catch (error) {
       res.status(500).json({
