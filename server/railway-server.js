@@ -28,9 +28,25 @@ if (process.env.DATABASE_URL) {
     // Use the DATABASE_URL exactly as provided, no modifications
     const connectionString = process.env.DATABASE_URL;
     
+    // Parse and validate connection string
+    const url = new URL(connectionString);
+    
     // Log connection details (safely)
-    if (connectionString.includes('pooler.supabase.com')) {
-      console.log("✅ Using Supabase Session Pooler");
+    console.log("📍 Connection details:");
+    console.log("   - Host:", url.hostname);
+    console.log("   - Port:", url.port);
+    console.log("   - User:", url.username);
+    console.log("   - Database:", url.pathname.substring(1));
+    
+    // Validate Supabase Session Pooler format
+    if (url.hostname.includes('pooler.supabase.com') && url.port === '6543') {
+      console.log("✅ Using Supabase Session Pooler (correct)");
+    } else if (url.hostname.includes('supabase.co') && url.port === '5432') {
+      console.log("❌ Using Direct Connection - this won't work on Railway!");
+      console.log("   Please use Session Pooler connection string instead");
+    } else if (url.hostname.includes('pooler.supabase.com') && url.port === '5432') {
+      console.log("❌ Wrong port for Session Pooler!");
+      console.log("   Session Pooler uses port 6543, not 5432");
     }
     
     // Create connection with minimal options
