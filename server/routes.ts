@@ -1982,6 +1982,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to check tasks table structure
+  app.get('/api/debug/tasks-table', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      console.log("=== Checking tasks table structure ===");
+      
+      // Check tasks table columns
+      const taskColumns = await db.execute(sql`
+        SELECT column_name, data_type, is_nullable, column_default
+        FROM information_schema.columns
+        WHERE table_name = 'tasks'
+        ORDER BY ordinal_position
+      `);
+      
+      console.log("Tasks table columns:", taskColumns);
+      
+      // Try to insert a simple task to see what fails
+      const testTaskData = {
+        userId: 'test_user_debug',
+        title: 'Debug Test Task',
+        description: 'Testing task creation',
+        completed: false,
+        taskCategory: 'todo',
+        taskType: 'todo',
+        difficulty: 'easy',
+        expReward: 10,
+        estimatedDuration: 15,
+        requiredEnergyBalls: 1,
+        tags: [],
+        skills: []
+      };
+      
+      console.log("Attempting to create test task with data:", testTaskData);
+      
+      let insertError = null;
+      try {
+        const newTask = await storage.createTask(testTaskData);
+        console.log("Test task created successfully:", newTask);
+      } catch (error) {
+        insertError = error;
+        console.error("Test task creation failed:", error);
+      }
+      
+      res.json({
+        taskColumns: taskColumns,
+        testTaskData: testTaskData,
+        insertError: insertError ? {
+          message: insertError.message,
+          code: insertError.code,
+          stack: insertError.stack
+        } : null
+      });
+      
+    } catch (error) {
+      console.error("Debug endpoint error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Generic data endpoint for client compatibility
   app.get('/api/data', isAuthenticated, async (req: any, res) => {
     try {
