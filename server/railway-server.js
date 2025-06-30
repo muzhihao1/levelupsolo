@@ -488,19 +488,25 @@ if (process.env.NODE_ENV === "production") {
     try {
       // Try to run the build process
       const { execSync } = require('child_process');
-      const buildScript = path.join(__dirname, '../scripts/build-railway-simple.js');
+      const simpleBuildScript = path.join(__dirname, 'build-frontend-simple.js');
+      const originalBuildScript = path.join(__dirname, '../scripts/build-railway-simple.js');
       
-      if (fs.existsSync(buildScript)) {
-        console.log("Running build script...");
-        execSync(`node ${buildScript}`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
-        
-        if (fs.existsSync(clientPath)) {
-          console.log("✅ Build successful! Client files are now available");
-        } else {
-          console.error("❌ Build completed but files not found");
-        }
+      // 尝试简化构建脚本
+      if (fs.existsSync(simpleBuildScript)) {
+        console.log("Running simplified build script...");
+        execSync(`node ${simpleBuildScript}`, { stdio: 'inherit', cwd: __dirname });
+      } else if (fs.existsSync(originalBuildScript)) {
+        console.log("Running original build script...");
+        execSync(`node ${originalBuildScript}`, { stdio: 'inherit', cwd: path.join(__dirname, '..') });
       } else {
-        console.error("❌ Build script not found at:", buildScript);
+        console.error("❌ No build script found");
+        throw new Error("Build scripts not available");
+      }
+      
+      if (fs.existsSync(clientPath)) {
+        console.log("✅ Build successful! Client files are now available");
+      } else {
+        console.error("❌ Build completed but files not found");
       }
     } catch (buildError) {
       console.error("❌ Build failed:", buildError.message);
