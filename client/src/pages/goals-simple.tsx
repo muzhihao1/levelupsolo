@@ -20,9 +20,7 @@ interface Goal {
   milestones?: Milestone[];
   skillTags?: string[] | null;
   expReward?: number;
-  goldReward?: number;
   pomodoroExpReward?: number;
-  pomodoroGoldReward?: number;
 }
 
 interface Milestone {
@@ -191,7 +189,7 @@ export default function Goals() {
             </CardContent>
           </Card>
         ) : (
-          goals.map((goal) => (
+          goals.filter(goal => !goal.completed).map((goal) => (
             <GoalCard
               key={goal.id}
               goal={goal}

@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress";
-import { Coins, Zap, Flame, Circle } from "lucide-react";
+import { Zap, Flame, Circle } from "lucide-react";
 import type { UserStats } from "@shared/schema";
 
 interface HabiticaStatsProps {

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Target, Trophy, Coins } from "lucide-react";
+import { Loader2, Sparkles, Target, Trophy } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -21,10 +21,8 @@ export default function IntelligentGoalCreator({ onGoalCreated }: IntelligentGoa
 
   const createGoalMutation = useMutation({
     mutationFn: async (goalDescription: string) => {
-      return await apiRequest("POST", "/api/crud?resource=goals", {
-        title: goalDescription,
-        description: goalDescription,
-        expReward: 500
+      return await apiRequest("POST", "/api/goals/intelligent-create", {
+        description: goalDescription
       });
     },
     onSuccess: (goal) => {
@@ -69,7 +67,7 @@ export default function IntelligentGoalCreator({ onGoalCreated }: IntelligentGoa
             AI智能目标创建
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            描述您的目标，AI将自动分析并创建结构化的主线任务，包含经验奖励、金币奖励和里程碑
+            描述您的目标，AI将自动分析并创建结构化的主线任务，包含经验奖励和里程碑
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -120,14 +118,12 @@ export default function IntelligentGoalCreator({ onGoalCreated }: IntelligentGoa
                 <Trophy className="h-3 w-3" />
                 完成奖励: {createdGoal.expReward} EXP
               </Badge>
-              <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-100 text-yellow-700">
-                <Coins className="h-3 w-3" />
-                {createdGoal.goldReward} 金币
-              </Badge>
-              <Badge variant="outline" className="flex items-center gap-1 border-blue-500 text-blue-400">
-                <Target className="h-3 w-3" />
-                番茄钟: {createdGoal.pomodoroExpReward} EXP + {createdGoal.pomodoroGoldReward} 金币
-              </Badge>
+              {createdGoal.pomodoroExpReward && (
+                <Badge variant="outline" className="flex items-center gap-1 border-blue-500 text-blue-400">
+                  <Target className="h-3 w-3" />
+                  番茄钟: {createdGoal.pomodoroExpReward} EXP
+                </Badge>
+              )}
             </div>
 
             {createdGoal.skillTags && createdGoal.skillTags.length > 0 && (

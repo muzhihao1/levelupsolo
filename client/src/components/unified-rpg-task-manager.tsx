@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, CheckCircle, Circle, Coins, Zap, Flame, Target, Trash2, Clock, Play, Pause, RotateCcw, Brain, Crown, X, Battery } from "lucide-react";
+import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pause, RotateCcw, Brain, Crown, X, Battery } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Task, InsertTask, Skill } from "@shared/schema";
@@ -33,10 +33,10 @@ const TASK_CATEGORIES = {
 };
 
 const DIFFICULTY_LEVELS = {
-  trivial: { name: "微不足道", xp: 1, gold: 1, color: "gray" },
-  easy: { name: "简单", xp: 5, gold: 2, color: "green" },
-  medium: { name: "中等", xp: 10, gold: 5, color: "yellow" },
-  hard: { name: "困难", xp: 15, gold: 8, color: "red" }
+  trivial: { name: "微不足道", xp: 1, color: "gray" },
+  easy: { name: "简单", xp: 5, color: "green" },
+  medium: { name: "中等", xp: 10, color: "yellow" },
+  hard: { name: "困难", xp: 15, color: "red" }
 };
 
 // 能量状态描述函数
@@ -669,8 +669,8 @@ export default function UnifiedRPGTaskManager() {
                   .then((reward: any) => {
                     console.log("🎉 主线任务番茄钟完成！", reward);
                     // 显示奖励提示
-                    if (reward.expGained && reward.goldGained) {
-                      console.log(`💎 获得奖励: +${reward.expGained} EXP, +${reward.goldGained} 金币`);
+                    if (reward.expGained) {
+                      console.log(`💎 获得奖励: +${reward.expGained} EXP`);
                     }
                     // 刷新用户数据
                     queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });

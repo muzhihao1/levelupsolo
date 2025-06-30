@@ -61,7 +61,6 @@ export function HabiticaTaskManager({ className }: HabiticaTaskManagerProps) {
       isRecurring: selectedCategory === "daily",
       recurringPattern: selectedCategory === "daily" ? "daily" : null,
       expReward: getDifficultyExpReward(selectedDifficulty),
-      // goldReward removed for simplified energy ball system
       userId: "", // Will be set by backend
     };
 
@@ -101,15 +100,6 @@ export function HabiticaTaskManager({ className }: HabiticaTaskManagerProps) {
     }
   };
 
-  const getDifficultyGoldReward = (difficulty: string) => {
-    switch (difficulty) {
-      case "trivial": return 1;
-      case "easy": return 2;
-      case "medium": return 3;
-      case "hard": return 5;
-      default: return 3;
-    }
-  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {

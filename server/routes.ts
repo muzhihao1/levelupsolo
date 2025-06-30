@@ -1206,9 +1206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   "title": "简洁明确的目标标题",
   "description": "详细的目标描述",
   "expReward": 目标完成奖励经验值(50-200),
-  "goldReward": 目标完成奖励金币(25-100),
   "pomodoroExpReward": 每个番茄钟经验奖励(5-15),
-  "pomodoroGoldReward": 每个番茄钟金币奖励(2-8),
   "relatedSkillNames": ["从用户现有技能中选择最相关的技能名称"],
   "milestones": [
     {"title": "里程碑1标题", "description": "里程碑1描述"},
@@ -1259,12 +1257,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: analysisResult.title,
         description: analysisResult.description,
         expReward: analysisResult.expReward,
-        goldReward: analysisResult.goldReward,
-        pomodoroExpReward: analysisResult.pomodoroExpReward,
-        pomodoroGoldReward: analysisResult.pomodoroGoldReward,
-        skillTags: analysisResult.relatedSkillNames, // Keep as readable names for display
-        relatedSkillIds, // Use actual skill IDs for system integration
-        completed: false,
+        status: 'active',
+        priority: 'medium',
         progress: 0
       };
 
@@ -1332,7 +1326,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         for (let i = 0; i < 3; i++) {
           const milestone = analysisResult.milestones[i];
           await storage.createMilestone({
-            userId,
             goalId: goal.id,
             title: milestone.title,
             description: milestone.description,
