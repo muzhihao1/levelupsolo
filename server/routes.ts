@@ -1044,8 +1044,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const userGoals = await sql`
             SELECT 
               id, user_id as "userId", title, description,
-              target_date as "targetDate", priority, status, 
-              created_at as "createdAt", updated_at as "updatedAt"
+              created_at as "createdAt"
             FROM goals
             WHERE user_id = ${userId}
             ORDER BY created_at DESC
@@ -1055,6 +1054,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const goalsWithDefaults = userGoals.map((goal: any) => ({
             ...goal,
             completed: false, // Default value since column doesn't exist
+            targetDate: null, // Default value
+            priority: 'medium', // Default value
+            status: 'active', // Default value  
+            updatedAt: goal.createdAt, // Default to createdAt
             milestones: [],
             microTasks: []
           }));
