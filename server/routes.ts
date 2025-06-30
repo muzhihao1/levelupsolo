@@ -237,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Debug endpoint for tasks
+  // Debug endpoint for tasks - pure SQL approach
   app.get('/api/debug/tasks', isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
@@ -247,43 +247,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated", userId: null });
       }
 
-      // Check actual table structure first
-      const { sql } = await import('drizzle-orm');
-      const { db } = await import('./db').then(m => ({ db: m.db }));
-      
-      // Get table columns
-      const tableInfo = await db.execute(sql`
-        SELECT column_name, data_type, is_nullable
-        FROM information_schema.columns
-        WHERE table_name = 'tasks'
-        ORDER BY ordinal_position
-      `);
-      
-      // Simple query without any potentially missing columns
-      const basicTasks = await db.execute(sql`
-        SELECT id, user_id, title, description, completed, created_at
-        FROM tasks
-        WHERE user_id = ${userId}
-        ORDER BY created_at DESC
-        LIMIT 5
-      `);
-      
-      console.log('Debug - Basic tasks count:', basicTasks.length);
+      // Use storage method directly to avoid schema issues
+      const allTasks = await storage.getTasks(userId);
       
       res.json({
         userId,
-        basicTasksCount: basicTasks.length,
-        basicTasks: basicTasks,
-        tableColumns: tableInfo,
-        debugTimestamp: new Date().toISOString()
+        tasksCount: allTasks.length,
+        tasks: allTasks.slice(0, 3), // First 3 tasks
+        debugTimestamp: new Date().toISOString(),
+        message: "Using storage.getTasks method"
       });
     } catch (error) {
       console.error("Debug tasks error:", error);
-      res.status(500).json({ 
-        message: "Debug failed", 
-        error: (error as any).message,
-        stack: (error as any).stack?.split('\n').slice(0, 5)
-      });
+      
+      // Fallback: try raw database query
+      try {
+        const postgres = require('postgres');
+        const connectionString = process.env.DATABASE_URL;
+        const sql = postgres(connectionString);
+        
+        const tableInfo = await sql`
+          SELECT column_name, data_type, is_nullable
+          FROM information_schema.columns
+          WHERE table_name = 'tasks'
+          ORDER BY ordinal_position
+        `;
+        
+        const basicTasks = await sql`
+          SELECT id, user_id, title, description, completed, created_at
+          FROM tasks
+          WHERE user_id = ${userId}
+          ORDER BY created_at DESC
+          LIMIT 5
+        `;
+        
+        await sql.end();
+        
+        res.json({
+          userId,
+          fallbackUsed: true,
+          tasksCount: basicTasks.length,
+          tasks: basicTasks,
+          tableColumns: tableInfo,
+          debugTimestamp: new Date().toISOString()
+        });
+      } catch (fallbackError) {
+        res.status(500).json({ 
+          message: "Both storage and fallback failed", 
+          storageError: (error as any).message,
+          fallbackError: (fallbackError as any).message
+        });
+      }
     }
   });
 
