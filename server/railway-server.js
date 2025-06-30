@@ -2,6 +2,11 @@
 require("dotenv").config();
 const express = require("express");
 const path = require("path");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+// Simple JWT secret with fallback
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,7 +14,26 @@ const PORT = process.env.PORT || 3000;
 console.log("🚀 Starting Railway server...");
 console.log("PORT:", PORT);
 console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("DATABASE_URL:", process.env.DATABASE_URL ? "✅ Configured" : "❌ Not configured");
 console.log("Current directory:", __dirname);
+
+// Database connection (simple postgres client)
+let db = null;
+if (process.env.DATABASE_URL) {
+  try {
+    const postgres = require("postgres");
+    const sql = postgres(process.env.DATABASE_URL, {
+      ssl: 'require',
+      connect_timeout: 30
+    });
+    db = sql;
+    console.log("✅ Database connection initialized");
+  } catch (error) {
+    console.error("❌ Database connection failed:", error.message);
+  }
+} else {
+  console.log("⚠️  No DATABASE_URL, running in demo mode only");
+}
 
 // Basic middleware
 app.use(express.json());
@@ -21,13 +45,34 @@ app.use((req, res, next) => {
 });
 
 // Health check endpoint
-app.get("/api/health", (req, res) => {
+app.get("/api/health", async (req, res) => {
+  let dbStatus = "unknown";
+  let dbError = null;
+  
+  if (db) {
+    try {
+      await db`SELECT 1 as test`;
+      dbStatus = "connected";
+    } catch (error) {
+      dbStatus = "error";
+      dbError = error.message;
+    }
+  } else if (!process.env.DATABASE_URL) {
+    dbStatus = "not configured";
+  } else {
+    dbStatus = "initialization failed";
+  }
+  
   res.json({
-    status: "ok",
+    status: dbStatus === "connected" ? "ok" : "degraded",
     timestamp: new Date().toISOString(),
     port: PORT,
     env: process.env.NODE_ENV,
-    database: !!process.env.DATABASE_URL ? "configured" : "not configured"
+    database: {
+      status: dbStatus,
+      error: dbError,
+      hasUrl: !!process.env.DATABASE_URL
+    }
   });
 });
 
@@ -53,16 +98,46 @@ app.get("/api/debug/files", (req, res) => {
   res.json(result);
 });
 
+// Debug endpoint to check database users
+app.get("/api/debug/users", async (req, res) => {
+  if (!db) {
+    return res.json({ error: "Database not connected", hasUrl: !!process.env.DATABASE_URL });
+  }
+  
+  try {
+    const users = await db`
+      SELECT id, email, first_name, last_name, 
+             CASE WHEN hashed_password IS NOT NULL THEN true ELSE false END as has_password,
+             created_at
+      FROM users 
+      ORDER BY created_at DESC 
+      LIMIT 10
+    `;
+    
+    res.json({
+      count: users.length,
+      users: users,
+      database: "connected"
+    });
+  } catch (error) {
+    res.json({
+      error: "Database query failed",
+      message: error.message,
+      database: "error"
+    });
+  }
+});
+
 // Simple auth endpoints for testing
-app.post("/api/auth/simple-login", (req, res) => {
+app.post("/api/auth/simple-login", async (req, res) => {
   const { email, password } = req.body;
   
   console.log("Login attempt:", email);
   
-  // Demo login
+  // Demo login (always available)
   if (email === "demo@levelupsolo.net" && password === "demo1234") {
-    const token = "demo-token-" + Date.now();
-    res.json({
+    const token = jwt.sign({ userId: "demo", email }, JWT_SECRET, { expiresIn: '7d' });
+    return res.json({
       success: true,
       accessToken: token,
       refreshToken: token,
@@ -73,20 +148,129 @@ app.post("/api/auth/simple-login", (req, res) => {
         lastName: "User"
       }
     });
+  }
+  
+  // Database login
+  if (db) {
+    try {
+      console.log("Querying database for user:", email);
+      const users = await db`
+        SELECT id, email, first_name, last_name, hashed_password 
+        FROM users 
+        WHERE email = ${email} 
+        LIMIT 1
+      `;
+      
+      if (users.length === 0) {
+        console.log("User not found:", email);
+        return res.status(401).json({ error: "邮箱或密码错误" });
+      }
+      
+      const user = users[0];
+      console.log("User found, verifying password");
+      
+      if (!user.hashed_password) {
+        console.log("No password set for user");
+        return res.status(401).json({ error: "邮箱或密码错误" });
+      }
+      
+      const valid = await bcrypt.compare(password, user.hashed_password);
+      if (!valid) {
+        console.log("Invalid password");
+        return res.status(401).json({ error: "邮箱或密码错误" });
+      }
+      
+      console.log("Login successful for:", email);
+      const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+      
+      res.json({
+        success: true,
+        accessToken: token,
+        refreshToken: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name
+        }
+      });
+    } catch (error) {
+      console.error("Database error during login:", error);
+      res.status(500).json({ 
+        error: "数据库错误", 
+        details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+      });
+    }
   } else {
-    res.status(401).json({ error: "Invalid credentials" });
+    // No database connection
+    console.log("No database connection available");
+    res.status(401).json({ error: "Invalid credentials (database not connected)" });
   }
 });
 
-app.get("/api/auth/user", (req, res) => {
-  // Return demo user for now
-  res.json({
-    id: "demo",
-    email: "demo@levelupsolo.net",
-    firstName: "Demo",
-    lastName: "User",
-    profileImageUrl: null
-  });
+app.get("/api/auth/user", async (req, res) => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    // Return demo user for backwards compatibility
+    return res.json({
+      id: "demo",
+      email: "demo@levelupsolo.net",
+      firstName: "Demo",
+      lastName: "User",
+      profileImageUrl: null
+    });
+  }
+  
+  const token = authHeader.substring(7);
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // If it's the demo user
+    if (decoded.userId === "demo") {
+      return res.json({
+        id: "demo",
+        email: "demo@levelupsolo.net",
+        firstName: "Demo",
+        lastName: "User",
+        profileImageUrl: null
+      });
+    }
+    
+    // For real users, fetch from database
+    if (db) {
+      const users = await db`
+        SELECT id, email, first_name, last_name, profile_image_url 
+        FROM users 
+        WHERE id = ${decoded.userId} 
+        LIMIT 1
+      `;
+      
+      if (users.length > 0) {
+        const user = users[0];
+        return res.json({
+          id: user.id,
+          email: user.email,
+          firstName: user.first_name,
+          lastName: user.last_name,
+          profileImageUrl: user.profile_image_url
+        });
+      }
+    }
+    
+    // Fallback
+    res.json({
+      id: decoded.userId,
+      email: decoded.email,
+      firstName: "User",
+      lastName: "",
+      profileImageUrl: null
+    });
+  } catch (error) {
+    console.error("JWT verification error:", error);
+    res.status(401).json({ error: "Invalid token" });
+  }
 });
 
 // Serve static files in production
