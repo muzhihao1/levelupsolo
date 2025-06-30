@@ -280,7 +280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       res.json({
-        allTables: allTables.map(t => t.table_name),
+        allTables: Array.isArray(allTables) ? allTables.map(t => t.table_name) : allTables,
         goalsTable: {
           exists: goalsTableInfo.length > 0,
           columns: goalsTableInfo
