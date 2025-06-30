@@ -247,19 +247,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated", userId: null });
       }
 
-      // Test basic tasks query without micro tasks
+      // Check actual table structure first
       const { sql } = await import('drizzle-orm');
       const { db } = await import('./db').then(m => ({ db: m.db }));
-      const { tasks } = await import('@shared/schema');
-      const { eq, desc } = await import('drizzle-orm');
       
-      const basicTasks = await db.select().from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.createdAt));
+      // Get table columns
+      const tableInfo = await db.execute(sql`
+        SELECT column_name, data_type, is_nullable
+        FROM information_schema.columns
+        WHERE table_name = 'tasks'
+        ORDER BY ordinal_position
+      `);
+      
+      // Simple query without any potentially missing columns
+      const basicTasks = await db.execute(sql`
+        SELECT id, user_id, title, description, completed, created_at
+        FROM tasks
+        WHERE user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 5
+      `);
+      
       console.log('Debug - Basic tasks count:', basicTasks.length);
       
       res.json({
         userId,
         basicTasksCount: basicTasks.length,
-        basicTasks: basicTasks.slice(0, 3), // First 3 tasks for debug
+        basicTasks: basicTasks,
+        tableColumns: tableInfo,
         debugTimestamp: new Date().toISOString()
       });
     } catch (error) {
@@ -267,7 +282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: "Debug failed", 
         error: (error as any).message,
-        stack: (error as any).stack
+        stack: (error as any).stack?.split('\n').slice(0, 5)
       });
     }
   });
