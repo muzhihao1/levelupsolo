@@ -1105,23 +1105,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const { db } = require('./db');
         
         try {
-          const userGoals = await sql`
+          const userGoals = await db.execute(sql`
             SELECT 
-              id, user_id as "userId", title, description,
-              created_at as "createdAt"
+              id, user_id as "userId", title, description, progress, status, priority,
+              target_date as "targetDate", parent_goal_id as "parentGoalId", 
+              exp_reward as "expReward", skill_id as "skillId",
+              created_at as "createdAt", updated_at as "updatedAt", 
+              completed_at as "completedAt"
             FROM goals
             WHERE user_id = ${userId}
             ORDER BY created_at DESC
-          `;
+          `);
           
-          // Add empty arrays and default values for frontend compatibility
-          const goalsWithDefaults = userGoals.map((goal: any) => ({
+          // Add frontend compatibility fields
+          const goalsWithDefaults = (userGoals.rows || userGoals).map((goal: any) => ({
             ...goal,
-            completed: false, // Default value since column doesn't exist
-            targetDate: null, // Default value
-            priority: 'medium', // Default value
-            status: 'active', // Default value  
-            updatedAt: goal.createdAt, // Default to createdAt
+            completed: !!goal.completedAt, // Derive completed from completedAt
             milestones: [],
             microTasks: []
           }));
