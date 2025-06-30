@@ -65,10 +65,27 @@ if (process.env.DATABASE_URL) {
     db`SELECT 1 as test`
       .then(() => {
         console.log("✅ Database connection successful!");
+        
+        // Also test the users table
+        return db`
+          SELECT COUNT(*) as count FROM users
+        `;
+      })
+      .then(result => {
+        console.log(`✅ Users table accessible, ${result[0].count} users found`);
       })
       .catch(err => {
         console.error("❌ Connection test failed:", err.message);
         console.error("Full error:", err);
+        
+        if (err.message.includes("Tenant or user not found")) {
+          console.error("🚨 This is a Supabase connection string issue!");
+          console.error("   Make sure DATABASE_URL uses the correct format");
+        } else if (err.message.includes("relation \"users\" does not exist")) {
+          console.error("🚨 The users table doesn't exist in this database!");
+          console.error("   You might be connected to the wrong database");
+        }
+        
         db = null;
       });
       
@@ -345,12 +362,27 @@ app.post("/api/auth/register", async (req, res) => {
     // Create user
     const userId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    await db`
+    // Insert with better error handling
+    const insertResult = await db`
       INSERT INTO users (id, email, first_name, last_name, hashed_password, created_at, updated_at)
       VALUES (${userId}, ${email}, ${firstName}, ${lastName}, ${hashedPassword}, NOW(), NOW())
+      RETURNING id, email
     `;
     
     console.log("User registered successfully:", email);
+    console.log("Insert result:", insertResult);
+    
+    // Verify the user was actually saved
+    const verifyUser = await db`
+      SELECT id, email FROM users WHERE id = ${userId}
+    `;
+    
+    if (verifyUser.length === 0) {
+      console.error("❌ User was not saved to database!");
+      throw new Error("User registration failed - not saved to database");
+    }
+    
+    console.log("✅ User verified in database:", verifyUser[0].email);
     
     // Generate token
     const token = jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: '7d' });

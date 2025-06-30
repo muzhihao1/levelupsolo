@@ -8,7 +8,6 @@
 
 import fs from 'fs/promises';
 import path from 'path';
-import { glob } from 'glob';
 import { createHash } from 'crypto';
 import * as ts from 'typescript';
 import { exec } from 'child_process';
@@ -131,12 +130,61 @@ class CodeQualityAnalyzer {
 
   private async getFilesToAnalyze(): Promise<string[]> {
     const allFiles: string[] = [];
+    const baseDir = process.cwd();
 
+    // Custom file finder function
+    const findFiles = async (dir: string, pattern: RegExp): Promise<string[]> => {
+      const results: string[] = [];
+      
+      try {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+        
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          const relativePath = path.relative(baseDir, fullPath);
+          
+          // Check if path should be excluded
+          const shouldExclude = this.config.exclude.some(excludePattern => {
+            // Convert glob pattern to regex
+            const regex = new RegExp(
+              excludePattern
+                .replace(/\*\*/g, '.*')
+                .replace(/\*/g, '[^/]*')
+                .replace(/\?/g, '.')
+            );
+            return regex.test(relativePath);
+          });
+          
+          if (shouldExclude) continue;
+          
+          if (entry.isDirectory()) {
+            // Recursively search subdirectories
+            const subFiles = await findFiles(fullPath, pattern);
+            results.push(...subFiles);
+          } else if (entry.isFile() && pattern.test(entry.name)) {
+            results.push(fullPath);
+          }
+        }
+      } catch (error) {
+        // Ignore directories we can't read
+      }
+      
+      return results;
+    };
+
+    // Convert glob patterns to regex
     for (const pattern of this.config.include) {
-      const files = await glob(pattern, {
-        ignore: this.config.exclude,
-        absolute: true
-      });
+      // Convert glob pattern to regex
+      const regex = new RegExp(
+        pattern
+          .replace(/\*\*/g, '.*')
+          .replace(/\*\.(ts|tsx|js|jsx)/g, '.*\\.(ts|tsx|js|jsx)')
+          .replace(/\*/g, '[^/]*')
+          .replace(/\?/g, '.')
+          .replace(/\./g, '\\.')
+      );
+      
+      const files = await findFiles(baseDir, regex);
       allFiles.push(...files);
     }
 
