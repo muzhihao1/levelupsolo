@@ -92,6 +92,35 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  // Reusable task selector (only includes columns that exist in DB)
+  private readonly taskSelectColumns = {
+    id: tasks.id,
+    userId: tasks.userId,
+    title: tasks.title,
+    description: tasks.description,
+    completed: tasks.completed,
+    skillId: tasks.skillId,
+    goalId: tasks.goalId,
+    goalTags: tasks.goalTags,
+    expReward: tasks.expReward,
+    estimatedDuration: tasks.estimatedDuration,
+    actualDuration: tasks.actualDuration,
+    accumulatedTime: tasks.accumulatedTime,
+    pomodoroSessionId: tasks.pomodoroSessionId,
+    startedAt: tasks.startedAt,
+    createdAt: tasks.createdAt,
+    completedAt: tasks.completedAt,
+    taskCategory: tasks.taskCategory,
+    taskType: tasks.taskType,
+    parentTaskId: tasks.parentTaskId,
+    order: tasks.order,
+    tags: tasks.tags,
+    difficulty: tasks.difficulty,
+    requiredEnergyBalls: tasks.requiredEnergyBalls,
+    lastCompletedAt: tasks.lastCompletedAt,
+    completionCount: tasks.completionCount,
+  };
+
   // User operations (required for authentication)
   async getUser(id: string): Promise<User | undefined> {
     if (!isDatabaseInitialized()) {
@@ -410,7 +439,9 @@ export class DatabaseStorage implements IStorage {
 
   // Tasks
   async getTasks(userId: string): Promise<Task[]> {
-    const userTasks = await db.select().from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.createdAt));
+    // Use the reusable selector that only includes existing columns
+    const userTasks = await db.select(this.taskSelectColumns)
+      .from(tasks).where(eq(tasks.userId, userId)).orderBy(desc(tasks.createdAt));
     
     // Fetch micro tasks for each task
     const tasksWithMicroTasks = await Promise.all(
@@ -419,7 +450,12 @@ export class DatabaseStorage implements IStorage {
           .where(eq(microTasks.taskId, task.id))
           .orderBy(microTasks.order);
         
-        return { ...task, microTasks: taskMicroTasks };
+        // Add skills array as empty for compatibility (since DB doesn't have this column)
+        return { 
+          ...task, 
+          skills: [], // Default empty array since column doesn't exist
+          microTasks: taskMicroTasks 
+        };
       })
     );
 
@@ -427,8 +463,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTask(id: number): Promise<Task | undefined> {
-    const [task] = await db.select().from(tasks).where(eq(tasks.id, id));
-    return task || undefined;
+    const [task] = await db.select(this.taskSelectColumns).from(tasks).where(eq(tasks.id, id));
+    
+    if (!task) return undefined;
+    
+    // Add skills array for compatibility
+    return { ...task, skills: [] };
   }
 
   async createTask(task: InsertTask): Promise<Task> {
@@ -482,48 +522,57 @@ export class DatabaseStorage implements IStorage {
 
   // Hierarchical task methods
   async getTasksByType(userId: string, taskType: string): Promise<Task[]> {
-    return await db
-      .select()
+    const result = await db
+      .select(this.taskSelectColumns)
       .from(tasks)
       .where(and(eq(tasks.userId, userId), eq(tasks.taskType, taskType)))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
+    
+    return result.map(task => ({ ...task, skills: [] }));
   }
 
   async getSubTasks(parentTaskId: number): Promise<Task[]> {
-    return await db
-      .select()
+    const result = await db
+      .select(this.taskSelectColumns)
       .from(tasks)
       .where(eq(tasks.parentTaskId, parentTaskId))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
+    
+    return result.map(task => ({ ...task, skills: [] }));
   }
 
   async getMainTasks(userId: string): Promise<Task[]> {
-    return await db
-      .select()
+    const result = await db
+      .select(this.taskSelectColumns)
       .from(tasks)
       .where(and(eq(tasks.userId, userId), eq(tasks.taskType, 'main')))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
+    
+    return result.map(task => ({ ...task, skills: [] }));
   }
 
   async getDailyTasks(userId: string): Promise<Task[]> {
-    return await db
-      .select()
+    // Use taskCategory instead of isRecurring (which doesn't exist in DB)
+    const result = await db
+      .select(this.taskSelectColumns)
       .from(tasks)
-      .where(and(eq(tasks.userId, userId), eq(tasks.isRecurring, true)))
+      .where(and(eq(tasks.userId, userId), eq(tasks.taskCategory, 'habit')))
       .orderBy(asc(tasks.order), desc(tasks.createdAt));
+    
+    return result.map(task => ({ ...task, skills: [] }));
   }
 
   async getTasksByTag(userId: string, tag: string): Promise<Task[]> {
     // Simple filtering - will implement proper array filtering when needed
     const allTasks = await db
-      .select()
+      .select(this.taskSelectColumns)
       .from(tasks)
       .where(eq(tasks.userId, userId))
       .orderBy(desc(tasks.createdAt));
 
-    return allTasks.filter(task => 
-      task.tags && task.tags.includes(tag)
-    );
+    return allTasks
+      .filter(task => task.tags && task.tags.includes(tag))
+      .map(task => ({ ...task, skills: [] }));
   }
 
   // Goals
