@@ -116,16 +116,17 @@ export const goals = pgTable("goals", {
   userId: varchar("user_id").notNull().references(() => users.id),
   title: text("title").notNull(),
   description: text("description"),
-  completed: boolean("completed").notNull().default(false),
+  // Note: completed field does not exist in production database - derive from completedAt
   progress: real("progress").notNull().default(0),
+  status: text("status").notNull().default("active"), // 'active', 'completed', 'paused'
+  priority: text("priority").notNull().default("medium"), // 'low', 'medium', 'high'
   targetDate: timestamp("target_date"),
-  expReward: integer("exp_reward").notNull().default(50), // 目标完成经验奖励
-  pomodoroExpReward: integer("pomodoro_exp_reward").notNull().default(10), // 每个番茄钟经验奖励
-  requiredEnergyBalls: integer("required_energy_balls").notNull().default(4), // 主线任务所需能量球数量
-  skillTags: text("skill_tags").array(), // 关联的技能标签
-  relatedSkillIds: integer("related_skill_ids").array(), // 关联的技能ID数组
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  completedAt: timestamp("completed_at"),
+  parentGoalId: integer("parent_goal_id"), // 父目标ID
+  expReward: integer("exp_reward").notNull().default(100), // 目标完成经验奖励
+  skillId: integer("skill_id"), // 关联的技能ID
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(), // 更新时间
+  completedAt: timestamp("completed_at"), // 完成时间
 });
 
 export const goalTasks = pgTable("goal_tasks", {
@@ -138,13 +139,14 @@ export const goalTasks = pgTable("goal_tasks", {
 
 export const milestones = pgTable("milestones", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").notNull().references(() => users.id),
+  // Note: No userId field in production database - milestones are linked via goalId
   goalId: integer("goal_id").notNull().references(() => goals.id),
   title: text("title").notNull(),
   description: text("description"),
   completed: boolean("completed").notNull().default(false),
+  progress: real("progress").notNull().default(0), // Added to match production database
   order: integer("order").notNull().default(0),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(), // Changed to match actual database (nullable)
   completedAt: timestamp("completed_at"),
 });
 
@@ -187,6 +189,7 @@ export const insertTaskSchema = createInsertSchema(tasks).omit({
 export const insertGoalSchema = createInsertSchema(goals).omit({
   id: true,
   createdAt: true,
+  updatedAt: true,
   completedAt: true,
 });
 

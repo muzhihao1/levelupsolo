@@ -1469,6 +1469,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/goals/:id", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const goalId = parseInt(req.params.id);
+      const updates = req.body;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (isNaN(goalId)) {
+        return res.status(400).json({ message: "Invalid goal ID" });
+      }
+
+      // Get current goal to verify ownership
+      const currentGoal = await storage.getGoal(goalId);
+      if (!currentGoal || currentGoal.userId !== userId) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+
+      // Handle goal completion - set completedAt timestamp and status
+      if (updates.completed !== undefined) {
+        if (updates.completed) {
+          updates.completedAt = new Date();
+          updates.status = 'completed';
+          updates.progress = 1.0; // 100% completion
+        } else {
+          updates.completedAt = null;
+          updates.status = 'active';
+        }
+        // Remove completed field as it doesn't exist in database
+        delete updates.completed;
+      }
+
+      // Update goal with correct fields only
+      const allowedFields = {
+        title: updates.title,
+        description: updates.description,
+        progress: updates.progress,
+        status: updates.status,
+        priority: updates.priority,
+        targetDate: updates.targetDate,
+        parentGoalId: updates.parentGoalId,
+        expReward: updates.expReward,
+        skillId: updates.skillId,
+        updatedAt: new Date(),
+        completedAt: updates.completedAt
+      };
+
+      // Filter out undefined values
+      const filteredUpdates = Object.fromEntries(
+        Object.entries(allowedFields).filter(([_, value]) => value !== undefined)
+      );
+
+      const goal = await storage.updateGoal(goalId, filteredUpdates);
+
+      if (!goal) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+
+      // Add virtual completed field for frontend compatibility
+      const goalWithCompleted = {
+        ...goal,
+        completed: !!goal.completedAt
+      };
+
+      res.json(goalWithCompleted);
+    } catch (error) {
+      console.error("Error updating goal:", error);
+      res.status(500).json({ message: "Failed to update goal", error: error.message });
+    }
+  });
+
   app.delete("/api/goals/:id", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user?.claims?.sub;
@@ -1931,6 +2004,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to check goals table structure
+  app.get('/api/debug/goals-table', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      console.log("=== Checking goals table structure ===");
+      
+      // Check goals table columns
+      const goalColumns = await db.execute(sql`
+        SELECT column_name, data_type, is_nullable, column_default
+        FROM information_schema.columns
+        WHERE table_name = 'goals'
+        ORDER BY ordinal_position
+      `);
+      
+      console.log("Goals table columns:", goalColumns);
+      
+      res.json({
+        goalColumns: goalColumns,
+        note: "Removed test goal creation to avoid foreign key errors"
+      });
+    } catch (error) {
+      console.error("Goals table debug error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Debug endpoint to check milestones table structure
+  app.get('/api/debug/milestones-table', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      console.log("=== Checking milestones table structure ===");
+      
+      // Check if milestones table exists
+      const tableExists = await db.execute(sql`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'milestones'
+        );
+      `);
+      
+      let milestoneColumns = [];
+      if (tableExists[0]?.exists) {
+        // Check milestones table columns
+        milestoneColumns = await db.execute(sql`
+          SELECT column_name, data_type, is_nullable, column_default
+          FROM information_schema.columns
+          WHERE table_name = 'milestones'
+          ORDER BY ordinal_position
+        `);
+        console.log("Milestones table columns:", milestoneColumns);
+      } else {
+        console.log("Milestones table does not exist");
+      }
+      
+      res.json({
+        tableExists: tableExists[0]?.exists || false,
+        milestoneColumns: milestoneColumns,
+        note: "Check if milestones table exists and has correct structure"
+      });
+    } catch (error) {
+      console.error("Milestones table debug error:", error);
+      res.status(500).json({ 
+        error: error.message,
+        tableExists: false,
+        reason: "Could not query milestones table - it may not exist"
+      });
+    }
+  });
+
   // Debug endpoint to check tasks table structure
   app.get('/api/debug/tasks-table', async (req, res) => {
     try {
@@ -2158,7 +2305,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const milestone = milestones[i];
               if (milestone.title && milestone.title.trim()) {
                 await storage.createMilestone({
-                  userId,
                   goalId: goal.id,
                   title: milestone.title.trim(),
                   description: milestone.description || null,

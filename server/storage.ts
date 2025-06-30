@@ -613,9 +613,10 @@ export class DatabaseStorage implements IStorage {
       .insert(goals)
       .values({
         ...goal,
-        completed: goal.completed || false,
         progress: goal.progress || 0,
-        expReward: goal.expReward || 0
+        status: goal.status || 'active',
+        priority: goal.priority || 'medium',
+        expReward: goal.expReward || 100
       })
       .returning();
     
@@ -651,8 +652,8 @@ export class DatabaseStorage implements IStorage {
       // 1. 先删除引用该目标的普通任务的goalId引用 (设为null而不是删除任务)
       await db.update(tasks).set({ goalId: null }).where(and(eq(tasks.goalId, id), eq(tasks.userId, userId)));
 
-      // 2. 删除相关的里程碑
-      await db.delete(milestones).where(and(eq(milestones.goalId, id), eq(milestones.userId, userId)));
+      // 2. 删除相关的里程碑 (milestones table doesn't have userId, linked via goalId)
+      await db.delete(milestones).where(eq(milestones.goalId, id));
 
       // 3. 删除相关的目标任务
       await db.delete(goalTasks).where(eq(goalTasks.goalId, id));
