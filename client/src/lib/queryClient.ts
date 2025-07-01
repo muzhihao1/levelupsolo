@@ -56,21 +56,49 @@ export const getQueryFn: <T>(options: {
     return await res.json();
   };
 
+// 为不同类型的数据设置不同的缓存策略
+const cacheConfig = {
+  // 用户数据和技能数据变化较少，缓存时间较长
+  static: {
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 60 * 60 * 1000, // 1 hour
+  },
+  // 任务数据变化频繁，缓存时间较短
+  dynamic: {
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  },
+  // 统计数据中等变化频率
+  stats: {
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 20 * 60 * 1000, // 20 minutes
+  },
+};
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       queryFn: getQueryFn({ on401: "throw" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000, // 5 minutes cache
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
+      staleTime: 5 * 60 * 1000, // 默认 5 分钟
+      gcTime: 10 * 60 * 1000, // 默认 10 分钟
       retry: (failureCount, error) => {
         if (error.message.includes('401')) return false;
         return failureCount < 2;
       },
+      // 优化网络请求
+      networkMode: 'offlineFirst',
+      // 结构化克隆以提高性能
+      structuralSharing: true,
     },
     mutations: {
       retry: false,
+      // 乐观更新的网络模式
+      networkMode: 'offlineFirst',
     },
   },
 });
+
+// 导出缓存配置供组件使用
+export { cacheConfig };

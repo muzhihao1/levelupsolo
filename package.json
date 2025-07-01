@@ -21,6 +21,8 @@
     "check": "tsc",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
+    "db:create-activity-logs": "tsx scripts/create-activity-logs-table.ts",
+    "db:migrate": "tsx server/startup-migrations.ts",
     "seed:test": "tsx scripts/seed-test-data.ts",
     "seed:test:clean": "tsx scripts/seed-test-data.ts --clean",
     "check:env": "tsx scripts/check-env-config.ts",

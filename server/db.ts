@@ -2,6 +2,7 @@ import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import * as schema from "@shared/schema";
 import { pgTable, serial, text, json, integer, boolean } from 'drizzle-orm/pg-core';
+import { getDb } from "./db-pool";
 
 // 优先使用 Supabase 数据库，如果没有则使用原 DATABASE_URL
 const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
@@ -22,30 +23,37 @@ if (process.env.NODE_ENV === 'development' && !databaseUrl) {
   console.warn('⚠️  No DATABASE_URL set in development mode. Using mock storage.');
 } else if (databaseUrl) {
   try {
-    console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
-    
-    // Parse the URL to check if it's using IPv6
-    const urlObj = new URL(databaseUrl);
-    const isIPv6 = urlObj.hostname.includes(':');
-    
-    if (isIPv6) {
-      console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');
-      console.warn('Consider using IPv4 address or hostname instead.');
-    }
-    
-    // Create connection with additional options for better compatibility
-    sql = postgres(databaseUrl, {
-      connect_timeout: 30,  // 30 seconds timeout
-      idle_timeout: 20,     // Close idle connections after 20 seconds
-      max: 10,              // Maximum number of connections
-      ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
-      prepare: false,       // Disable prepared statements which can cause issues
-      connection: {
-        application_name: 'levelupsolo'
+    // 在生产环境使用连接池，在开发环境使用普通连接
+    if (process.env.NODE_ENV === 'production' && process.env.USE_CONNECTION_POOL !== 'false') {
+      console.log('Using connection pool for database');
+      db = getDb();
+      sql = null; // 使用连接池时不需要sql实例
+    } else {
+      console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');
+      
+      // Parse the URL to check if it's using IPv6
+      const urlObj = new URL(databaseUrl);
+      const isIPv6 = urlObj.hostname.includes(':');
+      
+      if (isIPv6) {
+        console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platforms.');
+        console.warn('Consider using IPv4 address or hostname instead.');
       }
-    });
-    
-    db = drizzle(sql, { schema });
+      
+      // Create connection with additional options for better compatibility
+      sql = postgres(databaseUrl, {
+        connect_timeout: 30,  // 30 seconds timeout
+        idle_timeout: 20,     // Close idle connections after 20 seconds
+        max: 10,              // Maximum number of connections
+        ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+        prepare: false,       // Disable prepared statements which can cause issues
+        connection: {
+          application_name: 'levelupsolo'
+        }
+      });
+      
+      db = drizzle(sql, { schema });
+    }
   } catch (error) {
     console.error("🚨 Failed to initialize database connection:", error);
     console.error("Error details:", {

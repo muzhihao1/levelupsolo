@@ -113,6 +113,18 @@ app.use((req, res, next) => {
   console.log('- OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ Set' : '❌ Not set');
   
   try {
+    // Run database migrations before registering routes
+    if (process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL) {
+      console.log('🔄 Running startup migrations...');
+      try {
+        const { runStartupMigrations } = require('./startup-migrations');
+        await runStartupMigrations();
+      } catch (migrationError) {
+        console.error('⚠️  Migration error (non-fatal):', migrationError);
+        // Continue startup even if migrations fail
+      }
+    }
+    
     console.log('📝 Registering routes...');
     const server = await registerRoutes(app);
     console.log('✅ Routes registered successfully');

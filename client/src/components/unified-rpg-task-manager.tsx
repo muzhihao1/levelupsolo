@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, memo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pause, RotateCcw, Brain, Crown, X, Battery } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useFilteredTasks } from "@/hooks/use-filtered-tasks";
 import type { Task, InsertTask, Skill } from "@shared/schema";
 
 interface MicroTask {
@@ -72,7 +73,7 @@ interface TaskCardProps {
   getIconEmoji?: (fontAwesomeClass: string) => string;
 }
 
-function TaskCard({ 
+const TaskCard = memo(function TaskCard({ 
   task, 
   onComplete, 
   onDelete, 
@@ -255,7 +256,7 @@ function TaskCard({
       </CardContent>
     </Card>
   );
-}
+});
 
 export default function UnifiedRPGTaskManager() {
   const [newTask, setNewTask] = useState({
@@ -772,44 +773,33 @@ export default function UnifiedRPGTaskManager() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // 筛选任务：只显示未完成的过去任务和今天的任务
-  const filterTasksByDateAndCompletion = (tasks: Task[]) => {
-    const today = new Date();
-    const todayStr = today.toDateString();
-    
-    return tasks.filter(task => {
-      const taskDate = new Date(task.createdAt);
-      const taskDateStr = taskDate.toDateString();
-      
-      // For habit tasks, always show them regardless of creation date
-      if (task.taskCategory === "habit") {
-        return true;
-      }
-      
-      // 显示今天的所有任务（完成和未完成）
-      if (taskDateStr === todayStr) {
-        return true;
-      }
-      
-      // 显示过去未完成的任务
-      if (taskDate < today && !task.completed) {
-        return true;
-      }
-      
-      return false;
-    });
-  };
+  // 使用优化的任务过滤Hook
+  const { filteredTasks: goalTasks } = useFilteredTasks({
+    tasks,
+    activeTab: 'main',
+    searchQuery: ''
+  });
 
-  // 按类别筛选任务
-  const filterTasks = (category?: string) => {
-    const filteredByDate = filterTasksByDateAndCompletion(tasks);
-    if (!category || category === "all") return filteredByDate;
-    return filteredByDate.filter(task => task.taskCategory === category);
-  };
+  const { filteredTasks: sideTasks } = useFilteredTasks({
+    tasks,
+    activeTab: 'side',
+    searchQuery: ''
+  });
+
+  const { filteredTasks: habitTasks } = useFilteredTasks({
+    tasks,
+    activeTab: 'habit',
+    searchQuery: ''
+  });
+
+  const { filteredTasks: allTasks, taskStats } = useFilteredTasks({
+    tasks,
+    activeTab: activeTab === 'all' ? 'all' : activeTab,
+    searchQuery: ''
+  });
 
   // Special handling for habits - reset completed habits from previous days
-  const habitsRaw = filterTasks("habit");
-  const habits = habitsRaw.map(habit => {
+  const habits = habitTasks.map(habit => {
     const today = new Date().toDateString();
     const lastCompleted = habit.lastCompletedDate ? new Date(habit.lastCompletedDate).toDateString() : null;
     
@@ -824,8 +814,8 @@ export default function UnifiedRPGTaskManager() {
     return habit;
   });
   
-  const todos = filterTasks("todo");
-  const allFilteredTasks = filterTasks("all");
+  const todos = sideTasks; // Side tasks are equivalent to todos
+  const allFilteredTasks = allTasks;
   const completedToday = allFilteredTasks.filter(task => 
     task.completed && task.completedAt && 
     new Date(task.completedAt).toDateString() === new Date().toDateString()

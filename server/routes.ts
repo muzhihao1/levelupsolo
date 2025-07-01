@@ -8,6 +8,7 @@ import { skills, tasks, goals, activityLogs, microTasks } from "@shared/schema";
 import OpenAI from "openai";
 import { RecommendationEngine } from './recommendationEngine';
 import bcrypt from "bcryptjs";
+import { cacheMiddleware, invalidateCacheMiddleware } from "./cache-middleware";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -354,7 +355,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Skills routes
-  app.get("/api/skills", isAuthenticated, async (req: any, res) => {
+  app.get("/api/skills", isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
 
@@ -420,7 +421,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Tasks routes
-  app.get("/api/tasks", isAuthenticated, async (req: any, res) => {
+  app.get("/api/tasks", isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
 
@@ -469,7 +470,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/tasks", isAuthenticated, async (req: any, res) => {
+  app.post("/api/tasks", isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data']), async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
 
@@ -494,7 +495,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
+  app.patch("/api/tasks/:id", isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data', 'activity']), async (req: any, res) => {
     try {
       const taskId = parseInt(req.params.id);
       const updates = req.body;
@@ -586,7 +587,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/tasks/:id", isAuthenticated, async (req: any, res) => {
+  app.delete("/api/tasks/:id", isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data']), async (req: any, res) => {
     try {
       const userId = req.user?.claims?.sub;
       const taskId = parseInt(req.params.id);
@@ -623,7 +624,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // AI-powered task creation with automatic type classification
-  app.post("/api/tasks/intelligent-create", isAuthenticated, async (req: any, res) => {
+  app.post("/api/tasks/intelligent-create", isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data']), async (req: any, res) => {
     console.log("=== AI Task Creation Started ===");
     try {
       const { description } = req.body;
@@ -1094,7 +1095,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Goals routes
-  app.get("/api/goals", isAuthenticated, async (req: any, res) => {
+  app.get("/api/goals", isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
 
@@ -1886,73 +1887,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity logs routes
-  app.get("/api/activity-logs", isAuthenticated, async (req: any, res) => {
+  app.get("/api/activity-logs", isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
-      const userId = req.user?.claims?.sub || "31581595"; // Fallback to demo user
+      const userId = req.user?.claims?.sub || req.user?.id;
       console.log("Activity logs request - userId:", userId);
-      console.log("Activity logs request - user:", req.user);
 
       if (!userId) {
-        console.error("No userId found in request.user:", req.user);
+        console.error("No userId found in request:", req.user);
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Check if database is initialized
-      const { isDatabaseInitialized } = require('./db-check');
-      if (!isDatabaseInitialized()) {
-        console.error("Database not initialized for activity logs");
-        return res.json([]); // Return empty array instead of error
+      // Use the new safe method
+      const { safeGetActivityLogs } = require('./fix-activity-logs');
+      const logs = await safeGetActivityLogs(userId);
+      
+      console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
+      res.json(logs);
+    } catch (error: any) {
+      console.error("Error in activity logs endpoint:", error);
+      
+      // Send appropriate error response
+      if (error.message?.includes('permission')) {
+        res.status(403).json({ 
+          message: "Database permission error",
+          error: error.message 
+        });
+      } else {
+        res.status(500).json({ 
+          message: "Failed to fetch activity logs",
+          error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+        });
       }
-
-      try {
-        const logs = await storage.getActivityLogs(userId);
-        console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
-        res.json(logs);
-      } catch (dbError) {
-        console.error("Database error fetching activity logs:", dbError);
-        // If activity_logs table doesn't exist, try to create it and return empty array
-        if (dbError.message?.includes('relation') && dbError.message?.includes('does not exist')) {
-          console.log("Activity logs table doesn't exist, attempting to create it");
-          
-          try {
-            // Try to create the table
-            const { sql } = require('drizzle-orm');
-            const { db } = require('./db');
-            
-            await db.execute(sql`
-              CREATE TABLE IF NOT EXISTS activity_logs (
-                id SERIAL PRIMARY KEY,
-                user_id VARCHAR NOT NULL REFERENCES users(id),
-                date TIMESTAMP NOT NULL DEFAULT NOW(),
-                task_id INTEGER REFERENCES tasks(id),
-                skill_id INTEGER REFERENCES skills(id),
-                exp_gained INTEGER NOT NULL DEFAULT 0,
-                action TEXT NOT NULL,
-                description TEXT
-              )
-            `);
-            
-            await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id)`);
-            await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_activity_logs_date ON activity_logs(date DESC)`);
-            
-            console.log("Activity logs table created successfully");
-            return res.json([]);
-          } catch (createError) {
-            console.error("Failed to create activity logs table:", createError);
-            return res.json([]); // Still return empty array to not break the UI
-          }
-        }
-        throw dbError;
-      }
-    } catch (error) {
-      console.error("Error fetching activity logs:", error);
-      console.error("Stack trace:", error.stack);
-      res.status(500).json({ message: "Failed to fetch activity logs", error: error.message });
     }
   });
 
   // User Stats API endpoints for Habitica-inspired gamification
-  app.get('/api/user-stats', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user-stats', isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
       let stats = await storage.getUserStats(userId);
@@ -2077,7 +2047,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User Profile API routes
-  app.get('/api/profile', isAuthenticated, async (req: any, res) => {
+  app.get('/api/profile', isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
 
@@ -2291,7 +2261,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generic data endpoint for client compatibility
-  app.get('/api/data', isAuthenticated, async (req: any, res) => {
+  app.get('/api/data', isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
       const type = req.query.type;
