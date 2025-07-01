@@ -44,7 +44,12 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     }
   }
 
-  // For web app compatibility - use demo user if no auth
+  // In production, require authentication
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(401).json({ message: "Authentication required" });
+  }
+  
+  // In development, allow demo user for testing
   const demoUser = {
     claims: {
       sub: "31581595",
@@ -56,7 +61,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
   };
   
   try {
-    // Ensure demo user exists
+    // Only in development: ensure demo user exists
     await storage.upsertUser({
       id: demoUser.claims.sub,
       email: demoUser.claims.email,
@@ -68,7 +73,7 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     (req as any).user = demoUser;
     return next();
   } catch (error) {
-    console.error("Auth error:", error);
+    console.error("Demo user setup error:", error);
     return res.status(500).json({ message: "Authentication failed" });
   }
 };

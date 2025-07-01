@@ -48,8 +48,15 @@ export function cacheMiddleware(req: Request, res: Response, next: NextFunction)
     return next();
   }
 
+  // 检查用户是否已认证
+  const user = (req as any).user;
+  if (!user || !user.id || user.id === 'demo') {
+    // 不缓存未认证或demo用户的请求
+    return next();
+  }
+
   // 构建缓存键
-  const userId = (req as any).user?.id || 'demo';
+  const userId = user.id;
   const cacheKey = `${userId}:${req.originalUrl}`;
 
   // 检查缓存
@@ -128,10 +135,13 @@ export function invalidateCacheMiddleware(patterns: string[]) {
     res.json = function(data: any) {
       // 如果是成功的写操作，清除相关缓存
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        const userId = (req as any).user?.id || 'demo';
-        patterns.forEach(pattern => {
-          clearUserCache(userId, pattern);
-        });
+        const user = (req as any).user;
+        // 只清除已认证用户的缓存
+        if (user && user.id && user.id !== 'demo') {
+          patterns.forEach(pattern => {
+            clearUserCache(user.id, pattern);
+          });
+        }
       }
       return originalJson.call(this, data);
     };

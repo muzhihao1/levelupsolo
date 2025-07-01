@@ -6,6 +6,7 @@ import { db } from "./db";
 import { users } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
+import { clearAllCache } from "./cache-middleware";
 
 // Simple JWT secret with fallback
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-in-production';
@@ -150,6 +151,9 @@ export function setupSimpleAuth(app: Express) {
         const token = generateToken(user.id, user.email!);
         console.log('Login successful');
         
+        // Clear all cache on login to prevent stale data
+        clearAllCache();
+        
         res.json({
           success: true,
           accessToken: token,
@@ -242,6 +246,9 @@ export function setupSimpleAuth(app: Express) {
       // Generate token
       const token = generateToken(newUser.id, newUser.email!);
       
+      // Clear all cache on registration
+      clearAllCache();
+      
       res.json({
         success: true,
         accessToken: token,
@@ -315,8 +322,10 @@ export function setupSimpleAuth(app: Express) {
     }
   });
 
-  // Logout (client-side only)
+  // Logout
   app.post('/api/auth/logout', (req, res) => {
+    // Clear all cache on logout
+    clearAllCache();
     res.json({ success: true });
   });
 }
