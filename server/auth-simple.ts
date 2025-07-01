@@ -74,6 +74,12 @@ export function setupSimpleAuth(app: Express) {
   // Login endpoint
   app.post('/api/auth/simple-login', async (req, res) => {
     console.log('=== SIMPLE LOGIN START ===');
+    console.log('Environment:', {
+      NODE_ENV: process.env.NODE_ENV,
+      hasDB: !!db,
+      hasJWT: !!process.env.JWT_SECRET,
+      hasRefreshJWT: !!process.env.JWT_REFRESH_SECRET
+    });
     
     try {
       // 1. Parse input
@@ -82,17 +88,32 @@ export function setupSimpleAuth(app: Express) {
       
       // 2. Check if database is available
       if (!db) {
-        console.log('No database connection, using demo mode');
+        console.error('No database connection available');
+        console.error('Database check:', {
+          dbModule: !!db,
+          hasURL: !!process.env.DATABASE_URL || !!process.env.SUPABASE_DATABASE_URL,
+          nodeEnv: process.env.NODE_ENV
+        });
+        
+        // In production, don't fall back to demo mode
+        if (process.env.NODE_ENV === 'production') {
+          return res.status(503).json({ 
+            error: 'Service temporarily unavailable',
+            details: 'Database connection error. Please try again later.'
+          });
+        }
+        
+        // Development only: demo mode
         if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
           const token = generateToken('demo', email);
           return res.json({
             success: true,
             accessToken: token,
-            refreshToken: token, // Same token for simplicity
+            refreshToken: token,
             user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
           });
         }
-        return res.status(401).json({ error: 'Invalid credentials' });
+        return res.status(401).json({ error: 'Invalid credentials (DB unavailable)' });
       }
       
       // 3. Find user in database
@@ -103,9 +124,19 @@ export function setupSimpleAuth(app: Express) {
           .where(eq(users.email, email))
           .limit(1);
         
-        if (!user || !user.hashedPassword) {
-          console.log('User not found or no password');
+        if (!user) {
+          console.log('User not found:', email);
           return res.status(401).json({ error: '邮箱或密码错误' });
+        }
+        
+        if (!user.hashedPassword) {
+          console.error('User exists but no password hash:', {
+            userId: user.id,
+            email: user.email,
+            hasPassword: !!user.hashedPassword,
+            fields: Object.keys(user)
+          });
+          return res.status(401).json({ error: '账户配置错误，请联系管理员' });
         }
         
         // 4. Verify password
@@ -131,22 +162,34 @@ export function setupSimpleAuth(app: Express) {
           }
         });
       } catch (dbError) {
-        console.error('Database error:', dbError);
+        console.error('Database query error:', {
+          error: (dbError as any).message,
+          code: (dbError as any).code,
+          detail: (dbError as any).detail
+        });
         
-        // Fallback to demo mode if database fails
+        // In production, don't expose demo mode
+        if (process.env.NODE_ENV === 'production') {
+          return res.status(500).json({ 
+            error: '服务暂时不可用',
+            requestId: Date.now().toString()
+          });
+        }
+        
+        // Development: Allow demo mode and show error details
         if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
           const token = generateToken('demo', email);
           return res.json({
             success: true,
             accessToken: token,
-            refreshToken: token, // Same token for simplicity
+            refreshToken: token,
             user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
           });
         }
         
         return res.status(500).json({ 
           error: 'Database error',
-          details: process.env.NODE_ENV === 'development' ? (dbError as any).message : undefined
+          details: (dbError as any).message
         });
       }
     } catch (error) {

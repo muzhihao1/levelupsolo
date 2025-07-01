@@ -9,6 +9,7 @@ import OpenAI from "openai";
 import { RecommendationEngine } from './recommendationEngine';
 import bcrypt from "bcryptjs";
 import { cacheMiddleware, invalidateCacheMiddleware } from "./cache-middleware";
+import { runDatabaseDiagnostics, testDatabaseConnection } from './db-diagnostics';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -221,6 +222,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: false,
         error: (error as any).message,
         stack: process.env.NODE_ENV === 'development' ? (error as any).stack : undefined
+      });
+    }
+  });
+
+  // Enhanced database diagnostics endpoint
+  app.get('/api/diagnostics/database', async (req, res) => {
+    try {
+      const diagnostics = await runDatabaseDiagnostics();
+      const statusCode = diagnostics.summary.failed > 0 ? 500 : 
+                        diagnostics.summary.warnings > 0 ? 200 : 200;
+      res.status(statusCode).json(diagnostics);
+    } catch (error) {
+      console.error('Diagnostics error:', error);
+      res.status(500).json({
+        error: 'Failed to run diagnostics',
+        message: (error as any).message
+      });
+    }
+  });
+
+  // Test database connection with custom URL
+  app.post('/api/diagnostics/test-connection', async (req, res) => {
+    try {
+      const { connectionString } = req.body;
+      if (!connectionString) {
+        return res.status(400).json({ error: 'connectionString is required' });
+      }
+      
+      const result = await testDatabaseConnection(connectionString);
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      res.status(500).json({
+        error: 'Failed to test connection',
+        message: (error as any).message
       });
     }
   });

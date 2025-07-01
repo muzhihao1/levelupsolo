@@ -3,9 +3,10 @@
  * 为所有测试提供统一的setup和teardown
  */
 
+import React from 'react';
 import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
-import { cleanup } from '@testing-library/react';
-import { QueryClient } from '@tanstack/react-query';
+import { cleanup, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setupServer } from 'msw/node';
 import { rest } from 'msw';
 
