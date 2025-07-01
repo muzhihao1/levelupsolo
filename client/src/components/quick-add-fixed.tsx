@@ -256,15 +256,19 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
   });
 
   const createGoalMutation = useMutation({
-    mutationFn: async (goalData: InsertGoal) => {
-      return await apiRequest('POST', '/api/crud?resource=goals', goalData);
+    mutationFn: async (goalData: { title: string; description: string }) => {
+      // Use intelligent goal creation for better AI support
+      return await apiRequest('POST', '/api/goals/intelligent-create', {
+        description: `${goalData.title}${goalData.description ? `. ${goalData.description}` : ''}`
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
-      toast({ title: "目标创建成功!", description: "新目标已添加到你的目标列表" });
+      toast({ title: "目标创建成功!", description: "AI已智能分析并创建了结构化目标" });
       resetForm();
     },
     onError: (error) => {
+      console.error("Goal creation error:", error);
       toast({ title: "创建失败", description: "请稍后重试", variant: "destructive" });
     }
   });
@@ -307,17 +311,18 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
     const isGoal = selectedCategory === 'main_quest' || parsedSuggestion?.type === 'goal';
     
     if (isGoal) {
-      const goalData: InsertGoal = {
+      const goalData = {
         title: customTitle,
-        description: customDescription || "",
-        targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        description: customDescription || ""
       };
       createGoalMutation.mutate(goalData);
     } else {
       const taskData: InsertTask = {
         title: customTitle,
         description: customDescription || "",
-        estimatedDuration: parsedSuggestion?.estimatedDuration || 30
+        estimatedDuration: parsedSuggestion?.estimatedDuration || 30,
+        taskCategory: parsedSuggestion?.category === 'habit' ? 'habit' : 'todo',
+        priority: parsedSuggestion?.priority || 'medium'
       };
       createTaskMutation.mutate(taskData);
     }

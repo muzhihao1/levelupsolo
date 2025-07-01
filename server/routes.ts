@@ -2017,10 +2017,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get activity logs directly
-      const logs = await storage.getActivityLogs(userId);
-      
-      console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
-      res.json(logs);
+      try {
+        const logs = await storage.getActivityLogs(userId);
+        console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
+        res.json(logs);
+      } catch (dbError) {
+        console.error("Database error in activity logs:", dbError);
+        throw dbError;
+      }
     } catch (error: any) {
       console.error("Error in activity logs endpoint:", error);
       
@@ -2538,30 +2542,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         case 'goals':
           const { milestones, ...goalData } = req.body;
-          const parsedGoalData = insertGoalSchema.parse({
-            ...goalData,
-            userId
-          });
-          const goal = await storage.createGoal(parsedGoalData);
+          console.log("Creating goal with data:", { ...goalData, userId });
           
-          // Create milestones if provided
-          if (milestones && Array.isArray(milestones) && milestones.length > 0) {
-            for (let i = 0; i < milestones.length; i++) {
-              const milestone = milestones[i];
-              if (milestone.title && milestone.title.trim()) {
-                await storage.createMilestone({
-                  goalId: goal.id,
-                  title: milestone.title.trim(),
-                  description: milestone.description || null,
-                  order: i,
-                  completed: false
-                });
+          try {
+            const parsedGoalData = insertGoalSchema.parse({
+              ...goalData,
+              userId
+            });
+            const goal = await storage.createGoal(parsedGoalData);
+            
+            // Create milestones if provided
+            if (milestones && Array.isArray(milestones) && milestones.length > 0) {
+              for (let i = 0; i < milestones.length; i++) {
+                const milestone = milestones[i];
+                if (milestone.title && milestone.title.trim()) {
+                  await storage.createMilestone({
+                    goalId: goal.id,
+                    title: milestone.title.trim(),
+                    description: milestone.description || null,
+                    order: i,
+                    completed: false
+                  });
+                }
               }
             }
+            
+            const goalWithMilestones = await storage.getGoalWithMilestones(goal.id);
+            return res.json(goalWithMilestones);
+          } catch (goalError) {
+            console.error("Goal creation error:", goalError);
+            throw goalError;
           }
-          
-          const goalWithMilestones = await storage.getGoalWithMilestones(goal.id);
-          return res.json(goalWithMilestones);
         
         default:
           return res.status(400).json({ message: "Invalid resource type" });
