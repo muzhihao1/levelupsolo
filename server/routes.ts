@@ -10,6 +10,8 @@ import { RecommendationEngine } from './recommendationEngine';
 import bcrypt from "bcryptjs";
 import { cacheMiddleware, invalidateCacheMiddleware } from "./cache-middleware";
 import { runDatabaseDiagnostics, testDatabaseConnection } from './db-diagnostics';
+import { sql } from "drizzle-orm";
+import { db } from "./db";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -665,10 +667,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { description } = req.body;
       const userId = (req.user as any)?.claims?.sub;
 
-      console.log("=== AI Task Creation Debug ===");
-      console.log("User ID from JWT:", userId);
+      console.log("User ID:", userId);
       console.log("Task description:", description);
-      console.log("Full user object:", JSON.stringify(req.user, null, 2));
 
       if (!description) {
         console.error("No task description provided");
@@ -886,10 +886,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completed: false
       };
 
-      console.log("Creating AI task with data:", JSON.stringify(taskData, null, 2));
       const newTask = await storage.createTask(taskData);
-      console.log("AI task created successfully:", newTask.id);
-      console.log("Created task details:", JSON.stringify(newTask, null, 2));
 
       res.json({ task: newTask, analysis });
     } catch (error) {
@@ -918,45 +915,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: errorMessage,
         error: process.env.NODE_ENV === 'development' ? error?.message : undefined
       });
-    }
-  });
-
-  // Debug endpoint to check user tasks
-  app.get("/api/debug/user-tasks", isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      console.log("=== Debug: User Tasks Check ===");
-      console.log("User ID:", userId);
-      console.log("User object:", JSON.stringify(req.user, null, 2));
-      
-      // Get tasks from storage
-      const tasks = await storage.getTasks(userId);
-      console.log(`Found ${tasks.length} tasks for user ${userId}`);
-      
-      // Also get directly from database
-      const { sql } = await import('drizzle-orm');
-      const { db } = await import('./db');
-      
-      const dbTasks = await db.execute(sql`
-        SELECT id, title, task_category, user_id 
-        FROM tasks 
-        WHERE user_id = ${userId}
-        ORDER BY created_at DESC
-        LIMIT 10
-      `);
-      
-      console.log(`Database query found ${dbTasks.length} tasks`);
-      
-      res.json({
-        userId,
-        storageTasksCount: tasks.length,
-        storageTasks: tasks.slice(0, 5).map(t => ({ id: t.id, title: t.title, category: t.taskCategory })),
-        dbTasksCount: dbTasks.length,
-        dbTasks: dbTasks
-      });
-    } catch (error) {
-      console.error("Debug endpoint error:", error);
-      res.status(500).json({ error: error.message });
     }
   });
 
@@ -2349,11 +2307,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       switch (type) {
         case 'tasks':
-          console.log(`=== Fetching tasks for user: ${userId} ===`);
           try {
             const tasks = await storage.getTasks(userId);
-            console.log(`=== Found ${tasks.length} tasks for user ${userId} ===`);
-            console.log('Task categories:', tasks.map(t => ({ id: t.id, title: t.title, category: t.taskCategory })));
             return res.json(tasks);
           } catch (error) {
             console.error("Storage getTasks failed, using SQL fallback:", error);

@@ -327,40 +327,22 @@ export default function UnifiedRPGTaskManager() {
   
   const { data: tasks = [], isLoading, isError, error } = useQuery<Task[]>({
     queryKey: ["/api/data?type=tasks"],
-    staleTime: 0, // Always refetch when needed
+    staleTime: 1000, // Consider data fresh for 1 second to prevent excessive refetches
     refetchOnMount: true,
-    refetchOnWindowFocus: true,
+    refetchOnWindowFocus: false, // Disable auto-refetch on window focus to prevent unwanted refreshes
     select: (data) => {
-      console.log('=== Fetched tasks from API ===');
-      console.log('Total tasks:', data?.length || 0);
-      console.log('Tasks by category:', {
-        todo: data?.filter(t => t.taskCategory === 'todo').length || 0,
-        habit: data?.filter(t => t.taskCategory === 'habit').length || 0,
-        goal: data?.filter(t => t.taskCategory === 'goal').length || 0
-      });
-      console.log('All tasks:', data);
+      // Return data without logging to improve performance
       return data;
     }
   });
   
-  // Debug logging for query state
+  // Log errors only
   useEffect(() => {
     if (isError) {
-      console.error('=== Error fetching tasks ===', error);
+      console.error('Error fetching tasks:', error);
     }
-    console.log('=== Query state ===', {
-      isLoading,
-      isError,
-      tasksCount: tasks.length,
-      error
-    });
-  }, [isLoading, isError, tasks.length, error]);
+  }, [isError, error]);
   
-  // Force a fresh fetch on component mount to ensure we have latest data
-  useEffect(() => {
-    console.log('=== Component mounted, forcing fresh data fetch ===');
-    queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
-  }, [queryClient]);
 
   const { data: skills = [] } = useQuery<Skill[]>({
     queryKey: ["/api/data?type=skills"],
@@ -597,32 +579,16 @@ export default function UnifiedRPGTaskManager() {
   const handleCreateTask = async () => {
     if (!newTask.title.trim()) return;
     
-    console.log('=== Creating AI intelligent task with title:', newTask.title);
     setIsAnalyzing(true);
     
     try {
-      // Use the AI intelligent create endpoint
-      console.log('Sending to AI intelligent create endpoint...');
       const response = await apiRequest("POST", "/api/tasks/intelligent-create", {
-        description: newTask.title  // The AI endpoint expects 'description'
+        description: newTask.title
       });
       
       const result = await response.json();
-      console.log('AI intelligent create response:', result);
       
       if (result.task) {
-        console.log('Task created:', result.task);
-        console.log('Task category:', result.task.taskCategory);
-        console.log('Current active tab:', activeTab);
-        
-        // Manually add the task to the cache for immediate UI update
-        queryClient.setQueryData(["/api/data?type=tasks"], (old: Task[]) => {
-          console.log('Current tasks in cache:', old?.length || 0);
-          console.log('Adding new task to cache');
-          const updated = old ? [...old, result.task] : [result.task];
-          console.log('Updated tasks in cache:', updated.length);
-          return updated;
-        });
         
         // Clear form
         setNewTask({ title: "", description: "", category: "todo", difficulty: "medium" });
@@ -635,34 +601,19 @@ export default function UnifiedRPGTaskManager() {
         });
         
         // Switch to the correct tab if needed
-        if (result.task.taskCategory === 'todo' && activeTab !== 'todo') {
-          console.log('Switching to side quests tab for todo task');
-          setActiveTab('todo');
+        if (result.task.taskCategory === 'todo' && activeTab !== 'side') {
+          setActiveTab('side');
         } else if (result.task.taskCategory === 'habit' && activeTab !== 'habit') {
-          console.log('Switching to habit tab');
           setActiveTab('habit');
-        } else if (result.task.taskCategory === 'goal' && activeTab !== 'goal') {
-          console.log('Switching to main quests tab for goal task');
-          setActiveTab('goal');
+        } else if (result.task.taskCategory === 'goal' && activeTab !== 'main') {
+          setActiveTab('main');
         }
         
-        // Force complete cache removal and refetch
-        console.log('=== Invalidating and refetching tasks after creation ===');
-        
-        // First, cancel any in-flight queries
-        await queryClient.cancelQueries({ queryKey: ["/api/data?type=tasks"] });
-        
-        // Remove the query from cache completely
-        queryClient.removeQueries({ queryKey: ["/api/data?type=tasks"] });
-        
-        // Force refetch with no cache
-        await queryClient.refetchQueries({
+        // Optimized cache update - just invalidate to trigger background refetch
+        await queryClient.invalidateQueries({ 
           queryKey: ["/api/data?type=tasks"],
-          type: 'all',
-          exact: true
+          refetchType: 'active' // Only refetch if the query is actively being used
         });
-        
-        console.log('=== Cache invalidation complete ===');
       }
     } catch (error) {
       console.error("Error creating intelligent task:", error);
@@ -898,29 +849,6 @@ export default function UnifiedRPGTaskManager() {
     searchQuery: ''
   });
   
-  // Debug log to see filtering results
-  console.log('=== Task filtering results ===');
-  console.log('All tasks from API:', tasks.length);
-  console.log('Tasks by category:', {
-    todo: tasks.filter(t => t.taskCategory === 'todo').length,
-    habit: tasks.filter(t => t.taskCategory === 'habit').length,
-    goal: tasks.filter(t => t.taskCategory === 'goal').length
-  });
-  console.log('Filtered results:');
-  console.log('Goal tasks:', goalTasks.length);
-  console.log('Side tasks (todos):', sideTasks.length);
-  console.log('Habit tasks:', habitTasks.length);
-  console.log('Active tab:', activeTab);
-  
-  // Log some specific tasks
-  if (tasks.length > 0) {
-    console.log('Sample tasks:', tasks.slice(0, 3).map(t => ({
-      id: t.id,
-      title: t.title,
-      category: t.taskCategory,
-      userId: t.userId
-    })));
-  }
 
   // Special handling for habits - reset completed habits from previous days
   const habits = habitTasks.map(habit => {
@@ -1099,27 +1027,6 @@ export default function UnifiedRPGTaskManager() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Debug button - temporary */}
-      <Button 
-        onClick={async () => {
-          console.log('=== Debug: Checking user tasks ===');
-          try {
-            const response = await apiRequest("GET", "/api/debug/user-tasks");
-            const data = await response.json();
-            console.log('Debug response:', data);
-            alert(`User ID: ${data.userId}\nTasks in storage: ${data.storageTasksCount}\nTasks in DB: ${data.dbTasksCount}\n\nCheck console for details.`);
-          } catch (error) {
-            console.error('Debug error:', error);
-            alert('Error checking tasks. Check console.');
-          }
-        }}
-        variant="outline"
-        size="sm"
-        className="mb-4"
-      >
-        Debug: Check User Tasks
-      </Button>
 
       {/* 任务列表 - 移动优化 */}
       <div>

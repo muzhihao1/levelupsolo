@@ -13,11 +13,6 @@ export function useFilteredTasks({ tasks, activeTab, searchQuery }: UseFilteredT
 
     let filtered = [...tasks];
 
-    // Debug log
-    console.log(`Filtering tasks for tab: ${activeTab}, total tasks: ${tasks.length}`);
-    if (activeTab === 'side') {
-      console.log('Tasks with todo category:', tasks.filter(t => t.taskCategory === 'todo').map(t => ({ id: t.id, title: t.title, category: t.taskCategory })));
-    }
 
     // 根据标签页过滤
     switch (activeTab) {
