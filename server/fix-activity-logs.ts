@@ -1,4 +1,5 @@
-import { db, sql } from './db';
+import { db } from './db';
+import { sql } from 'drizzle-orm';
 import { activityLogs } from '../shared/schema';
 import { desc, eq } from 'drizzle-orm';
 import type { ActivityLog } from '../shared/schema';
@@ -137,7 +138,9 @@ export async function checkActivityLogsTable(): Promise<boolean> {
       ) as exists
     `);
     
-    return result.rows[0]?.exists === true;
+    // Handle both possible return formats
+    const exists = result?.[0]?.exists || result?.rows?.[0]?.exists;
+    return exists === true;
   } catch (error) {
     console.error('Error checking activity_logs table:', error);
     return false;
@@ -157,7 +160,8 @@ export async function runActivityLogsMigration(): Promise<void> {
     const migrationSQL = await fs.readFile(migrationPath, 'utf-8');
     
     // 执行迁移
-    await db.execute(sql.raw(migrationSQL));
+    // Using sql`` with template literal to execute raw SQL
+    await db.execute(sql`${sql.raw(migrationSQL)}`);
     
     console.log('Activity logs migration completed successfully');
   } catch (error) {
