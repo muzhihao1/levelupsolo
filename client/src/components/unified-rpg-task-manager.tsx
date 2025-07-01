@@ -245,8 +245,8 @@ function TaskCard({
               <div className="flex items-center gap-2">
                 <div className="text-base">⚔️</div>
                 <div className="text-left">
-                  <div className="text-sm font-bold" style={{ color: '#ffffff', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>挑战Boss</div>
-                  <div className="text-xs font-medium" style={{ color: '#dbeafe', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>25分钟专注战斗</div>
+                  <div className="text-sm font-bold text-white">挑战Boss</div>
+                  <div className="text-xs font-medium text-blue-100">25分钟专注战斗</div>
                 </div>
               </div>
             </Button>

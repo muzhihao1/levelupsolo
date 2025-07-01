@@ -351,7 +351,7 @@ router.post('/parse-input', isAuthenticated, async (req, res) => {
 {
   "type": "task|goal|habit",
   "category": "main_quest|side_quest|habit",
-  "title": "建议的标题",
+  "title": "完整保留用户输入作为标题，不要截断",
   "description": "建议的描述",
   "priority": "high|medium|low",
   "estimatedDuration": 数字(分钟),

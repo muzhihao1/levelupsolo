@@ -82,8 +82,7 @@ export default function IntelligentGoalCreator({ onGoalCreated }: IntelligentGoa
           <Button 
             onClick={handleSubmit}
             disabled={createGoalMutation.isPending || !description.trim()}
-            className="w-full bg-purple-700 hover:bg-purple-800 font-medium text-white border-0"
-            style={{ backgroundColor: '#7c3aed', color: '#ffffff', fontWeight: '600', border: 'none' }}
+            className="w-full bg-purple-600 hover:bg-purple-700 font-semibold text-white border-0 shadow-md"
           >
             {createGoalMutation.isPending ? (
               <>

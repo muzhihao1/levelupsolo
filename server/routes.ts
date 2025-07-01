@@ -1910,10 +1910,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(logs);
       } catch (dbError) {
         console.error("Database error fetching activity logs:", dbError);
-        // If activity_logs table doesn't exist, return empty array
+        // If activity_logs table doesn't exist, try to create it and return empty array
         if (dbError.message?.includes('relation') && dbError.message?.includes('does not exist')) {
-          console.log("Activity logs table doesn't exist, returning empty array");
-          return res.json([]);
+          console.log("Activity logs table doesn't exist, attempting to create it");
+          
+          try {
+            // Try to create the table
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            await db.execute(sql`
+              CREATE TABLE IF NOT EXISTS activity_logs (
+                id SERIAL PRIMARY KEY,
+                user_id VARCHAR NOT NULL REFERENCES users(id),
+                date TIMESTAMP NOT NULL DEFAULT NOW(),
+                task_id INTEGER REFERENCES tasks(id),
+                skill_id INTEGER REFERENCES skills(id),
+                exp_gained INTEGER NOT NULL DEFAULT 0,
+                action TEXT NOT NULL,
+                description TEXT
+              )
+            `);
+            
+            await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id)`);
+            await db.execute(sql`CREATE INDEX IF NOT EXISTS idx_activity_logs_date ON activity_logs(date DESC)`);
+            
+            console.log("Activity logs table created successfully");
+            return res.json([]);
+          } catch (createError) {
+            console.error("Failed to create activity logs table:", createError);
+            return res.json([]); // Still return empty array to not break the UI
+          }
         }
         throw dbError;
       }

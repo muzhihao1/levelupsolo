@@ -9,7 +9,6 @@ import Navigation from "@/components/navigation";
 import AIAssistant from "@/components/ai-assistant";
 import AIFloatingButton from "@/components/ai-floating-button";
 import QuickAdd from "@/components/quick-add";
-import ModeToggle from "@/components/mode-toggle";
 import { GlobalFloatingTimer } from "@/components/global-floating-timer";
 
 import PerformanceMonitoring from "@/components/performance-monitoring";
@@ -132,7 +131,6 @@ function Router() {
       />
       
       {/* Mode Toggle - Professional/Game Mode */}
-      <ModeToggle />
 
 
 

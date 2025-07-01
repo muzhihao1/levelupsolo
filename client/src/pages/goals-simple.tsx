@@ -258,10 +258,10 @@ function GoalCard({
               删除
             </Button>
             <Button
-              variant="ghost" 
+              variant="outline" 
               size="sm"
               onClick={() => onToggleCompletion(goal)}
-              className="text-primary hover:bg-primary/10"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium"
             >
               标记完成
             </Button>
