@@ -60,19 +60,8 @@ export function useAuth() {
     queryFn: async () => {
       const token = localStorage.getItem("accessToken");
       
-      // Handle demo login
-      if (token === "demo_token") {
-        return {
-          id: "demo_user",
-          email: "demo@levelupsolo.net",
-          firstName: "Demo",
-          lastName: "User",
-          profileImageUrl: null,
-        };
-      }
-      
-      // Handle real JWT tokens
-      if (token && token !== "demo_token") {
+      // Handle JWT tokens
+      if (token) {
         const response = await fetchWithAuth("/api/auth/user");
         if (!response.ok) {
           throw new Error("Failed to fetch user");

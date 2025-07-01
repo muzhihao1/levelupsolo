@@ -57,9 +57,8 @@ export async function simpleAuth(req: any, res: any, next: any) {
     }
   }
   
-  // For demo purposes, allow unauthenticated access
-  req.user = { userId: 'demo', email: 'demo@levelupsolo.net' };
-  next();
+  // No authentication provided - return 401
+  return res.status(401).json({ error: 'Authentication required' });
 }
 
 export function setupSimpleAuth(app: Express) {
@@ -96,25 +95,10 @@ export function setupSimpleAuth(app: Express) {
           nodeEnv: process.env.NODE_ENV
         });
         
-        // In production, don't fall back to demo mode
-        if (process.env.NODE_ENV === 'production') {
-          return res.status(503).json({ 
-            error: 'Service temporarily unavailable',
-            details: 'Database connection error. Please try again later.'
-          });
-        }
-        
-        // Development only: demo mode
-        if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
-          const token = generateToken('demo', email);
-          return res.json({
-            success: true,
-            accessToken: token,
-            refreshToken: token,
-            user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
-          });
-        }
-        return res.status(401).json({ error: 'Invalid credentials (DB unavailable)' });
+        return res.status(503).json({ 
+          error: 'Service temporarily unavailable',
+          details: 'Database connection error. Please try again later.'
+        });
       }
       
       // 3. Find user in database
@@ -172,28 +156,10 @@ export function setupSimpleAuth(app: Express) {
           detail: (dbError as any).detail
         });
         
-        // In production, don't expose demo mode
-        if (process.env.NODE_ENV === 'production') {
-          return res.status(500).json({ 
-            error: '服务暂时不可用',
-            requestId: Date.now().toString()
-          });
-        }
-        
-        // Development: Allow demo mode and show error details
-        if (email === 'demo@levelupsolo.net' && password === 'demo1234') {
-          const token = generateToken('demo', email);
-          return res.json({
-            success: true,
-            accessToken: token,
-            refreshToken: token,
-            user: { id: 'demo', email, firstName: 'Demo', lastName: 'User' }
-          });
-        }
-        
         return res.status(500).json({ 
-          error: 'Database error',
-          details: (dbError as any).message
+          error: '服务暂时不可用',
+          requestId: Date.now().toString(),
+          details: process.env.NODE_ENV === 'development' ? (dbError as any).message : undefined
         });
       }
     } catch (error) {
@@ -274,18 +240,7 @@ export function setupSimpleAuth(app: Express) {
     try {
       const { userId, email } = req.user;
       
-      // For demo user, return static data
-      if (userId === 'demo') {
-        return res.json({
-          id: 'demo',
-          email: 'demo@levelupsolo.net',
-          firstName: 'Demo',
-          lastName: 'User',
-          profileImageUrl: null
-        });
-      }
-      
-      // For real users, fetch from database
+      // Fetch user from database
       if (db) {
         try {
           const [user] = await db
@@ -308,14 +263,8 @@ export function setupSimpleAuth(app: Express) {
         }
       }
       
-      // Fallback response
-      res.json({
-        id: userId,
-        email: email,
-        firstName: 'User',
-        lastName: '',
-        profileImageUrl: null
-      });
+      // User not found
+      res.status(404).json({ error: 'User not found' });
     } catch (error) {
       console.error('Error in /api/auth/user:', error);
       res.status(500).json({ error: 'Failed to fetch user' });

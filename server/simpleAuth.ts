@@ -44,38 +44,8 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
     }
   }
 
-  // In production, require authentication
-  if (process.env.NODE_ENV === 'production') {
-    return res.status(401).json({ message: "Authentication required" });
-  }
-  
-  // In development, allow demo user for testing
-  const demoUser = {
-    claims: {
-      sub: "31581595",
-      email: "demo@levelupsolo.net",
-      first_name: "Demo",
-      last_name: "User",
-      profile_image_url: null
-    }
-  };
-  
-  try {
-    // Only in development: ensure demo user exists
-    await storage.upsertUser({
-      id: demoUser.claims.sub,
-      email: demoUser.claims.email,
-      firstName: demoUser.claims.first_name,
-      lastName: demoUser.claims.last_name,
-      profileImageUrl: demoUser.claims.profile_image_url,
-    });
-    
-    (req as any).user = demoUser;
-    return next();
-  } catch (error) {
-    console.error("Demo user setup error:", error);
-    return res.status(500).json({ message: "Authentication failed" });
-  }
+  // No authentication provided - always require authentication
+  return res.status(401).json({ message: "Authentication required" });
 };
 
 export async function setupAuth(app: Express) {

@@ -183,7 +183,7 @@ export default function Navigation({ currentPage, onPageChange }: NavigationProp
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
                   <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Email</span>
                   <span className="text-xs text-gray-600 dark:text-gray-400">
-                    {user?.email || "demo@levelupsolo.net"}
+                    {user?.email}
                   </span>
                 </div>
                 
