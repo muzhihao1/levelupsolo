@@ -265,7 +265,7 @@ export default function UnifiedRPGTaskManager() {
     category: "todo" as keyof typeof TASK_CATEGORIES,
     difficulty: "medium" as keyof typeof DIFFICULTY_LEVELS
   });
-  const [activeTab, setActiveTab] = useState("goal");
+  const [activeTab, setActiveTab] = useState("side"); // Default to side quests tab
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   // 将Font Awesome图标类名转换为emoji
@@ -325,9 +325,42 @@ export default function UnifiedRPGTaskManager() {
   
   const queryClient = useQueryClient();
   
-  const { data: tasks = [], isLoading } = useQuery<Task[]>({
+  const { data: tasks = [], isLoading, isError, error } = useQuery<Task[]>({
     queryKey: ["/api/data?type=tasks"],
+    staleTime: 0, // Always refetch when needed
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    select: (data) => {
+      console.log('=== Fetched tasks from API ===');
+      console.log('Total tasks:', data?.length || 0);
+      console.log('Tasks by category:', {
+        todo: data?.filter(t => t.taskCategory === 'todo').length || 0,
+        habit: data?.filter(t => t.taskCategory === 'habit').length || 0,
+        goal: data?.filter(t => t.taskCategory === 'goal').length || 0
+      });
+      console.log('All tasks:', data);
+      return data;
+    }
   });
+  
+  // Debug logging for query state
+  useEffect(() => {
+    if (isError) {
+      console.error('=== Error fetching tasks ===', error);
+    }
+    console.log('=== Query state ===', {
+      isLoading,
+      isError,
+      tasksCount: tasks.length,
+      error
+    });
+  }, [isLoading, isError, tasks.length, error]);
+  
+  // Force a fresh fetch on component mount to ensure we have latest data
+  useEffect(() => {
+    console.log('=== Component mounted, forcing fresh data fetch ===');
+    queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+  }, [queryClient]);
 
   const { data: skills = [] } = useQuery<Skill[]>({
     queryKey: ["/api/data?type=skills"],
@@ -375,12 +408,16 @@ export default function UnifiedRPGTaskManager() {
   const createTaskMutation = useMutation({
     mutationFn: async (taskData: Omit<InsertTask, 'userId'>) => {
       const difficulty = DIFFICULTY_LEVELS[taskData.difficulty as keyof typeof DIFFICULTY_LEVELS];
-      return apiRequest("POST", "/api/tasks", {
+      const response = await apiRequest("POST", "/api/tasks", {
         ...taskData,
         expReward: difficulty.xp,
         requiredEnergyBalls: Math.ceil((taskData.estimatedDuration || 25) / 15), // 15 minutes per energy ball
         taskCategory: taskData.taskCategory || "todo"
       });
+      const result = await response.json();
+      console.log('=== Task creation API response ===');
+      console.log('Created task:', result);
+      return result;
     },
     onMutate: async (taskData) => {
       // Cancel any outgoing refetches
@@ -445,9 +482,22 @@ export default function UnifiedRPGTaskManager() {
         description: "新任务已添加到您的任务列表",
       });
     },
-    onSettled: () => {
+    onSettled: (data, error, variables, context) => {
+      console.log('=== Task creation settled ===');
+      console.log('Success:', !!data && !error);
+      console.log('Response data:', data);
+      console.log('Error:', error);
+      
       // Always refetch after error or success
-      queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+      console.log('Invalidating tasks query...');
+      queryClient.invalidateQueries({ 
+        queryKey: ["/api/data?type=tasks"],
+        refetchType: 'all' // Force refetch all matching queries
+      }).then(() => {
+        console.log('Tasks query invalidation complete');
+      }).catch((err) => {
+        console.error('Failed to invalidate tasks query:', err);
+      });
     },
   });
 
@@ -547,50 +597,80 @@ export default function UnifiedRPGTaskManager() {
   const handleCreateTask = async () => {
     if (!newTask.title.trim()) return;
     
+    console.log('=== Creating AI intelligent task with title:', newTask.title);
     setIsAnalyzing(true);
     
     try {
-      // First, analyze the task with AI
-      const analysisResponse = await apiRequest("POST", "/api/tasks/analyze-task", {
-        title: newTask.title,
-        description: newTask.description || ""
+      // Use the AI intelligent create endpoint
+      console.log('Sending to AI intelligent create endpoint...');
+      const response = await apiRequest("POST", "/api/tasks/intelligent-create", {
+        description: newTask.title  // The AI endpoint expects 'description'
       });
       
-      const analysis = await analysisResponse.json();
+      const result = await response.json();
+      console.log('AI intelligent create response:', result);
       
-      // Create task with AI suggestions
-      const taskData = {
-        title: newTask.title,
-        description: newTask.description || null,
-        taskCategory: analysis.category || newTask.category,
-        difficulty: analysis.difficulty || newTask.difficulty,
-        skills: analysis.skills || [],
-        estimatedDuration: analysis.estimatedDuration || 25,
-        completed: false,
-        order: 0
-      };
-      
-      createTaskMutation.mutate(taskData);
+      if (result.task) {
+        console.log('Task created:', result.task);
+        console.log('Task category:', result.task.taskCategory);
+        console.log('Current active tab:', activeTab);
+        
+        // Manually add the task to the cache for immediate UI update
+        queryClient.setQueryData(["/api/data?type=tasks"], (old: Task[]) => {
+          console.log('Current tasks in cache:', old?.length || 0);
+          console.log('Adding new task to cache');
+          const updated = old ? [...old, result.task] : [result.task];
+          console.log('Updated tasks in cache:', updated.length);
+          return updated;
+        });
+        
+        // Clear form
+        setNewTask({ title: "", description: "", category: "todo", difficulty: "medium" });
+        
+        // Show success toast with category info
+        const categoryName = TASK_CATEGORIES[result.task.taskCategory as keyof typeof TASK_CATEGORIES]?.name || result.task.taskCategory;
+        toast({
+          title: "任务创建成功",
+          description: `已创建${categoryName}：${result.task.title}`,
+        });
+        
+        // Switch to the correct tab if needed
+        if (result.task.taskCategory === 'todo' && activeTab !== 'todo') {
+          console.log('Switching to side quests tab for todo task');
+          setActiveTab('todo');
+        } else if (result.task.taskCategory === 'habit' && activeTab !== 'habit') {
+          console.log('Switching to habit tab');
+          setActiveTab('habit');
+        } else if (result.task.taskCategory === 'goal' && activeTab !== 'goal') {
+          console.log('Switching to main quests tab for goal task');
+          setActiveTab('goal');
+        }
+        
+        // Force complete cache removal and refetch
+        console.log('=== Invalidating and refetching tasks after creation ===');
+        
+        // First, cancel any in-flight queries
+        await queryClient.cancelQueries({ queryKey: ["/api/data?type=tasks"] });
+        
+        // Remove the query from cache completely
+        queryClient.removeQueries({ queryKey: ["/api/data?type=tasks"] });
+        
+        // Force refetch with no cache
+        await queryClient.refetchQueries({
+          queryKey: ["/api/data?type=tasks"],
+          type: 'all',
+          exact: true
+        });
+        
+        console.log('=== Cache invalidation complete ===');
+      }
     } catch (error) {
-      console.error("Error analyzing task:", error);
+      console.error("Error creating intelligent task:", error);
       toast({
-        title: "AI分析失败",
-        description: "将使用默认设置创建任务",
-        variant: "default",
+        title: "创建失败",
+        description: "任务创建失败，请重试",
+        variant: "destructive",
       });
-      // Fallback to creating task without AI analysis
-      const taskData = {
-        title: newTask.title,
-        description: newTask.description || null,
-        taskCategory: newTask.category,
-        difficulty: newTask.difficulty,
-        skills: [], // Add empty skills array
-        estimatedDuration: 25, // Add default duration
-        completed: false,
-        order: 0
-      };
-      
-      createTaskMutation.mutate(taskData);
     } finally {
       setIsAnalyzing(false);
     }
@@ -817,6 +897,30 @@ export default function UnifiedRPGTaskManager() {
     activeTab: activeTab === 'all' ? 'all' : activeTab,
     searchQuery: ''
   });
+  
+  // Debug log to see filtering results
+  console.log('=== Task filtering results ===');
+  console.log('All tasks from API:', tasks.length);
+  console.log('Tasks by category:', {
+    todo: tasks.filter(t => t.taskCategory === 'todo').length,
+    habit: tasks.filter(t => t.taskCategory === 'habit').length,
+    goal: tasks.filter(t => t.taskCategory === 'goal').length
+  });
+  console.log('Filtered results:');
+  console.log('Goal tasks:', goalTasks.length);
+  console.log('Side tasks (todos):', sideTasks.length);
+  console.log('Habit tasks:', habitTasks.length);
+  console.log('Active tab:', activeTab);
+  
+  // Log some specific tasks
+  if (tasks.length > 0) {
+    console.log('Sample tasks:', tasks.slice(0, 3).map(t => ({
+      id: t.id,
+      title: t.title,
+      category: t.taskCategory,
+      userId: t.userId
+    })));
+  }
 
   // Special handling for habits - reset completed habits from previous days
   const habits = habitTasks.map(habit => {
@@ -977,7 +1081,7 @@ export default function UnifiedRPGTaskManager() {
 
           <Button 
             onClick={() => handleCreateTask()}
-            disabled={!newTask.title.trim() || createTaskMutation.isPending || isAnalyzing}
+            disabled={!newTask.title.trim() || isAnalyzing}
             className="w-full h-10 bg-purple-700 hover:bg-purple-800 text-sm font-medium text-white border-0 disabled:opacity-50"
             style={{ backgroundColor: '#7c3aed', color: '#ffffff', fontWeight: '600', border: 'none' }}
           >
@@ -985,11 +1089,6 @@ export default function UnifiedRPGTaskManager() {
               <>
                 <Brain className="w-4 h-4 mr-2 animate-pulse" />
                 AI 分析中...
-              </>
-            ) : createTaskMutation.isPending ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                创建中...
               </>
             ) : (
               "AI 智能创建"
@@ -1001,14 +1100,35 @@ export default function UnifiedRPGTaskManager() {
         </CardContent>
       </Card>
 
+      {/* Debug button - temporary */}
+      <Button 
+        onClick={async () => {
+          console.log('=== Debug: Checking user tasks ===');
+          try {
+            const response = await apiRequest("GET", "/api/debug/user-tasks");
+            const data = await response.json();
+            console.log('Debug response:', data);
+            alert(`User ID: ${data.userId}\nTasks in storage: ${data.storageTasksCount}\nTasks in DB: ${data.dbTasksCount}\n\nCheck console for details.`);
+          } catch (error) {
+            console.error('Debug error:', error);
+            alert('Error checking tasks. Check console.');
+          }
+        }}
+        variant="outline"
+        size="sm"
+        className="mb-4"
+      >
+        Debug: Check User Tasks
+      </Button>
+
       {/* 任务列表 - 移动优化 */}
       <div>
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 bg-muted h-12">
-            <TabsTrigger value="goal" className="data-[state=active]:bg-background text-xs py-3">
+            <TabsTrigger value="main" className="data-[state=active]:bg-background text-xs py-3">
               主线任务 ({goals.length})
             </TabsTrigger>
-            <TabsTrigger value="todo" className="data-[state=active]:bg-background text-xs py-3">
+            <TabsTrigger value="side" className="data-[state=active]:bg-background text-xs py-3">
               支线任务 ({todos.filter(t => !t.completed).length})
             </TabsTrigger>
             <TabsTrigger value="habit" className="data-[state=active]:bg-background text-xs py-3">
@@ -1018,7 +1138,7 @@ export default function UnifiedRPGTaskManager() {
 
 
 
-        <TabsContent value="goal" className="space-y-3">
+        <TabsContent value="main" className="space-y-3">
           <div className="mb-4 p-4 bg-primary/10 rounded-lg border border-primary/30">
             <h3 className="font-medium text-primary mb-2">🎯 主线任务 (Main Quests)</h3>
             <p className="text-sm text-muted-foreground">长期主线目标任务</p>
@@ -1277,7 +1397,7 @@ export default function UnifiedRPGTaskManager() {
 
 
 
-        <TabsContent value="todo" className="space-y-3">
+        <TabsContent value="side" className="space-y-3">
           <div className="mb-4 p-4 bg-primary/20 rounded-lg border border-primary/30">
             <h3 className="font-medium text-primary mb-2">✅ 支线任务 (Side Quests)</h3>
             <p className="text-sm text-muted-foreground">一次性任务，完成后消除</p>
@@ -1335,6 +1455,7 @@ export default function UnifiedRPGTaskManager() {
             <div className="text-center py-8 text-muted-foreground">
               <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
               <p>还没有支线任务，创建你的第一个任务开始升级吧！</p>
+              <p className="text-xs mt-2">当前共有 {tasks.length} 个任务</p>
             </div>
           )}
         </TabsContent>

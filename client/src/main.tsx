@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-// Build timestamp: ${new Date().toISOString()}
+// Build timestamp: 2025-01-01T16:00:00Z
 
 const container = document.getElementById("root");
 if (!container) {

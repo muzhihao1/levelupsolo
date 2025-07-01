@@ -65,7 +65,7 @@ const cacheConfig = {
   },
   // 任务数据变化频繁，缓存时间较短
   dynamic: {
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 0, // Always consider stale, fetch fresh data
     gcTime: 5 * 60 * 1000, // 5 minutes
   },
   // 统计数据中等变化频率

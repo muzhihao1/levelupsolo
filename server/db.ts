@@ -52,7 +52,7 @@ if (process.env.NODE_ENV === 'development' && !databaseUrl) {
         }
       });
       
-      db = drizzle(sql, { schema });
+      db = drizzle(sql, { schema, logger: true });
     }
   } catch (error) {
     console.error("🚨 Failed to initialize database connection:", error);

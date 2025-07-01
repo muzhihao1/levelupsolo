@@ -470,19 +470,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createTask(task: InsertTask): Promise<Task> {
+    console.log('=== Storage: Creating task ===');
+    console.log('Input task data:', JSON.stringify(task, null, 2));
+    
+    const taskToInsert = {
+      ...task,
+      completed: task.completed || false,
+      expReward: task.expReward || 0,
+      estimatedDuration: task.estimatedDuration ?? 25
+    };
+    
+    console.log('Task to insert:', JSON.stringify(taskToInsert, null, 2));
+    
     const result = await db
       .insert(tasks)
-      .values({
-        ...task,
-        completed: task.completed || false,
-        expReward: task.expReward || 0,
-        estimatedDuration: task.estimatedDuration ?? 25
-      })
+      .values(taskToInsert)
       .returning();
+    
+    console.log('Database insert result:', result);
     
     if (!result || result.length === 0) {
       throw new Error('Failed to create task: No data returned from database');
     }
+    
+    console.log('Created task:', JSON.stringify(result[0], null, 2));
+    console.log('=== Task creation completed ===');
     
     return result[0];
   }
