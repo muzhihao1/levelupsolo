@@ -8,34 +8,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     react(),
-    // 自定义插件来确保正确的模块加载顺序
-    {
-      name: 'ensure-react-load-order',
-      transformIndexHtml(html) {
-        // 确保 React 在所有其他模块之前加载
-        return html.replace(
-          /<link rel="modulepreload"[^>]+href="([^"]+vendor[^"]+)"[^>]*>/,
-          (match, vendorPath) => {
-            // 查找 React chunk
-            const reactMatch = html.match(/<link rel="modulepreload"[^>]+href="([^"]+react[^"]+)"[^>]*>/);
-            if (reactMatch) {
-              // 先加载 React，然后加载 vendor
-              return `<link rel="modulepreload" crossorigin href="${reactMatch[1]}">
-    <link rel="modulepreload" crossorigin href="${vendorPath}">`;
-            }
-            return match;
-          }
-        ).replace(
-          // 移除重复的 React preload
-          /<link rel="modulepreload"[^>]+href="[^"]+react[^"]+"[^>]*>/g,
-          (match, offset, string) => {
-            // 只保留第一个 React preload
-            const firstIndex = string.indexOf(match);
-            return offset === firstIndex ? match : '';
-          }
-        );
-      }
-    }
   ],
   resolve: {
     alias: {
@@ -63,25 +35,10 @@ export default defineConfig({
     // 优化构建配置
     rollupOptions: {
       output: {
-        // 使用函数形式的 manualChunks 以获得更好的控制
-        manualChunks(id) {
-          // 调试信息
-          if (id.includes('node_modules')) {
-            // React 核心库必须在最优先的 chunk
-            if (id.includes('node_modules/react/') || 
-                id.includes('node_modules/react-dom/') ||
-                id.includes('react/jsx-runtime')) {
-              return 'react';
-            }
-            
-            // Radix UI 组件
-            if (id.includes('@radix-ui/')) {
-              return 'ui';
-            }
-            
-            // 其他第三方库
-            return 'vendor';
-          }
+        // 简化 chunk 策略，让 Vite 自动处理
+        manualChunks: {
+          // 只将 React 相关的包单独打包
+          'react-vendor': ['react', 'react-dom', 'react/jsx-runtime'],
         },
         // 生成更好的文件名
         entryFileNames: 'assets/[name].[hash].js',

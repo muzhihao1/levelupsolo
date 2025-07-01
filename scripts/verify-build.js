@@ -23,8 +23,8 @@ if (!fs.existsSync(indexPath)) {
 // Read index.html
 const indexContent = fs.readFileSync(indexPath, 'utf8');
 
-// Check for React chunk
-const reactChunkMatch = indexContent.match(/react\.[a-zA-Z0-9-_]+\.js/);
+// Check for React chunk (now named react-vendor)
+const reactChunkMatch = indexContent.match(/react-vendor\.[a-zA-Z0-9-_]+\.js/);
 if (reactChunkMatch) {
   console.log(`✅ React chunk found: ${reactChunkMatch[0]}`);
 } else {
@@ -32,13 +32,12 @@ if (reactChunkMatch) {
   process.exit(1);
 }
 
-// Check for vendor chunk
+// Check for vendor chunk (might not exist with new config)
 const vendorChunkMatch = indexContent.match(/vendor\.[a-zA-Z0-9-_]+\.js/);
 if (vendorChunkMatch) {
   console.log(`✅ Vendor chunk found: ${vendorChunkMatch[0]}`);
 } else {
-  console.error('❌ Error: Vendor chunk not found in index.html!');
-  process.exit(1);
+  console.log(`ℹ️  No separate vendor chunk (bundled with main)`);
 }
 
 // Check for main index chunk
@@ -59,16 +58,13 @@ modulePreloads.forEach((module, index) => {
   console.log(`   ${index + 1}. ${module}`);
 });
 
-// Verify React is preloaded before vendor
-const reactPreloadIndex = modulePreloads.findIndex(m => m.includes('react'));
-const vendorPreloadIndex = modulePreloads.findIndex(m => m.includes('vendor'));
+// Verify React is preloaded
+const reactPreloadIndex = modulePreloads.findIndex(m => m.includes('react-vendor'));
 
-if (reactPreloadIndex >= 0 && vendorPreloadIndex >= 0) {
-  if (reactPreloadIndex < vendorPreloadIndex) {
-    console.log('\n✅ React is correctly preloaded before vendor chunk');
-  } else {
-    console.warn('\n⚠️  Warning: Vendor chunk is preloaded before React chunk');
-  }
+if (reactPreloadIndex >= 0) {
+  console.log('\n✅ React vendor chunk is correctly preloaded');
+} else {
+  console.warn('\n⚠️  Warning: React vendor chunk not found in preloads');
 }
 
 // Check file sizes
