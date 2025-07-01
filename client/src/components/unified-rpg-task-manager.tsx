@@ -431,6 +431,19 @@ export default function UnifiedRPGTaskManager() {
         category: (taskData.taskCategory as "todo" | "goal" | "habit") || "todo",
         difficulty: (taskData.difficulty as "medium" | "trivial" | "easy" | "hard") || "medium"
       });
+      // Show error message
+      console.error("Task creation error:", err);
+      toast({
+        title: "创建任务失败",
+        description: "无法创建任务，请检查网络连接后重试",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "任务创建成功",
+        description: "新任务已添加到您的任务列表",
+      });
     },
     onSettled: () => {
       // Always refetch after error or success
@@ -560,12 +573,19 @@ export default function UnifiedRPGTaskManager() {
       createTaskMutation.mutate(taskData);
     } catch (error) {
       console.error("Error analyzing task:", error);
+      toast({
+        title: "AI分析失败",
+        description: "将使用默认设置创建任务",
+        variant: "default",
+      });
       // Fallback to creating task without AI analysis
       const taskData = {
         title: newTask.title,
         description: newTask.description || null,
         taskCategory: newTask.category,
         difficulty: newTask.difficulty,
+        skills: [], // Add empty skills array
+        estimatedDuration: 25, // Add default duration
         completed: false,
         order: 0
       };
