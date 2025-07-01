@@ -1652,7 +1652,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             userId,
             action: 'goal_completed',
             description: `完成目标: ${goal.title}`,
-            goalId: goalId,
             expGained: expReward,
             date: new Date()
           });
@@ -1751,7 +1750,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             userId,
             action: 'milestone_completed',
             description: `完成里程碑: ${milestone.title}`,
-            goalId: goalId,
             expGained: 0,
             date: new Date()
           });
@@ -2439,7 +2437,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         case 'goals':
           try {
             const goals = await storage.getGoals(userId);
-            return res.json(goals);
+            // Add virtual completed field for frontend compatibility
+            const goalsWithCompleted = goals.map(goal => ({
+              ...goal,
+              completed: !!goal.completedAt
+            }));
+            return res.json(goalsWithCompleted);
           } catch (error) {
             console.error("Storage getGoals failed, using SQL fallback:", error);
             // Use same SQL fallback as /api/goals endpoint
