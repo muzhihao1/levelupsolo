@@ -514,10 +514,19 @@ export default function UnifiedRPGTaskManager() {
       if (context?.previousTasks) {
         queryClient.setQueryData(["/api/data?type=tasks"], context.previousTasks);
       }
+      toast({
+        title: "删除失败",
+        description: "任务删除失败，请重试",
+        variant: "destructive",
+      });
     },
-    onSettled: () => {
-      // Always refetch after error or success
+    onSuccess: () => {
+      // Only invalidate on success to avoid flicker
       queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+      toast({
+        title: "任务已删除",
+        description: "任务已成功删除",
+      });
     },
   });
 

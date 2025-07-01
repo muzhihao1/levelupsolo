@@ -52,14 +52,23 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
     
     const textLower = cleanText.toLowerCase();
     
-    if (textLower.includes('学习') || textLower.includes('xue xi')) {
+    // 检查是否是读书任务
+    if (textLower.includes('读完') || textLower.includes('看完') || textLower.includes('阅读') || 
+        textLower.includes('du wan') || textLower.includes('kan wan') || textLower.includes('yue du') ||
+        (textLower.includes('读') && textLower.includes('书')) || 
+        (textLower.includes('看') && textLower.includes('书'))) {
+      description = `完成${cleanText}，获取知识和见解`;
+      category = 'side_quest'; // 读完一本书是一次性任务
+      priority = 'medium';
+    } else if (textLower.includes('学习') || textLower.includes('xue xi')) {
       description = `掌握${cleanText.replace(/学习|xue xi/g, '')}的核心知识和技能`;
       category = 'main_quest';
       priority = 'high';
-    } else if (textLower.includes('跑步') || textLower.includes('pao bu') || 
-               textLower.includes('运动') || textLower.includes('yun dong') ||
-               textLower.includes('健身') || textLower.includes('jian shen') ||
-               textLower.includes('锻炼') || textLower.includes('duan lian')) {
+    } else if ((textLower.includes('每天') || textLower.includes('每日') || textLower.includes('坚持')) &&
+               (textLower.includes('跑步') || textLower.includes('pao bu') || 
+                textLower.includes('运动') || textLower.includes('yun dong') ||
+                textLower.includes('健身') || textLower.includes('jian shen') ||
+                textLower.includes('锻炼') || textLower.includes('duan lian'))) {
       description = `建立${cleanText}的运动习惯，提升身体健康水平`;
       category = 'habit';
       priority = 'medium';

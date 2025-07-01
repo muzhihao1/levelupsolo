@@ -40,7 +40,7 @@ export function useTaskMutations() {
 
   const deleteTaskMutation = useMutation({
     mutationFn: async (id: number) => {
-      await apiRequest('DELETE', `/api/crud?resource=tasks&id=${id}`);
+      await apiRequest('DELETE', `/api/tasks/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
