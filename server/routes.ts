@@ -1592,6 +1592,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Handle goal completion - set completedAt timestamp and status
       if (updates.completed !== undefined) {
         if (updates.completed) {
+          // Check if all milestones are completed before allowing goal completion
+          const goalWithMilestones = await storage.getGoalWithMilestones(goalId);
+          if (goalWithMilestones.milestones && goalWithMilestones.milestones.length > 0) {
+            const allMilestonesCompleted = goalWithMilestones.milestones.every((m: any) => m.completed);
+            if (!allMilestonesCompleted) {
+              return res.status(400).json({ 
+                message: "所有里程碑必须完成后才能完成目标", 
+                code: "MILESTONES_NOT_COMPLETED" 
+              });
+            }
+          }
+          
           updates.completedAt = new Date();
           updates.status = 'completed';
           updates.progress = 1.0; // 100% completion
@@ -1627,6 +1639,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!goal) {
         return res.status(404).json({ message: "Goal not found" });
+      }
+
+      // If goal was just completed, create activity log and award experience
+      if (updates.completed && goal.completedAt) {
+        try {
+          // Award experience points
+          const expReward = goal.expReward || 100;
+          
+          // Create activity log for goal completion
+          await storage.createActivityLog({
+            userId,
+            action: 'goal_completed',
+            description: `完成目标: ${goal.title}`,
+            goalId: goalId,
+            expGained: expReward,
+            date: new Date()
+          });
+
+          // Update user experience/stats
+          const userStats = await storage.getUserStats(userId);
+          if (userStats) {
+            const newExperience = userStats.experience + expReward;
+            
+            // Check for level up
+            let newLevel = userStats.level;
+            let experienceToNext = userStats.experienceToNext;
+            let remainingExp = newExperience;
+            
+            while (remainingExp >= experienceToNext) {
+              remainingExp -= experienceToNext;
+              newLevel++;
+              experienceToNext = newLevel * 100; // Simple level formula
+            }
+            
+            await storage.updateUserStats(userId, {
+              experience: remainingExp,
+              experienceToNext: experienceToNext,
+              level: newLevel,
+              totalTasksCompleted: userStats.totalTasksCompleted + 1
+            });
+            
+            // Log level up if it happened
+            if (newLevel > userStats.level) {
+              await storage.createActivityLog({
+                userId,
+                action: 'level_up',
+                description: `升级到等级 ${newLevel}！`,
+                expGained: 0,
+                date: new Date()
+              });
+            }
+          }
+          
+          console.log(`Goal ${goalId} completed. Awarded ${expReward} experience to user ${userId}`);
+        } catch (error) {
+          console.error("Error creating activity log for goal completion:", error);
+          // Don't fail the request if activity log creation fails
+        }
       }
 
       // Add virtual completed field for frontend compatibility
@@ -1672,6 +1742,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (!milestone) {
         return res.status(404).json({ message: "Milestone not found" });
+      }
+
+      // Create activity log for milestone completion
+      if (completed) {
+        try {
+          await storage.createActivityLog({
+            userId,
+            action: 'milestone_completed',
+            description: `完成里程碑: ${milestone.title}`,
+            goalId: goalId,
+            expGained: 0,
+            date: new Date()
+          });
+        } catch (error) {
+          console.error("Error creating activity log for milestone:", error);
+        }
       }
 
       res.json(milestone);
@@ -1932,9 +2018,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Use the new safe method
-      const { safeGetActivityLogs } = require('./fix-activity-logs');
-      const logs = await safeGetActivityLogs(userId);
+      // Get activity logs directly
+      const logs = await storage.getActivityLogs(userId);
       
       console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
       res.json(logs);

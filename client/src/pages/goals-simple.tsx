@@ -52,17 +52,29 @@ export default function Goals() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/activity-logs'] }); // Refresh activity logs
       toast({
-        title: "目标已更新",
-        description: "目标状态已成功更新",
+        title: "目标已完成！🎉",
+        description: "恭喜你完成了这个目标！",
       });
     },
-    onError: () => {
-      toast({
-        title: "更新失败",
-        description: "目标状态更新失败，请重试",
-        variant: "destructive",
-      });
+    onError: (error: any) => {
+      console.error("Goal update error:", error);
+      
+      // Check if it's a milestone validation error
+      if (error?.response?.data?.code === "MILESTONES_NOT_COMPLETED") {
+        toast({
+          title: "请先完成所有里程碑",
+          description: "必须完成所有里程碑后才能标记目标为完成",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "更新失败",
+          description: error?.response?.data?.message || "目标状态更新失败，请重试",
+          variant: "destructive",
+        });
+      }
     },
   });
 
@@ -92,15 +104,49 @@ export default function Goals() {
     mutationFn: async ({ goalId, milestoneId, completed }: { goalId: number; milestoneId: number; completed: boolean }) => {
       return await apiRequest("PATCH", `/api/goals/${goalId}/milestones/${milestoneId}`, { completed });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+    onMutate: async ({ goalId, milestoneId, completed }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['/api/data?type=goals'] });
+
+      // Snapshot the previous value
+      const previousGoals = queryClient.getQueryData<Goal[]>(['/api/data?type=goals']);
+
+      // Optimistically update the milestone
+      if (previousGoals) {
+        queryClient.setQueryData<Goal[]>(['/api/data?type=goals'], (old) => {
+          if (!old) return old;
+          return old.map(goal => {
+            if (goal.id === goalId && goal.milestones) {
+              return {
+                ...goal,
+                milestones: goal.milestones.map(m => 
+                  m.id === milestoneId ? { ...m, completed } : m
+                )
+              };
+            }
+            return goal;
+          });
+        });
+      }
+
+      // Return a context object with the snapshotted value
+      return { previousGoals };
     },
-    onError: () => {
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousGoals) {
+        queryClient.setQueryData(['/api/data?type=goals'], context.previousGoals);
+      }
       toast({
         title: "更新失败",
         description: "里程碑状态更新失败",
         variant: "destructive",
       });
+    },
+    onSettled: () => {
+      // Always refetch after error or success
+      queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/activity-logs'] });
     },
   });
 
@@ -228,6 +274,9 @@ function GoalCard({
   };
 
   const progress = calculateProgress(goal);
+  const allMilestonesCompleted = goal.milestones && goal.milestones.length > 0 
+    ? goal.milestones.every(m => m.completed) 
+    : true; // If no milestones, allow completion
 
   return (
     <Card className={`bg-card border-border transition-all duration-200 ${goal.completed ? 'opacity-60' : ''}`}>
@@ -261,7 +310,9 @@ function GoalCard({
               variant="outline" 
               size="sm"
               onClick={() => onToggleCompletion(goal)}
-              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium"
+              disabled={!allMilestonesCompleted}
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              title={!allMilestonesCompleted ? "请先完成所有里程碑" : "标记目标为完成"}
             >
               标记完成
             </Button>

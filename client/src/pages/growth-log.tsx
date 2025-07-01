@@ -111,6 +111,12 @@ export default function GrowthLog() {
         return 'fas fa-arrow-up text-blue-400';
       case 'goal_completed':
         return 'fas fa-trophy text-yellow-400';
+      case 'milestone_completed':
+        return 'fas fa-flag text-purple-400';
+      case 'level_up':
+        return 'fas fa-star text-amber-400';
+      case 'goal_pomodoro_complete':
+        return 'fas fa-clock text-orange-400';
       default:
         return 'fas fa-star text-gray-400';
     }
@@ -124,6 +130,14 @@ export default function GrowthLog() {
         return '技能升级';
       case 'goal_completed':
         return '目标完成';
+      case 'milestone_completed':
+        return '里程碑完成';
+      case 'level_up':
+        return '等级提升';
+      case 'goal_pomodoro_complete':
+        return '番茄钟完成';
+      case 'task_completed_with_pomodoro':
+        return '番茄钟任务完成';
       default:
         return '活动';
     }
