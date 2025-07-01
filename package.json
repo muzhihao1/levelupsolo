@@ -22,6 +22,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:create-activity-logs": "tsx scripts/create-activity-logs-table.ts",
+    "db:test-activity-logs": "tsx scripts/test-activity-logs.ts",
     "db:migrate": "tsx server/startup-migrations.ts",
     "seed:test": "tsx scripts/seed-test-data.ts",
     "seed:test:clean": "tsx scripts/seed-test-data.ts --clean",

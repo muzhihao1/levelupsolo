@@ -9,6 +9,12 @@ import type { ActivityLog } from '../shared/schema';
  */
 export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]> {
   try {
+    // Check if db is initialized
+    if (!db) {
+      console.error('Database not initialized');
+      return [];
+    }
+    
     // 首先尝试直接查询
     const logs = await db
       .select()
@@ -20,6 +26,14 @@ export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]
     return logs;
   } catch (error: any) {
     console.error('Error fetching activity logs:', error);
+    console.error('Error details:', {
+      code: error.code,
+      message: error.message,
+      detail: error.detail,
+      hint: error.hint,
+      table: error.table,
+      schema: error.schema
+    });
     
     // 检查是否是表不存在的错误
     if (error.code === '42P01' || // PostgreSQL: relation does not exist
@@ -130,6 +144,11 @@ export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]
  */
 export async function checkActivityLogsTable(): Promise<boolean> {
   try {
+    if (!db) {
+      console.error('Database not initialized in checkActivityLogsTable');
+      return false;
+    }
+    
     const result = await db.execute(sql`
       SELECT EXISTS (
         SELECT FROM pg_catalog.pg_tables
@@ -138,9 +157,22 @@ export async function checkActivityLogsTable(): Promise<boolean> {
       ) as exists
     `);
     
-    // Handle both possible return formats
-    const exists = result?.[0]?.exists || result?.rows?.[0]?.exists;
-    return exists === true;
+    console.log('Table check result:', result);
+    
+    // Handle both possible return formats from different drivers
+    // node-postgres returns result.rows, postgres.js returns result directly
+    let exists = false;
+    if (Array.isArray(result)) {
+      exists = result[0]?.exists === true;
+    } else if (result?.rows && Array.isArray(result.rows)) {
+      exists = result.rows[0]?.exists === true;
+    } else if (typeof result === 'object' && result !== null) {
+      // Check if result has a direct exists property
+      exists = result.exists === true;
+    }
+    
+    console.log('Activity logs table exists:', exists);
+    return exists;
   } catch (error) {
     console.error('Error checking activity_logs table:', error);
     return false;

@@ -1181,41 +1181,170 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Manual activity logs table creation endpoint (for emergency use)
+  app.post('/api/debug/create-activity-logs-table', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      if (!db) {
+        return res.status(500).json({ error: 'Database not initialized' });
+      }
+      
+      console.log('Manual table creation requested...');
+      
+      // Create the table
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS activity_logs (
+          id SERIAL PRIMARY KEY,
+          user_id VARCHAR NOT NULL,
+          date TIMESTAMP NOT NULL DEFAULT NOW(),
+          task_id INTEGER,
+          skill_id INTEGER,
+          exp_gained INTEGER NOT NULL DEFAULT 0,
+          action TEXT NOT NULL,
+          description TEXT
+        )
+      `);
+      
+      console.log('Table created, adding indexes...');
+      
+      // Create indexes
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id 
+        ON activity_logs(user_id)
+      `);
+      
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS idx_activity_logs_date 
+        ON activity_logs(date DESC)
+      `);
+      
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS idx_activity_logs_user_date 
+        ON activity_logs(user_id, date DESC)
+      `);
+      
+      console.log('Indexes created successfully');
+      
+      res.json({
+        success: true,
+        message: 'Activity logs table created successfully'
+      });
+    } catch (error: any) {
+      console.error('Failed to create activity logs table:', error);
+      res.status(500).json({
+        error: error.message,
+        code: error.code,
+        detail: error.detail,
+        hint: error.hint
+      });
+    }
+  });
+  
   // Debug endpoint for activity_logs table
   app.get('/api/debug/activity-logs', async (req, res) => {
     try {
       const { sql } = require('drizzle-orm');
       const { db } = require('./db');
       
-      // Check table structure
-      const tableInfo = await db.execute(sql`
-        SELECT column_name, data_type, is_nullable, column_default
-        FROM information_schema.columns
-        WHERE table_name = 'activity_logs'
-        ORDER BY ordinal_position
-      `);
+      const diagnostics: any = {
+        dbInitialized: !!db,
+        timestamp: new Date().toISOString()
+      };
       
-      // Get sample data
-      const sampleData = await db.execute(sql`
-        SELECT * FROM activity_logs
-        ORDER BY date DESC
-        LIMIT 5
-      `);
+      // Check if table exists
+      try {
+        const tableExists = await db.execute(sql`
+          SELECT EXISTS (
+            SELECT FROM pg_catalog.pg_tables
+            WHERE schemaname = 'public'
+            AND tablename = 'activity_logs'
+          ) as exists
+        `);
+        
+        diagnostics.tableExists = tableExists;
+        diagnostics.tableExistsResult = Array.isArray(tableExists) ? tableExists[0]?.exists : tableExists?.rows?.[0]?.exists;
+      } catch (e: any) {
+        diagnostics.tableExistsError = {
+          message: e.message,
+          code: e.code
+        };
+      }
       
-      // Count total logs
-      const count = await db.execute(sql`
-        SELECT COUNT(*) as count FROM activity_logs
-      `);
+      // Check table structure if it exists
+      if (diagnostics.tableExistsResult) {
+        try {
+          const tableInfo = await db.execute(sql`
+            SELECT column_name, data_type, is_nullable, column_default
+            FROM information_schema.columns
+            WHERE table_name = 'activity_logs'
+            ORDER BY ordinal_position
+          `);
+          
+          diagnostics.tableStructure = Array.isArray(tableInfo) ? tableInfo : tableInfo?.rows;
+        } catch (e: any) {
+          diagnostics.tableStructureError = {
+            message: e.message,
+            code: e.code
+          };
+        }
+        
+        // Get sample data
+        try {
+          const sampleData = await db.execute(sql`
+            SELECT * FROM activity_logs
+            ORDER BY date DESC
+            LIMIT 5
+          `);
+          
+          diagnostics.sampleData = Array.isArray(sampleData) ? sampleData : sampleData?.rows;
+        } catch (e: any) {
+          diagnostics.sampleDataError = {
+            message: e.message,
+            code: e.code
+          };
+        }
+        
+        // Count total logs
+        try {
+          const count = await db.execute(sql`
+            SELECT COUNT(*) as count FROM activity_logs
+          `);
+          
+          const countResult = Array.isArray(count) ? count[0] : count?.rows?.[0];
+          diagnostics.totalCount = countResult?.count || 0;
+        } catch (e: any) {
+          diagnostics.countError = {
+            message: e.message,
+            code: e.code
+          };
+        }
+      }
       
-      res.json({
-        tableStructure: tableInfo,
-        sampleData: sampleData,
-        totalCount: count[0]?.count || 0
-      });
-    } catch (error) {
+      // Check all tables in database
+      try {
+        const tables = await db.execute(sql`
+          SELECT tablename 
+          FROM pg_catalog.pg_tables 
+          WHERE schemaname = 'public'
+          ORDER BY tablename
+        `);
+        
+        diagnostics.allTables = Array.isArray(tables) ? tables.map(t => t.tablename) : tables?.rows?.map((t: any) => t.tablename);
+      } catch (e: any) {
+        diagnostics.allTablesError = {
+          message: e.message,
+          code: e.code
+        };
+      }
+      
+      res.json(diagnostics);
+    } catch (error: any) {
       console.error('Debug activity logs error:', error);
       res.status(500).json({ 
         error: error.message,
+        code: error.code,
         stack: error.stack
       });
     }
@@ -2016,13 +2145,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Get activity logs directly
+      // Get activity logs with better error handling
       try {
         const logs = await storage.getActivityLogs(userId);
         console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
         res.json(logs);
-      } catch (dbError) {
+      } catch (dbError: any) {
         console.error("Database error in activity logs:", dbError);
+        
+        // If it's a table not found error, try to create the table directly
+        if (dbError.code === '42P01' || dbError.message?.includes('does not exist')) {
+          console.log('Activity logs table missing, attempting direct creation...');
+          
+          try {
+            const { db } = require('./db');
+            const { sql } = require('drizzle-orm');
+            
+            // Create the table directly
+            await db.execute(sql`
+              CREATE TABLE IF NOT EXISTS activity_logs (
+                id SERIAL PRIMARY KEY,
+                user_id VARCHAR NOT NULL,
+                date TIMESTAMP NOT NULL DEFAULT NOW(),
+                task_id INTEGER,
+                skill_id INTEGER,
+                exp_gained INTEGER NOT NULL DEFAULT 0,
+                action TEXT NOT NULL,
+                description TEXT
+              )
+            `);
+            
+            console.log('Activity logs table created, retrying query...');
+            
+            // Retry the query
+            const logs = await storage.getActivityLogs(userId);
+            return res.json(logs);
+          } catch (createError: any) {
+            console.error('Failed to create activity logs table:', createError);
+            return res.status(500).json({
+              message: "Activity logs table missing and could not be created",
+              error: createError.message,
+              hint: "Please run 'npm run db:create-activity-logs' on the server"
+            });
+          }
+        }
+        
         throw dbError;
       }
     } catch (error: any) {
@@ -2037,7 +2204,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ 
           message: "Failed to fetch activity logs",
-          error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+          error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
+          code: error.code
         });
       }
     }

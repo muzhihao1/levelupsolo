@@ -26,6 +26,8 @@ export async function runStartupMigrations(): Promise<void> {
     
     // 检查并创建activity_logs表
     const activityLogsExists = await checkActivityLogsTable();
+    console.log('Activity logs table exists:', activityLogsExists);
+    
     if (!activityLogsExists) {
       console.log('📋 Creating activity_logs table...');
       try {

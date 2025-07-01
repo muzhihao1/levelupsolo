@@ -707,7 +707,9 @@ export class DatabaseStorage implements IStorage {
 
   // Activity Logs
   async getActivityLogs(userId: string): Promise<ActivityLog[]> {
-    return await db.select().from(activityLogs).where(eq(activityLogs.userId, userId)).orderBy(desc(activityLogs.date));
+    // Use the safe version that handles table creation
+    const { safeGetActivityLogs } = require('./fix-activity-logs');
+    return await safeGetActivityLogs(userId);
   }
 
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
