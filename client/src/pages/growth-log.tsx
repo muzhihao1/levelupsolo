@@ -20,10 +20,25 @@ export default function GrowthLog() {
       return response;
     },
     onSuccess: (data) => {
+      console.log('Test data creation response:', data);
+      if (data?.diagnostics) {
+        console.log('Diagnostics:', data.diagnostics);
+      }
+      
       toast({
         title: "测试数据创建成功",
         description: `已创建 ${data?.logs?.length || 0} 条示例活动记录`,
       });
+      
+      // Show additional diagnostic info if there were issues
+      if (data?.diagnostics?.createErrors?.length > 0) {
+        toast({
+          title: "部分记录创建失败",
+          description: `失败数量: ${data.diagnostics.createErrors.length}`,
+          variant: "destructive"
+        });
+      }
+      
       refetchLogs();
     },
     onError: (error) => {
@@ -280,7 +295,13 @@ export default function GrowthLog() {
                   重新加载
                 </Button>
                 <Button 
-                  onClick={() => checkDiagnosticsMutation.mutate()} 
+                  onClick={() => {
+                    checkDiagnosticsMutation.mutate();
+                    // Also log detailed information
+                    console.log('Logs data:', logs);
+                    console.log('Logs loading:', logsLoading);
+                    console.log('Logs error:', logsError);
+                  }} 
                   variant="outline"
                   disabled={checkDiagnosticsMutation.isPending}
                 >
@@ -296,24 +317,45 @@ export default function GrowthLog() {
               <i className="fas fa-book text-4xl text-muted-foreground mb-4"></i>
               <h3 className="text-xl font-semibold text-foreground mb-2">还没有升级记录</h3>
               <p className="text-muted-foreground mb-4">完成一些任务来开始记录你的升级历程吧！</p>
-              <div className="mt-4">
-                <Button 
-                  onClick={() => createTestDataMutation.mutate()}
-                  disabled={createTestDataMutation.isPending}
-                  variant="outline"
-                >
-                  {createTestDataMutation.isPending ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
-                      创建中...
-                    </>
-                  ) : (
-                    <>
-                      <i className="fas fa-plus mr-2"></i>
-                      创建示例记录
-                    </>
-                  )}
-                </Button>
+              <div className="mt-4 space-y-2">
+                <div className="flex justify-center gap-2">
+                  <Button 
+                    onClick={() => createTestDataMutation.mutate()}
+                    disabled={createTestDataMutation.isPending}
+                    variant="outline"
+                  >
+                    {createTestDataMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                        创建中...
+                      </>
+                    ) : (
+                      <>
+                        <i className="fas fa-plus mr-2"></i>
+                        创建示例记录
+                      </>
+                    )}
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      checkDiagnosticsMutation.mutate();
+                      console.log('Empty logs state - diagnostics clicked');
+                      console.log('Current logs:', logs);
+                      console.log('Query state:', { logsLoading, logsError });
+                    }} 
+                    variant="outline"
+                    disabled={checkDiagnosticsMutation.isPending}
+                  >
+                    <i className="fas fa-stethoscope mr-2"></i>
+                    诊断
+                  </Button>
+                </div>
+                {checkDiagnosticsMutation.data && (
+                  <div className="text-xs text-muted-foreground">
+                    表存在: {checkDiagnosticsMutation.data.tableExists ? '是' : '否'} | 
+                    总记录: {checkDiagnosticsMutation.data.totalCount || 0}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

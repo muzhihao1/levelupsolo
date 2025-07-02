@@ -1244,15 +1244,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Debug endpoint for activity_logs table
-  app.get('/api/debug/activity-logs', async (req, res) => {
+  // Comprehensive debug endpoint for activity_logs
+  app.get('/api/debug/activity-logs', async (req: any, res) => {
     try {
       const { sql } = require('drizzle-orm');
       const { db } = require('./db');
       
       const diagnostics: any = {
         dbInitialized: !!db,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        user: {
+          authenticated: !!req.user,
+          userId: req.user?.claims?.sub || req.user?.id || null,
+          userType: req.user ? typeof req.user : 'none',
+          claims: req.user?.claims ? Object.keys(req.user.claims) : []
+        }
       };
       
       // Check if table exists
@@ -1265,8 +1271,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ) as exists
         `);
         
-        diagnostics.tableExists = tableExists;
-        diagnostics.tableExistsResult = Array.isArray(tableExists) ? tableExists[0]?.exists : tableExists?.rows?.[0]?.exists;
+        diagnostics.tableExists = Array.isArray(tableExists) ? tableExists[0]?.exists : tableExists?.rows?.[0]?.exists;
       } catch (e: any) {
         diagnostics.tableExistsError = {
           message: e.message,
@@ -1275,7 +1280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check table structure if it exists
-      if (diagnostics.tableExistsResult) {
+      if (diagnostics.tableExists) {
         try {
           const tableInfo = await db.execute(sql`
             SELECT column_name, data_type, is_nullable, column_default
@@ -1339,6 +1344,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: e.message,
           code: e.code
         };
+      }
+      
+      // Check user data consistency
+      if (diagnostics.user.userId) {
+        try {
+          // Check if user exists in users table
+          const userCheck = await db.execute(sql`
+            SELECT id, email, created_at 
+            FROM users 
+            WHERE id = ${diagnostics.user.userId}
+          `);
+          
+          diagnostics.userInUsersTable = {
+            exists: (Array.isArray(userCheck) ? userCheck : userCheck?.rows)?.length > 0,
+            data: Array.isArray(userCheck) ? userCheck[0] : userCheck?.rows?.[0]
+          };
+          
+          // Check tasks for this user
+          const taskCount = await db.execute(sql`
+            SELECT COUNT(*) as count 
+            FROM tasks 
+            WHERE user_id = ${diagnostics.user.userId}
+          `);
+          
+          diagnostics.userTaskCount = Array.isArray(taskCount) ? taskCount[0]?.count : taskCount?.rows?.[0]?.count;
+          
+          // Check activity logs for this user
+          const logCount = await db.execute(sql`
+            SELECT COUNT(*) as count 
+            FROM activity_logs 
+            WHERE user_id = ${diagnostics.user.userId}
+          `);
+          
+          diagnostics.userActivityLogCount = Array.isArray(logCount) ? logCount[0]?.count : logCount?.rows?.[0]?.count;
+          
+          // Get unique user IDs from activity_logs
+          const uniqueUsers = await db.execute(sql`
+            SELECT DISTINCT user_id, COUNT(*) as log_count
+            FROM activity_logs
+            GROUP BY user_id
+            ORDER BY log_count DESC
+            LIMIT 10
+          `);
+          
+          diagnostics.uniqueUsersInLogs = Array.isArray(uniqueUsers) ? uniqueUsers : uniqueUsers?.rows;
+        } catch (e: any) {
+          diagnostics.userCheckError = {
+            message: e.message,
+            code: e.code
+          };
+        }
       }
       
       res.json(diagnostics);
@@ -2136,16 +2192,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create test activity logs
+  // Create test activity logs and comprehensive diagnostics
   app.post("/api/activity-logs/create-test", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user?.claims?.sub || req.user?.id;
+      console.log('Create test logs - userId:', userId);
       
       if (!userId) {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Create some test activity logs
+      // First, run comprehensive diagnostics
+      const diagnostics: any = {
+        userId,
+        timestamp: new Date().toISOString(),
+        phase: 'initial'
+      };
+
+      // Check if activity_logs table exists
+      try {
+        const { sql } = require('drizzle-orm');
+        const { db } = require('./db');
+        
+        const tableCheck = await db.execute(sql`
+          SELECT EXISTS (
+            SELECT FROM pg_catalog.pg_tables
+            WHERE schemaname = 'public'
+            AND tablename = 'activity_logs'
+          ) as exists
+        `);
+        
+        const exists = Array.isArray(tableCheck) ? tableCheck[0]?.exists : tableCheck?.rows?.[0]?.exists;
+        diagnostics.tableExists = exists;
+        
+        if (!exists) {
+          // Try to create the table
+          diagnostics.phase = 'creating_table';
+          await db.execute(sql`
+            CREATE TABLE IF NOT EXISTS activity_logs (
+              id SERIAL PRIMARY KEY,
+              user_id VARCHAR NOT NULL,
+              date TIMESTAMP NOT NULL DEFAULT NOW(),
+              task_id INTEGER,
+              skill_id INTEGER,
+              exp_gained INTEGER NOT NULL DEFAULT 0,
+              action TEXT NOT NULL,
+              description TEXT
+            )
+          `);
+          
+          // Create indexes
+          await db.execute(sql`
+            CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id 
+            ON activity_logs(user_id)
+          `);
+          
+          await db.execute(sql`
+            CREATE INDEX IF NOT EXISTS idx_activity_logs_date 
+            ON activity_logs(date DESC)
+          `);
+          
+          diagnostics.tableCreated = true;
+        }
+      } catch (tableError: any) {
+        diagnostics.tableError = {
+          message: tableError.message,
+          code: tableError.code
+        };
+        console.error('Table check/create error:', tableError);
+      }
+
+      // Check existing logs for this user
+      diagnostics.phase = 'checking_existing';
+      try {
+        const existingLogs = await storage.getActivityLogs(userId);
+        diagnostics.existingLogsCount = existingLogs.length;
+        diagnostics.existingLogs = existingLogs.slice(0, 3); // First 3 logs
+      } catch (fetchError: any) {
+        diagnostics.fetchError = {
+          message: fetchError.message,
+          code: fetchError.code
+        };
+      }
+
+      // Create test activity logs
+      diagnostics.phase = 'creating_logs';
       const testLogs = [
         {
           userId,
@@ -2171,22 +2302,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       const createdLogs = [];
+      const createErrors = [];
+      
       for (const log of testLogs) {
         try {
+          console.log('Creating test log:', log);
           const created = await storage.createActivityLog(log);
           createdLogs.push(created);
-        } catch (err) {
+          console.log('Created log successfully:', created);
+        } catch (err: any) {
           console.error("Failed to create test log:", err);
+          createErrors.push({
+            log: log.description,
+            error: err.message,
+            code: err.code
+          });
         }
+      }
+
+      diagnostics.createdCount = createdLogs.length;
+      diagnostics.createErrors = createErrors;
+
+      // Verify logs after creation
+      diagnostics.phase = 'verifying';
+      try {
+        const afterLogs = await storage.getActivityLogs(userId);
+        diagnostics.afterLogsCount = afterLogs.length;
+        diagnostics.newLogsFound = afterLogs.length > (diagnostics.existingLogsCount || 0);
+      } catch (verifyError: any) {
+        diagnostics.verifyError = {
+          message: verifyError.message,
+          code: verifyError.code
+        };
       }
 
       res.json({
         message: `Created ${createdLogs.length} test activity logs`,
-        logs: createdLogs
+        logs: createdLogs,
+        diagnostics
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating test logs:", error);
-      res.status(500).json({ message: "Failed to create test logs", error: error.message });
+      res.status(500).json({ 
+        message: "Failed to create test logs", 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
   });
 
@@ -2195,6 +2356,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user?.claims?.sub || req.user?.id;
       console.log("Activity logs request - userId:", userId);
+      console.log("Full user object:", JSON.stringify(req.user, null, 2));
 
       if (!userId) {
         console.error("No userId found in request:", req.user);
@@ -2205,6 +2367,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const logs = await storage.getActivityLogs(userId);
         console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);
+        
+        // Add debug info in development
+        if (process.env.NODE_ENV === 'development' || logs.length === 0) {
+          console.log('Debug: First 3 logs:', logs.slice(0, 3));
+          
+          // Check if there are ANY logs in the table
+          const { sql } = require('drizzle-orm');
+          const { db } = require('./db');
+          
+          try {
+            const totalCount = await db.execute(sql`
+              SELECT COUNT(*) as count FROM activity_logs
+            `);
+            const userCount = await db.execute(sql`
+              SELECT COUNT(*) as count FROM activity_logs WHERE user_id = ${userId}
+            `);
+            
+            console.log('Total logs in table:', totalCount);
+            console.log('Logs for this user:', userCount);
+          } catch (countError) {
+            console.error('Count query error:', countError);
+          }
+        }
+        
         res.json(logs);
       } catch (dbError: any) {
         console.error("Database error in activity logs:", dbError);
