@@ -545,6 +545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Handle habit completion logic using existing database fields
+      let isHabitCompletion = false;
       if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
         const now = new Date();
         
@@ -552,6 +553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // For habits, update lastCompletedAt and increment completionCount
           updates.lastCompletedAt = now;
           updates.completionCount = (currentTask.completionCount || 0) + 1;
+          isHabitCompletion = true; // Mark this as a habit completion for activity log
           
           // Don't actually mark habits as "completed" - they're repeatable
           delete updates.completed;
@@ -595,8 +597,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Create activity log for task completion
-      if (updates.completed && !currentTask.completed) {
+      // Create activity log for task completion (including habits)
+      if ((updates.completed && !currentTask.completed) || isHabitCompletion) {
         try {
           const expGained = task.expReward || 20;
           await storage.createActivityLog({
@@ -604,10 +606,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             taskId: task.id,
             skillId: task.skillId || null,
             expGained,
-            action: 'task_completed',
+            action: isHabitCompletion ? 'task_completed' : 'task_completed',
             description: `完成任务: ${task.title}`
           });
-          console.log(`Activity log created for task ${task.id} completion`);
+          console.log(`Activity log created for ${isHabitCompletion ? 'habit' : 'task'} ${task.id} completion`);
         } catch (error) {
           console.error("Error creating activity log:", error);
         }
@@ -1678,7 +1680,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Log the activity
-      await storage.addActivityLog({
+      await storage.createActivityLog({
         userId,
         taskId: null,
         skillId: null,

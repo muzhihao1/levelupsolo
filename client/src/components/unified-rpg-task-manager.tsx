@@ -534,6 +534,7 @@ export default function UnifiedRPGTaskManager() {
       // Always refetch after error or success
       queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
       queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/activity-logs"] }); // Refresh activity logs
     },
   });
 

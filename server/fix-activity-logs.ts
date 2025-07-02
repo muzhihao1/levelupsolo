@@ -9,6 +9,8 @@ import type { ActivityLog } from '../shared/schema';
  */
 export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]> {
   try {
+    console.log(`safeGetActivityLogs called for userId: ${userId}`);
+    
     // Check if db is initialized
     if (!db) {
       console.error('Database not initialized');
@@ -23,6 +25,7 @@ export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]
       .orderBy(desc(activityLogs.date))
       .limit(50);
     
+    console.log(`Found ${logs.length} activity logs for user ${userId}`);
     return logs;
   } catch (error: any) {
     console.error('Error fetching activity logs:', error);

@@ -713,19 +713,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createActivityLog(log: InsertActivityLog): Promise<ActivityLog> {
-    const result = await db
-      .insert(activityLogs)
-      .values({
-        ...log,
-        expGained: log.expGained || 0
-      })
-      .returning();
-    
-    if (!result || result.length === 0) {
-      throw new Error('Failed to create activity log: No data returned from database');
+    console.log('createActivityLog called with:', log);
+    try {
+      const result = await db
+        .insert(activityLogs)
+        .values({
+          ...log,
+          expGained: log.expGained || 0
+        })
+        .returning();
+      
+      console.log('createActivityLog result:', result);
+      
+      if (!result || result.length === 0) {
+        throw new Error('Failed to create activity log: No data returned from database');
+      }
+      
+      return result[0];
+    } catch (error) {
+      console.error('createActivityLog error:', error);
+      throw error;
     }
-    
-    return result[0];
   }
 
   async removeTaskCompletionLog(taskId: number): Promise<boolean> {
@@ -1120,10 +1128,6 @@ export class DatabaseStorage implements IStorage {
     return level * 100 + Math.max(0, level - 1) * 50;
   }
 
-  async addActivityLog(logData: InsertActivityLog): Promise<ActivityLog> {
-    const [created] = await db.insert(activityLogs).values(logData).returning();
-    return created;
-  }
 
 }
 
