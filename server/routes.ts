@@ -538,10 +538,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = req.body;
       const userId = (req.user as any)?.claims?.sub;
 
+      console.log(`[PATCH /api/tasks/${taskId}] User: ${userId}, Updates:`, updates);
+
+      if (!userId) {
+        console.error(`[PATCH /api/tasks/${taskId}] User not authenticated properly`);
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
       // Get current task to check if it's a habit
       const currentTask = await storage.getTask(taskId);
       if (!currentTask) {
+        console.error(`[PATCH /api/tasks/${taskId}] Task not found`);
         return res.status(404).json({ message: "Task not found" });
+      }
+
+      // Verify task belongs to user
+      if (currentTask.userId !== userId) {
+        console.error(`[PATCH /api/tasks/${taskId}] Task belongs to different user. Task userId: ${currentTask.userId}, Request userId: ${userId}`);
+        return res.status(403).json({ message: "Access denied" });
       }
 
       // Handle habit completion logic using existing database fields
@@ -584,7 +598,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Handle energy ball consumption/restoration
       if ((updates.completed !== undefined || isHabitCompletion) && task.requiredEnergyBalls) {
         try {
-          const userId = req.user.claims.sub;
+          // Use the userId already extracted at the beginning of the function
           
           // First ensure user stats exist
           let stats = await storage.getUserStats(userId);
@@ -635,12 +649,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json(task);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof z.ZodError) {
         res.status(400).json({ message: "Invalid task data", errors: error.errors });
       } else {
-        console.error("Error updating task:", error);
-        res.status(500).json({ message: "Failed to update task" });
+        console.error(`[PATCH /api/tasks/${req.params.id}] Error updating task:`, error);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+          message: "Failed to update task",
+          error: error.message || "Unknown error",
+          taskId: req.params.id
+        });
       }
     }
   });
@@ -714,6 +733,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const difficulty = description.length > 50 ? "hard" : description.length > 20 ? "medium" : "easy";
           const energyBalls = difficulty === "hard" ? 4 : difficulty === "medium" ? 2 : 1;
           
+          // Initialize core skills if they don't exist
+          await (storage as any).initializeCoreSkills(userId);
+          
+          // Try to find the default skill "意志执行力"
+          const userSkills = await storage.getSkills(userId);
+          const defaultSkill = userSkills.find(s => s.name === "意志执行力");
+          
           const taskData = {
             userId,
             title: description.trim(),
@@ -724,12 +750,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
             estimatedDuration: energyBalls * 15,
             requiredEnergyBalls: energyBalls,
-            tags: [],
-            skillId: null,
+            tags: ["意志执行力"],
+            skillId: defaultSkill?.id || null,
             completed: false,
             // Add missing fields that iOS expects
             order: 0,
-            skills: [], // iOS requires this field
+            skills: ["意志执行力"], // iOS requires this field
             isDailyTask: taskCategory === "habit",
             dailyStreak: null,
             isRecurring: taskCategory === "habit",
@@ -3121,8 +3147,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log('CRUD task creation - request body:', req.body);
             console.log('CRUD task creation - userId:', userId);
             
+            // Initialize core skills if they don't exist
+            await (storage as any).initializeCoreSkills(userId);
+            
+            // If no skillId provided, assign default skill
+            let taskDataWithSkill = { ...req.body };
+            if (!taskDataWithSkill.skillId) {
+              const userSkills = await storage.getSkills(userId);
+              const defaultSkill = userSkills.find(s => s.name === "意志执行力");
+              if (defaultSkill) {
+                taskDataWithSkill.skillId = defaultSkill.id;
+                console.log('CRUD task creation - assigned default skill:', defaultSkill.name);
+              }
+            }
+            
             const taskData = insertTaskSchema.parse({
-              ...req.body,
+              ...taskDataWithSkill,
               userId
             });
             

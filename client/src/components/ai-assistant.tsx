@@ -162,7 +162,7 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
 
   return (
     <div className={`fixed bottom-4 right-4 z-[1004] transition-all duration-300 ${
-      isMinimized ? 'w-80 h-16' : 'w-96 h-[28rem] max-h-[80vh]'
+      isMinimized ? 'w-80 h-16' : 'w-96 h-[26rem] max-h-[70vh]'
     }`}>
       <Card className="h-full shadow-2xl border-primary/20">
         {/* Header */}
@@ -215,8 +215,8 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Calendar className="h-4 w-4 text-blue-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-foreground">专注完成当前任务</div>
-                      <div className="text-xs text-muted-foreground mt-1">你有 9 个未完成任务，建议先完成几个</div>
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">专注完成当前任务</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mt-1">你有 9 个未完成任务，建议先完成几个</div>
                       <Badge variant="secondary" className="text-xs mt-1">优化建议</Badge>
                     </div>
                   </div>
@@ -230,8 +230,8 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Target className="h-4 w-4 text-green-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-foreground">技能发展建议</div>
-                      <div className="text-xs text-muted-foreground mt-1">情绪稳定力技能还有很大提升空间</div>
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">技能发展建议</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mt-1">情绪稳定力技能还有很大提升空间</div>
                       <Badge variant="secondary" className="text-xs mt-1">数据洞察</Badge>
                     </div>
                   </div>
@@ -245,8 +245,8 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Lightbulb className="h-4 w-4 text-orange-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-foreground">探索模板中心</div>
-                      <div className="text-xs text-muted-foreground mt-1">发现更多专业的任务和目标模板</div>
+                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">探索模板中心</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mt-1">发现更多专业的任务和目标模板</div>
                       <Badge variant="secondary" className="text-xs mt-1">优化建议</Badge>
                     </div>
                   </div>

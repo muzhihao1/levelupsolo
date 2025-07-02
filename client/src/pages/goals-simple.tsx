@@ -344,7 +344,7 @@ function GoalCard({
 
       <CardContent className="space-y-4">
         {/* 完成奖励信息 */}
-        <div className="flex items-center justify-between bg-muted/30 rounded-lg p-3">
+        <div className="flex items-center justify-between bg-primary/10 rounded-lg p-3 border border-primary/20">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-1 text-primary">
               <Zap className="h-4 w-4" />
