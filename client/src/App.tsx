@@ -8,7 +8,6 @@ import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/navigation";
 import AIAssistant from "@/components/ai-assistant";
 import AIFloatingButton from "@/components/ai-floating-button";
-import QuickAdd from "@/components/quick-add";
 import { GlobalFloatingTimer } from "@/components/global-floating-timer";
 
 import PerformanceMonitoring from "@/components/performance-monitoring";
@@ -100,8 +99,6 @@ function Router() {
         </Suspense>
       </main>
 
-      {/* Quick Add Floating Button */}
-      <QuickAdd variant="floating" />
 
       {/* AI Assistant Integration - Top Right Corner like Elisi */}
       {!isAIAssistantVisible && (
