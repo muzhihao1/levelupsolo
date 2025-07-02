@@ -16,12 +16,13 @@ export default function GrowthLog() {
   // Create test data mutation
   const createTestDataMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('POST', '/api/activity-logs/create-test', {});
+      const response = await apiRequest('POST', '/api/activity-logs/create-test', {});
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "测试数据创建成功",
-        description: "已创建一些示例活动记录",
+        description: `已创建 ${data?.logs?.length || 0} 条示例活动记录`,
       });
       refetchLogs();
     },

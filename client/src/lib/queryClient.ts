@@ -11,7 +11,7 @@ export async function apiRequest(
   method: string,
   url: string,
   data?: unknown | undefined,
-): Promise<Response> {
+): Promise<any> {
   const token = localStorage.getItem("accessToken");
   const headers: HeadersInit = data ? { "Content-Type": "application/json" } : {};
   
@@ -27,6 +27,13 @@ export async function apiRequest(
   });
 
   await throwIfResNotOk(res);
+  
+  // Parse JSON response
+  const contentType = res.headers.get("content-type");
+  if (contentType && contentType.includes("application/json")) {
+    return await res.json();
+  }
+  
   return res;
 }
 
