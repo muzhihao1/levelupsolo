@@ -583,11 +583,16 @@ export default function UnifiedRPGTaskManager() {
     setIsAnalyzing(true);
     
     try {
+      console.log("Sending AI task creation request with:", { description: newTask.title });
+      
       const response = await apiRequest("POST", "/api/tasks/intelligent-create", {
         description: newTask.title
       });
       
-      const result = await response.json();
+      console.log("AI task creation response:", response);
+      
+      // The response should already be parsed by apiRequest
+      const result = response;
       
       if (result.task) {
         
@@ -616,11 +621,18 @@ export default function UnifiedRPGTaskManager() {
           refetchType: 'active' // Only refetch if the query is actively being used
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating intelligent task:", error);
+      
+      // Extract error message from response if available
+      let errorMessage = "任务创建失败，请重试";
+      if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "创建失败",
-        description: "任务创建失败，请重试",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

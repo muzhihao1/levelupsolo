@@ -700,14 +700,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
             title: description.trim(),
             description: null,
             taskCategory: taskCategory,
-            taskType: taskCategory,
+            taskType: "simple", // Use valid taskType value
             difficulty: difficulty,
             expReward: difficulty === "hard" ? 35 : difficulty === "medium" ? 20 : 10,
             estimatedDuration: energyBalls * 15,
             requiredEnergyBalls: energyBalls,
             tags: [],
             skillId: null,
-            completed: false
+            completed: false,
+            // Add missing fields that iOS expects
+            order: 0,
+            skills: [], // iOS requires this field
+            isDailyTask: taskCategory === "habit",
+            dailyStreak: null,
+            isRecurring: taskCategory === "habit",
+            recurringPattern: taskCategory === "habit" ? "daily" : null,
+            habitDirection: taskCategory === "habit" ? "positive" : null,
+            habitStreak: null,
+            habitValue: null,
+            lastCompletedDate: null,
+            lastCompletedAt: null,
+            completionCount: 0
           };
 
           console.log("Creating simple task with data:", JSON.stringify(taskData, null, 2));
@@ -878,7 +891,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: analysis.title || description.trim(),
         description: null,
         taskCategory: taskCategory,
-        taskType: taskCategory,
+        taskType: taskCategory === "habit" ? "daily" : "simple", // Map to valid taskType
         difficulty: difficulty,
         expReward: rewards.xp,
         estimatedDuration: requiredEnergyBalls * 15, // Energy balls * 15 minutes
@@ -888,7 +901,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completed: false
       };
 
+      console.log("Creating task with data:", JSON.stringify(taskData, null, 2));
       const newTask = await storage.createTask(taskData);
+      console.log("Task created successfully:", newTask.id);
 
       res.json({ task: newTask, analysis });
     } catch (error) {
