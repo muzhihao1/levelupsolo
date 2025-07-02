@@ -1960,6 +1960,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get milestones for a goal
+  app.get("/api/goals/:goalId/milestones", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const goalId = parseInt(req.params.goalId);
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (isNaN(goalId)) {
+        return res.status(400).json({ message: "Invalid goal ID" });
+      }
+
+      // Verify goal ownership
+      const goal = await storage.getGoal(goalId);
+      if (!goal || goal.userId !== userId) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+
+      // Get milestones
+      const milestones = await storage.getMilestones(goalId);
+      
+      // Add userId to each milestone since iOS expects it
+      const milestonesWithUser = milestones.map(milestone => ({
+        ...milestone,
+        userId: userId,
+        user_id: userId
+      }));
+
+      res.json({ milestones: milestonesWithUser });
+    } catch (error) {
+      console.error("Error getting milestones:", error);
+      res.status(500).json({ message: "Failed to get milestones" });
+    }
+  });
+
+  // Create milestone
+  app.post("/api/milestones", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const { goalId, title, description, order } = req.body;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (!goalId || !title) {
+        return res.status(400).json({ message: "Goal ID and title are required" });
+      }
+
+      // Verify goal ownership
+      const goal = await storage.getGoal(goalId);
+      if (!goal || goal.userId !== userId) {
+        return res.status(404).json({ message: "Goal not found" });
+      }
+
+      // Create milestone
+      const milestone = await storage.createMilestone({
+        goalId,
+        title,
+        description,
+        order: order || 0,
+        completed: false
+      });
+
+      // Add userId to response since iOS expects it
+      const milestoneWithUser = {
+        ...milestone,
+        userId: userId,
+        user_id: userId
+      };
+
+      res.json(milestoneWithUser);
+    } catch (error) {
+      console.error("Error creating milestone:", error);
+      res.status(500).json({ message: "Failed to create milestone" });
+    }
+  });
+
   // Update milestone status
   app.patch("/api/goals/:goalId/milestones/:milestoneId", isAuthenticated, async (req: any, res) => {
     try {

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 
 import TemplatesSection from "@/components/templates-section";
-import QuickAdd from "@/components/quick-add";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Sparkles, Target, Clock } from "lucide-react";
@@ -45,22 +44,6 @@ export default function Templates() {
           </div>
         </div>
       </div>
-
-      {/* Quick Add Section */}
-      <Card className="border-gray-200">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5" />
-            快速添加
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            输入任务或目标，AI会智能解析并提供分类建议
-          </p>
-        </CardHeader>
-        <CardContent>
-          <QuickAdd variant="inline" />
-        </CardContent>
-      </Card>
 
       {/* Templates Section */}
       <TemplatesSection />

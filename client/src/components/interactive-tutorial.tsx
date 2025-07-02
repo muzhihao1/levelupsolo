@@ -25,20 +25,11 @@ const tutorialSteps: TutorialStep[] = [
   {
     id: "welcome",
     title: "欢迎来到LevelUp Solo",
-    description: "我们将通过3个简单步骤帮你快速上手这个个人成长平台",
+    description: "我们将通过简单步骤帮你快速上手这个个人成长平台",
     targetSelector: "",
     action: "开始教程",
     completed: false,
     position: "top"
-  },
-  {
-    id: "create-task",
-    title: "创建你的第一个任务",
-    description: "点击右下角的 + 按钮来快速添加任务。你可以使用自然语言输入，AI会帮你智能解析。点击按钮后可以关闭弹窗继续教程。",
-    targetSelector: "[data-testid='quick-add-button']",
-    action: "继续下一步",
-    completed: false,
-    position: "left"
   },
   {
     id: "check-skills", 
