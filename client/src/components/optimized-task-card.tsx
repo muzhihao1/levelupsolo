@@ -232,10 +232,10 @@ const TaskFooter = memo(function TaskFooter({
         </div>
         
         {/* 习惯连击 */}
-        {task.taskCategory === "habit" && (task.habitStreak || 0) > 0 && (
-          <div className="flex items-center gap-2 text-secondary">
+        {task.taskCategory === "habit" && (task.completionCount || 0) > 0 && (
+          <div className="flex items-center gap-2 text-orange-500">
             <Flame className="h-4 w-4" />
-            <span className="font-medium text-sm">{task.habitStreak}连击</span>
+            <span className="font-medium text-sm">{task.completionCount}天连续</span>
           </div>
         )}
       </div>
@@ -243,9 +243,16 @@ const TaskFooter = memo(function TaskFooter({
       {/* 标签 */}
       <div className="flex items-center gap-2 flex-wrap">
         {task.taskCategory === "habit" && (
-          <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30 text-xs px-2 py-1">
-            🔄 每日习惯
-          </Badge>
+          <>
+            <Badge variant="outline" className="bg-secondary/20 text-secondary border-secondary/30 text-xs px-2 py-1">
+              🔄 每日习惯
+            </Badge>
+            {task.lastCompletedAt && new Date(task.lastCompletedAt).toDateString() === new Date().toDateString() && (
+              <Badge variant="outline" className="bg-green-100 text-green-700 border-green-300 text-xs px-2 py-1">
+                ✅ 今日已完成
+              </Badge>
+            )}
+          </>
         )}
         <Badge variant="secondary" className="text-xs px-2 py-1">
           {difficulty.name}

@@ -291,34 +291,48 @@ export class DatabaseStorage implements IStorage {
   }
 
   async findOrCreateSkill(name: string, userId: string, icon?: string, color?: string): Promise<Skill> {
-    // Map task descriptions to core skills instead of creating new ones
-    const skillMapping = {
-      "学习": "心智成长力",
-      "研究": "心智成长力", 
-      "写作": "心智成长力",
-      "工作": "意志执行力",
-      "运动": "身体掌控力",
-      "健身": "身体掌控力",
-      "锻炼": "身体掌控力",
-      "社交": "关系经营力",
-      "交流": "关系经营力",
-      "沟通": "关系经营力",
-      "理财": "财富掌控力",
-      "投资": "财富掌控力",
-      "赚钱": "财富掌控力",
-      "情绪": "情绪稳定力",
-      "心理": "情绪稳定力",
-      "冥想": "情绪稳定力",
-      "执行": "意志执行力",
-      "计划": "意志执行力"
-    };
+    // Core skill names
+    const coreSkillNames = [
+      "身体掌控力",
+      "情绪稳定力",
+      "心智成长力",
+      "关系经营力",
+      "财富掌控力",
+      "意志执行力"
+    ];
 
-    // Find the appropriate core skill based on task content
-    let targetSkillName = "意志执行力"; // default
-    for (const [keyword, skillName] of Object.entries(skillMapping)) {
-      if (name.toLowerCase().includes(keyword)) {
-        targetSkillName = skillName;
-        break;
+    // Check if the name is already a core skill name
+    let targetSkillName = name;
+    if (!coreSkillNames.includes(name)) {
+      // Map task descriptions to core skills instead of creating new ones
+      const skillMapping = {
+        "学习": "心智成长力",
+        "研究": "心智成长力", 
+        "写作": "心智成长力",
+        "工作": "意志执行力",
+        "运动": "身体掌控力",
+        "健身": "身体掌控力",
+        "锻炼": "身体掌控力",
+        "社交": "关系经营力",
+        "交流": "关系经营力",
+        "沟通": "关系经营力",
+        "理财": "财富掌控力",
+        "投资": "财富掌控力",
+        "赚钱": "财富掌控力",
+        "情绪": "情绪稳定力",
+        "心理": "情绪稳定力",
+        "冥想": "情绪稳定力",
+        "执行": "意志执行力",
+        "计划": "意志执行力"
+      };
+
+      // Find the appropriate core skill based on task content
+      targetSkillName = "意志执行力"; // default
+      for (const [keyword, skillName] of Object.entries(skillMapping)) {
+        if (name.toLowerCase().includes(keyword)) {
+          targetSkillName = skillName;
+          break;
+        }
       }
     }
 

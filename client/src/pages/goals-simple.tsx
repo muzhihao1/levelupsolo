@@ -310,12 +310,12 @@ function GoalCard({
               onCheckedChange={() => onToggleCompletion(goal)}
               className="mt-1"
             />
-            <div className="flex-1">
-              <CardTitle className={`text-lg ${goal.completed ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
+            <div className="flex-1 min-w-0">
+              <CardTitle className={`text-lg leading-tight ${goal.completed ? 'line-through text-muted-foreground' : 'text-foreground'} break-words`}>
                 {goal.title}
               </CardTitle>
               {goal.description && (
-                <p className="text-muted-foreground text-sm mt-1">{goal.description}</p>
+                <p className="text-muted-foreground text-sm mt-2 leading-relaxed break-words">{goal.description}</p>
               )}
             </div>
           </div>
@@ -384,11 +384,11 @@ function GoalCard({
                     className="flex-shrink-0 mt-0.5"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium leading-tight ${milestone.completed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
+                    <p className={`text-sm font-medium leading-tight break-words ${milestone.completed ? 'text-muted-foreground line-through' : 'text-foreground'}`}>
                       {milestone.title}
                     </p>
                     {milestone.description && (
-                      <p className="text-xs text-muted-foreground mt-1 leading-tight">{milestone.description}</p>
+                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed break-words">{milestone.description}</p>
                     )}
                   </div>
                   {milestone.completed && (

@@ -568,28 +568,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Task not found" });
       }
 
-      // Award experience to associated skill when task is completed
-      if (updates.completed && task.skillId) {
+      // Award experience to associated skill when task is completed (including habits)
+      if ((updates.completed || isHabitCompletion) && task.skillId) {
         try {
           const expToAward = task.expReward || 20;
           await storage.addSkillExp(task.skillId, expToAward);
 
           // Core skills system - no auto-merge needed
-          console.log(`Task completed, skill experience awarded to user ${userId}`);
+          console.log(`${isHabitCompletion ? 'Habit' : 'Task'} completed, skill experience awarded to user ${userId}`);
         } catch (error) {
           console.error("Error awarding skill experience:", error);
         }
       }
 
       // Handle energy ball consumption/restoration
-      if (updates.completed !== undefined && task.requiredEnergyBalls) {
+      if ((updates.completed !== undefined || isHabitCompletion) && task.requiredEnergyBalls) {
         try {
           const userId = req.user.claims.sub;
-          if (updates.completed && !currentTask.completed) {
-            // Completing a task - consume energy balls
+          
+          // First ensure user stats exist
+          let stats = await storage.getUserStats(userId);
+          if (!stats) {
+            // Create default user stats if they don't exist
+            stats = await storage.createUserStats({
+              userId,
+              level: 1,
+              experience: 0,
+              energyBalls: 18,
+              maxEnergyBalls: 18,
+              streak: 0,
+              lastEnergyReset: new Date()
+            });
+          }
+          
+          // For habits, always consume energy when completing (isHabitCompletion)
+          if (isHabitCompletion) {
+            await storage.consumeEnergyBalls(userId, task.requiredEnergyBalls);
+          } else if (updates.completed && !currentTask.completed) {
+            // Completing a regular task - consume energy balls
             await storage.consumeEnergyBalls(userId, task.requiredEnergyBalls);
           } else if (!updates.completed && currentTask.completed) {
-            // Uncompleting a task - restore energy balls
+            // Uncompleting a regular task - restore energy balls
             await storage.restoreEnergyBalls(userId, task.requiredEnergyBalls);
           }
         } catch (error) {
@@ -1895,6 +1914,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If goal was just completed, create activity log and award experience
       if (updates.completed && goal.completedAt) {
         try {
+          // First, complete all uncompleted milestones for this goal
+          const milestones = await storage.getMilestones(goalId);
+          for (const milestone of milestones) {
+            if (!milestone.completed) {
+              await storage.updateMilestone(milestone.id, {
+                completed: true,
+                completedAt: new Date()
+              });
+              console.log(`Auto-completed milestone ${milestone.id} for completed goal ${goalId}`);
+            }
+          }
+          
           // Award experience points
           const expReward = goal.expReward || 100;
           
@@ -1983,11 +2014,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get milestones
       const milestones = await storage.getMilestones(goalId);
       
-      // Add userId to each milestone since iOS expects it
+      // Add userId and goalId to each milestone since iOS expects them
       const milestonesWithUser = milestones.map(milestone => ({
         ...milestone,
         userId: userId,
-        user_id: userId
+        user_id: userId,
+        goalId: goalId,
+        goal_id: goalId
       }));
 
       res.json({ milestones: milestonesWithUser });
@@ -2026,11 +2059,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         completed: false
       });
 
-      // Add userId to response since iOS expects it
+      // Add userId and goalId to response since iOS expects them
       const milestoneWithUser = {
         ...milestone,
         userId: userId,
-        user_id: userId
+        user_id: userId,
+        goalId: goalId,
+        goal_id: goalId
       };
 
       res.json(milestoneWithUser);
@@ -2086,11 +2121,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Add userId to milestone since iOS expects it but DB doesn't have it
+      // Add userId and goalId to milestone since iOS expects them
       const milestoneWithUser = {
         ...milestone,
         userId: userId,
-        user_id: userId // Also include snake_case for consistency
+        user_id: userId, // Also include snake_case for consistency
+        goalId: goalId,
+        goal_id: goalId // Also include snake_case for consistency
       };
       
       res.json(milestoneWithUser);

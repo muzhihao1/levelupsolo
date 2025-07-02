@@ -162,7 +162,7 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
 
   return (
     <div className={`fixed bottom-4 right-4 z-[1004] transition-all duration-300 ${
-      isMinimized ? 'w-80 h-16' : 'w-96 h-[36rem]'
+      isMinimized ? 'w-80 h-16' : 'w-96 h-[28rem] max-h-[80vh]'
     }`}>
       <Card className="h-full shadow-2xl border-primary/20">
         {/* Header */}
@@ -203,11 +203,11 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
               <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20">
                 <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="h-4 w-4 text-purple-600" />
-                  <span className="font-medium text-sm text-gray-800 dark:text-gray-200">智能推荐</span>
+                  <span className="font-medium text-sm text-foreground">智能推荐</span>
                 </div>
                 <div className="space-y-2">
                   <div 
-                    className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-200 hover:shadow-sm transition-shadow cursor-pointer"
+                    className="flex items-start gap-3 p-3 bg-background rounded-lg border border-blue-200 hover:shadow-sm transition-shadow cursor-pointer"
                     onClick={() => {
                       onPageChange?.('tasks');
                       onToggle();
@@ -215,14 +215,14 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Calendar className="h-4 w-4 text-blue-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-800">专注完成当前任务</div>
-                      <div className="text-xs text-gray-600 mt-1">你有 9 个未完成任务，建议先完成几个</div>
+                      <div className="font-medium text-sm text-foreground">专注完成当前任务</div>
+                      <div className="text-xs text-muted-foreground mt-1">你有 9 个未完成任务，建议先完成几个</div>
                       <Badge variant="secondary" className="text-xs mt-1">优化建议</Badge>
                     </div>
                   </div>
                   
                   <div 
-                    className="flex items-start gap-3 p-3 bg-white rounded-lg border border-green-200 hover:shadow-sm transition-shadow cursor-pointer"
+                    className="flex items-start gap-3 p-3 bg-background rounded-lg border border-green-200 hover:shadow-sm transition-shadow cursor-pointer"
                     onClick={() => {
                       onPageChange?.('skills');
                       onToggle();
@@ -230,14 +230,14 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Target className="h-4 w-4 text-green-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-800">技能发展建议</div>
-                      <div className="text-xs text-gray-600 mt-1">情绪稳定力技能还有很大提升空间</div>
+                      <div className="font-medium text-sm text-foreground">技能发展建议</div>
+                      <div className="text-xs text-muted-foreground mt-1">情绪稳定力技能还有很大提升空间</div>
                       <Badge variant="secondary" className="text-xs mt-1">数据洞察</Badge>
                     </div>
                   </div>
                   
                   <div 
-                    className="flex items-start gap-3 p-3 bg-white rounded-lg border border-orange-200 hover:shadow-sm transition-shadow cursor-pointer"
+                    className="flex items-start gap-3 p-3 bg-background rounded-lg border border-orange-200 hover:shadow-sm transition-shadow cursor-pointer"
                     onClick={() => {
                       onPageChange?.('goals');
                       onToggle();
@@ -245,8 +245,8 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                   >
                     <Lightbulb className="h-4 w-4 text-orange-600 mt-0.5" />
                     <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-800">探索模板中心</div>
-                      <div className="text-xs text-gray-600 mt-1">发现更多专业的任务和目标模板</div>
+                      <div className="font-medium text-sm text-foreground">探索模板中心</div>
+                      <div className="text-xs text-muted-foreground mt-1">发现更多专业的任务和目标模板</div>
                       <Badge variant="secondary" className="text-xs mt-1">优化建议</Badge>
                     </div>
                   </div>
@@ -255,8 +255,8 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
             </CardContent>
 
             {/* Messages */}
-            <CardContent className="p-0 flex-1">
-              <ScrollArea className="h-48 p-4">
+            <CardContent className="p-0 flex-1 overflow-hidden">
+              <ScrollArea className="h-[10rem] p-4">
                 <div className="space-y-4">
                   {messages.map((message) => (
                     <div

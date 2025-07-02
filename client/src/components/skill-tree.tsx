@@ -46,7 +46,7 @@ const SkillNode = memo(({ node }: { node: SkillNode }) => (
               Lv.{node.level}
             </Badge>
             <span className="text-xs text-gray-400">
-              {node.exp}/{node.maxExp}
+              经验: {node.exp}/{node.maxExp}
             </span>
           </div>
         </div>

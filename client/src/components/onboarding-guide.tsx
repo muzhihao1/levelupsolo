@@ -87,10 +87,10 @@ export default function OnboardingGuide({ isOpen, onClose, onComplete }: Onboard
           <h3 className="text-xl font-bold text-foreground text-center">第二步：完成任务</h3>
           <div className="space-y-3">
             <div className="bg-card rounded-lg p-4 border border-border">
-              <h4 className="font-semibold text-foreground mb-2">⚔️ 番茄钟战斗系统</h4>
+              <h4 className="font-semibold text-foreground mb-2">⚡ 能量球系统</h4>
               <p className="text-muted-foreground text-sm">
-                使用番茄钟专注法来完成任务，每次专注就像在打Boss战！
-                完成后获得经验值和金币奖励。
+                每天你有18个能量球（每个=15分钟专注时间）。
+                完成任务需要消耗对应的能量球，合理安排你的精力分配！
               </p>
             </div>
             <div className="bg-card rounded-lg p-4 border border-border">
@@ -118,13 +118,25 @@ export default function OnboardingGuide({ isOpen, onClose, onComplete }: Onboard
           <div className="space-y-3">
             <div className="bg-card rounded-lg p-4 border border-border">
               <h4 className="font-semibold text-foreground mb-2">📊 六大核心技能</h4>
-              <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                <div>• 情绪稳定力</div>
-                <div>• 学习能力</div>
-                <div>• 沟通表达</div>
-                <div>• 身体健康</div>
-                <div>• 专业技能</div>
-                <div>• 时间管理</div>
+              <div className="grid grid-cols-2 gap-2 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <span className="text-red-500">💪</span> 身体掌控力
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-purple-500">❤️</span> 情绪稳定力
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-cyan-500">🧠</span> 心智成长力
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-green-500">👥</span> 关系经营力
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500">💰</span> 财富掌控力
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-red-600">🎯</span> 意志执行力
+                </div>
               </div>
             </div>
             <div className="bg-card rounded-lg p-4 border border-border">
