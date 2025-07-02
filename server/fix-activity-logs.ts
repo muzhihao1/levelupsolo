@@ -22,7 +22,7 @@ export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]
       .select()
       .from(activityLogs)
       .where(eq(activityLogs.userId, userId))
-      .orderBy(desc(activityLogs.date))
+      .orderBy(desc(activityLogs.createdAt))
       .limit(50);
     
     console.log(`Found ${logs.length} activity logs for user ${userId}`);
@@ -53,12 +53,12 @@ export async function safeGetActivityLogs(userId: string): Promise<ActivityLog[]
             CREATE TABLE IF NOT EXISTS activity_logs (
               id SERIAL PRIMARY KEY,
               user_id VARCHAR NOT NULL,
-              date TIMESTAMP NOT NULL DEFAULT NOW(),
+              created_at TIMESTAMP DEFAULT NOW(),
               task_id INTEGER,
               skill_id INTEGER,
               exp_gained INTEGER NOT NULL DEFAULT 0,
               action TEXT NOT NULL,
-              description TEXT
+              details JSONB
             )
           `);
           

@@ -168,12 +168,12 @@ export const microTasks = pgTable("micro_tasks", {
 export const activityLogs = pgTable("activity_logs", {
   id: serial("id").primaryKey(),
   userId: varchar("user_id").notNull().references(() => users.id),
-  date: timestamp("date").notNull().defaultNow(),
+  createdAt: timestamp("created_at").defaultNow(), // Changed from 'date' to match production
   taskId: integer("task_id").references(() => tasks.id),
   skillId: integer("skill_id").references(() => skills.id),
   expGained: integer("exp_gained").notNull().default(0),
   action: text("action").notNull(), // 'task_completed', 'skill_levelup', 'goal_completed'
-  description: text("description"),
+  details: jsonb("details"), // Changed from 'description' text to match production
 });
 
 export const insertSkillSchema = createInsertSchema(skills).omit({
@@ -199,7 +199,7 @@ export const insertGoalTaskSchema = createInsertSchema(goalTasks).omit({
 
 export const insertActivityLogSchema = createInsertSchema(activityLogs).omit({
   id: true,
-  date: true,
+  createdAt: true,
 });
 
 export const insertMilestoneSchema = createInsertSchema(milestones).omit({

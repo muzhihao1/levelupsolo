@@ -118,19 +118,19 @@ export default function GrowthLog() {
     if (filter === "weekly") {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      return new Date(log.date) >= weekAgo;
+      return new Date(log.createdAt || log.date) >= weekAgo;
     }
     if (filter === "monthly") {
       const monthAgo = new Date();
       monthAgo.setMonth(monthAgo.getMonth() - 1);
-      return new Date(log.date) >= monthAgo;
+      return new Date(log.createdAt || log.date) >= monthAgo;
     }
     return true;
   });
 
   // Group logs by date
   const groupedLogs = processedLogs.reduce((groups: { [key: string]: ActivityLog[] }, log) => {
-    const dateKey = new Date(log.date).toDateString();
+    const dateKey = new Date(log.createdAt || log.date).toDateString();
     if (!groups[dateKey]) {
       groups[dateKey] = [];
     }
@@ -446,10 +446,10 @@ export default function GrowthLog() {
                             )}
                           </div>
                           <p className="text-foreground font-medium truncate mt-1">
-                            {log.description || (log.taskId ? getTaskTitle(log.taskId) : '活动记录')}
+                            {(log.details as any)?.description || log.description || (log.taskId ? getTaskTitle(log.taskId) : '活动记录')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(log.date).toLocaleTimeString('zh-CN', {
+                            {new Date(log.createdAt || log.date).toLocaleTimeString('zh-CN', {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}

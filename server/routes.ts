@@ -607,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             skillId: task.skillId || null,
             expGained,
             action: isHabitCompletion ? 'task_completed' : 'task_completed',
-            description: `完成任务: ${task.title}`
+            details: { description: `完成任务: ${task.title}` } // Use details as JSONB
           });
           console.log(`Activity log created for ${isHabitCompletion ? 'habit' : 'task'} ${task.id} completion`);
         } catch (error) {
@@ -1742,7 +1742,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         skillId: null,
         expGained,
         action: "goal_pomodoro_complete",
-        description: `完成主线任务番茄钟: ${goal.title}`
+        details: { description: `完成主线任务番茄钟: ${goal.title}` }
       });
 
       res.json({ 
@@ -1838,9 +1838,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.createActivityLog({
             userId,
             action: 'goal_completed',
-            description: `完成目标: ${goal.title}`,
-            expGained: expReward,
-            date: new Date()
+            details: { description: `完成目标: ${goal.title}` },
+            expGained: expReward
           });
 
           // Update user experience/stats
@@ -1871,9 +1870,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
               await storage.createActivityLog({
                 userId,
                 action: 'level_up',
-                description: `升级到等级 ${newLevel}！`,
-                expGained: 0,
-                date: new Date()
+                details: { description: `升级到等级 ${newLevel}！` },
+                expGained: 0
               });
             }
           }
@@ -1936,9 +1934,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.createActivityLog({
             userId,
             action: 'milestone_completed',
-            description: `完成里程碑: ${milestone.title}`,
-            expGained: 0,
-            date: new Date()
+            details: { description: `完成里程碑: ${milestone.title}` },
+            expGained: 0
           });
         } catch (error) {
           console.error("Error creating activity log for milestone:", error);
@@ -2281,23 +2278,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         {
           userId,
           action: 'task_completed',
-          description: '完成任务: 学习 React 开发',
-          expGained: 50,
-          date: new Date()
+          details: { description: '完成任务: 学习 React 开发' },
+          expGained: 50
         },
         {
           userId,
           action: 'skill_levelup',
-          description: '技能升级: 心理 升级到 2 级',
-          expGained: 100,
-          date: new Date(Date.now() - 60000) // 1 minute ago
+          details: { description: '技能升级: 心理 升级到 2 级' },
+          expGained: 100
         },
         {
           userId,
           action: 'goal_completed',
-          description: '完成目标: 掌握前端开发技能',
-          expGained: 200,
-          date: new Date(Date.now() - 120000) // 2 minutes ago
+          details: { description: '完成目标: 掌握前端开发技能' },
+          expGained: 200
         }
       ];
 
@@ -2313,7 +2307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (err: any) {
           console.error("Failed to create test log:", err);
           createErrors.push({
-            log: log.description,
+            log: log.details?.description || 'Unknown',
             error: err.message,
             code: err.code
           });
