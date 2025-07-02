@@ -218,12 +218,38 @@ export default function QuickAdd({ className = "", variant = "floating" }: Quick
       };
       createGoalMutation.mutate(goalData);
     } else {
+      // Map priority to difficulty
+      const difficultyMap: Record<string, string> = {
+        'low': 'easy',
+        'medium': 'medium',
+        'high': 'hard'
+      };
+      
+      const difficulty = difficultyMap[parsedSuggestion?.priority || 'medium'] || 'medium';
+      const estimatedDuration = parsedSuggestion?.estimatedDuration || 30;
+      
+      // Calculate exp reward based on difficulty
+      const expRewardMap: Record<string, number> = {
+        'trivial': 10,
+        'easy': 20,
+        'medium': 30,
+        'hard': 50
+      };
+      
       const taskData: InsertTask = {
         title: customTitle,
         description: customDescription || "",
-        estimatedDuration: parsedSuggestion?.estimatedDuration || 30,
+        estimatedDuration: estimatedDuration,
+        taskCategory: parsedSuggestion?.category === 'habit' ? 'habit' : 'todo',
+        taskType: parsedSuggestion?.category === 'main_quest' ? 'main' : 'simple',
+        difficulty: difficulty,
+        expReward: expRewardMap[difficulty] || 30,
+        requiredEnergyBalls: Math.ceil(estimatedDuration / 15), // 15 minutes per energy ball
+        completed: false,
         userId: ""
       };
+      
+      console.log('Creating task with data:', taskData);
       createTaskMutation.mutate(taskData);
     }
   };

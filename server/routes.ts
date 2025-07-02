@@ -2929,12 +2929,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       switch (resource) {
         case 'tasks':
-          const taskData = insertTaskSchema.parse({
-            ...req.body,
-            userId
-          });
-          const task = await storage.createTask(taskData);
-          return res.json(task);
+          try {
+            console.log('CRUD task creation - request body:', req.body);
+            console.log('CRUD task creation - userId:', userId);
+            
+            const taskData = insertTaskSchema.parse({
+              ...req.body,
+              userId
+            });
+            
+            console.log('CRUD task creation - parsed data:', taskData);
+            const task = await storage.createTask(taskData);
+            return res.json(task);
+          } catch (taskError) {
+            console.error('CRUD task creation error:', taskError);
+            if (taskError instanceof z.ZodError) {
+              console.error('Validation errors:', taskError.errors);
+            }
+            throw taskError;
+          }
         
         case 'skills':
           const skillData = insertSkillSchema.parse({

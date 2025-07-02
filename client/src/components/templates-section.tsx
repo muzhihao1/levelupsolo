@@ -199,14 +199,21 @@ export default function TemplatesSection() {
       };
       createGoalMutation.mutate(goalData);
     } else {
+      const estimatedDuration = template.estimatedDuration || 30;
       const taskData: InsertTask = {
         title: template.title,
         description: template.description,
-        estimatedDuration: template.estimatedDuration || 30,
+        estimatedDuration: estimatedDuration,
         expReward: template.expReward,
         difficulty: template.difficulty,
+        taskCategory: template.isRecurring ? 'habit' : 'todo',
+        taskType: template.category === 'learning' || template.category === 'career' ? 'main' : 'simple',
+        requiredEnergyBalls: Math.ceil(estimatedDuration / 15), // 15 minutes per energy ball
+        completed: false,
         userId: "" // Will be set by backend
       };
+      
+      console.log('Creating task from template:', taskData);
       createTaskMutation.mutate(taskData);
     }
   };
