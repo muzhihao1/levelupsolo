@@ -727,8 +727,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const newTask = await storage.createTask(taskData);
           console.log("Simple task created successfully:", newTask.id);
           
+          // Transform task to include all fields iOS expects
+          const transformedTask = {
+            ...newTask,
+            skills: taskData.skills || [],
+            isDailyTask: taskData.isDailyTask || false,
+            dailyStreak: taskData.dailyStreak || null,
+            isRecurring: taskData.isRecurring || false,
+            recurringPattern: taskData.recurringPattern || null,
+            habitDirection: taskData.habitDirection || null,
+            habitStreak: taskData.habitStreak || null,
+            habitValue: taskData.habitValue || null,
+            lastCompletedDate: taskData.lastCompletedDate || null,
+            order: taskData.order || 0,
+            tags: taskData.tags || [],
+            dueDate: null,
+            priority: 1
+          };
+          
           return res.json({ 
-            task: newTask, 
+            task: transformedTask, 
             analysis: {
               category: taskCategory,
               title: description.trim(),
@@ -898,14 +916,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
         requiredEnergyBalls: requiredEnergyBalls,
         tags: skillName ? [skillName] : [],
         skillId: skillId,
-        completed: false
+        completed: false,
+        // Add missing fields that iOS expects
+        order: 0,
+        skills: skillName ? [skillName] : [], // iOS requires this field
+        isDailyTask: taskCategory === "habit",
+        dailyStreak: null,
+        isRecurring: taskCategory === "habit",
+        recurringPattern: taskCategory === "habit" ? "daily" : null,
+        habitDirection: taskCategory === "habit" ? "positive" : null,
+        habitStreak: null,
+        habitValue: null,
+        lastCompletedDate: null,
+        lastCompletedAt: null,
+        completionCount: 0
       };
 
       console.log("Creating task with data:", JSON.stringify(taskData, null, 2));
       const newTask = await storage.createTask(taskData);
       console.log("Task created successfully:", newTask.id);
 
-      res.json({ task: newTask, analysis });
+      // Transform task to include all fields iOS expects
+      const transformedTask = {
+        ...newTask,
+        skills: taskData.skills || [],
+        isDailyTask: taskData.isDailyTask || false,
+        dailyStreak: taskData.dailyStreak || null,
+        isRecurring: taskData.isRecurring || false,
+        recurringPattern: taskData.recurringPattern || null,
+        habitDirection: taskData.habitDirection || null,
+        habitStreak: taskData.habitStreak || null,
+        habitValue: taskData.habitValue || null,
+        lastCompletedDate: taskData.lastCompletedDate || null,
+        order: taskData.order || 0,
+        tags: taskData.tags || [],
+        dueDate: null,
+        priority: 1
+      };
+
+      res.json({ task: transformedTask, analysis });
     } catch (error) {
       console.error("=== AI Task Creation Error ===");
       console.error("Error type:", error?.constructor?.name);
