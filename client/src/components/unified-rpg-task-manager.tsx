@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pause, RotateCcw, Brain, Crown, X, Battery } from "lucide-react";
+import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pause, RotateCcw, Brain, Crown, X, Battery, Trophy } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useFilteredTasks } from "@/hooks/use-filtered-tasks";
@@ -1046,7 +1046,7 @@ export default function UnifiedRPGTaskManager() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-3 bg-muted h-12">
             <TabsTrigger value="main" className="data-[state=active]:bg-background text-xs py-3">
-              主线任务 ({goals.length})
+              主线任务 ({goals.filter(g => !g.completed).length})
             </TabsTrigger>
             <TabsTrigger value="side" className="data-[state=active]:bg-background text-xs py-3">
               支线任务 ({todos.filter(t => !t.completed).length})
@@ -1063,7 +1063,7 @@ export default function UnifiedRPGTaskManager() {
             <h3 className="font-medium text-primary mb-2">🎯 主线任务 (Main Quests)</h3>
             <p className="text-sm text-muted-foreground">长期主线目标任务</p>
           </div>
-          {goals.length === 0 ? (
+          {goals.filter(goal => !goal.completed).length === 0 ? (
             <Card className="bg-card border-border">
               <CardContent className="p-8 text-center">
                 <Target className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -1072,7 +1072,7 @@ export default function UnifiedRPGTaskManager() {
               </CardContent>
             </Card>
           ) : (
-            goals.map((goal) => (
+            goals.filter(goal => !goal.completed).map((goal) => (
               <Card key={goal.id} className="bg-card border-border hover:shadow-md transition-all">
                 <CardContent className="p-4">
                   <div className="space-y-4">
@@ -1250,6 +1250,38 @@ export default function UnifiedRPGTaskManager() {
                 </CardContent>
               </Card>
             ))
+          )}
+          
+          {/* 已完成的目标 */}
+          {goals.filter(goal => goal.completed).length > 0 && (
+            <div className="mt-6 space-y-3">
+              <h4 className="text-sm font-medium text-muted-foreground px-2 border-t border-border pt-4">
+                已完成的主线任务 ({goals.filter(goal => goal.completed).length})
+              </h4>
+              {goals.filter(goal => goal.completed).map((goal) => (
+                <Card key={goal.id} className="bg-card border-border opacity-60">
+                  <CardContent className="p-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
+                        <h3 className="font-medium text-foreground line-through">{goal.title}</h3>
+                      </div>
+                      <p className="text-muted-foreground text-sm">{goal.description}</p>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Trophy className="h-3 w-3" />
+                        <span>已完成</span>
+                        {goal.completedAt && (
+                          <>
+                            <span>•</span>
+                            <span>{new Date(goal.completedAt).toLocaleDateString()}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           )}
         </TabsContent>
 

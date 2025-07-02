@@ -250,6 +250,28 @@ export default function Goals() {
           ))
         )}
       </div>
+
+      {/* 已完成的目标 */}
+      {goals.filter(goal => goal.completed).length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h2 className="text-xl font-semibold text-muted-foreground flex items-center">
+            <i className="fas fa-check-circle text-green-500 mr-2"></i>
+            已完成的目标
+          </h2>
+          {goals.filter(goal => goal.completed).map((goal) => (
+            <GoalCard
+              key={goal.id}
+              goal={goal}
+              onEditGoal={handleEditGoal}
+              onToggleCompletion={toggleGoalCompletion}
+              onDeleteGoal={handleDeleteGoal}
+              onUpdateMilestone={({ goalId, milestoneId, completed }) => {
+                updateMilestoneMutation.mutate({ goalId, milestoneId, completed });
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

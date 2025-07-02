@@ -2006,7 +2006,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      res.json(milestone);
+      // Add userId to milestone since iOS expects it but DB doesn't have it
+      const milestoneWithUser = {
+        ...milestone,
+        userId: userId,
+        user_id: userId // Also include snake_case for consistency
+      };
+      
+      res.json(milestoneWithUser);
     } catch (error) {
       console.error("Error updating milestone:", error);
       res.status(500).json({ message: "Failed to update milestone" });
