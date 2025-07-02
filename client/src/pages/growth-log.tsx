@@ -1,16 +1,64 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { ActivityLog, Skill, Task } from "@shared/schema";
 
 export default function GrowthLog() {
   const [filter, setFilter] = useState("daily");
   const [sortBy, setSortBy] = useState("newest");
+  const { toast } = useToast();
 
-  const { data: logs = [], isLoading: logsLoading, error: logsError } = useQuery<ActivityLog[]>({
+  // Create test data mutation
+  const createTestDataMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('POST', '/api/activity-logs/create-test', {});
+    },
+    onSuccess: () => {
+      toast({
+        title: "测试数据创建成功",
+        description: "已创建一些示例活动记录",
+      });
+      refetchLogs();
+    },
+    onError: (error) => {
+      console.error("Failed to create test data:", error);
+      toast({
+        title: "创建失败",
+        description: "无法创建测试数据",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Check database diagnostics
+  const checkDiagnosticsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('GET', '/api/debug/activity-logs', {});
+      return response;
+    },
+    onSuccess: (data) => {
+      console.log("Activity logs diagnostics:", data);
+      toast({
+        title: "诊断信息",
+        description: `表存在: ${data.tableExists ? '是' : '否'}, 记录数: ${data.totalCount || 0}`,
+      });
+    },
+    onError: (error) => {
+      console.error("Diagnostics failed:", error);
+      toast({
+        title: "诊断失败",
+        description: "无法获取诊断信息",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const { data: logs = [], isLoading: logsLoading, error: logsError, refetch: refetchLogs } = useQuery<ActivityLog[]>({
     queryKey: ['/api/activity-logs'],
     staleTime: 5 * 60 * 1000, // 5 minutes
     cacheTime: 10 * 60 * 1000, // 10 minutes
@@ -226,9 +274,19 @@ export default function GrowthLog() {
               <i className="fas fa-exclamation-triangle text-4xl text-destructive mb-4"></i>
               <h3 className="text-xl font-semibold text-foreground mb-2">加载失败</h3>
               <p className="text-muted-foreground mb-4">无法加载活动日志，请稍后重试</p>
-              <Button onClick={() => window.location.reload()} variant="outline">
-                重新加载
-              </Button>
+              <div className="flex justify-center gap-2">
+                <Button onClick={() => refetchLogs()} variant="outline">
+                  重新加载
+                </Button>
+                <Button 
+                  onClick={() => checkDiagnosticsMutation.mutate()} 
+                  variant="outline"
+                  disabled={checkDiagnosticsMutation.isPending}
+                >
+                  <i className="fas fa-stethoscope mr-2"></i>
+                  诊断问题
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : logs.length === 0 ? (
@@ -236,7 +294,26 @@ export default function GrowthLog() {
             <CardContent className="text-center py-12">
               <i className="fas fa-book text-4xl text-muted-foreground mb-4"></i>
               <h3 className="text-xl font-semibold text-foreground mb-2">还没有升级记录</h3>
-              <p className="text-muted-foreground">完成一些任务来开始记录你的升级历程吧！</p>
+              <p className="text-muted-foreground mb-4">完成一些任务来开始记录你的升级历程吧！</p>
+              <div className="mt-4">
+                <Button 
+                  onClick={() => createTestDataMutation.mutate()}
+                  disabled={createTestDataMutation.isPending}
+                  variant="outline"
+                >
+                  {createTestDataMutation.isPending ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                      创建中...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-plus mr-2"></i>
+                      创建示例记录
+                    </>
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ) : (

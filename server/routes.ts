@@ -2134,6 +2134,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create test activity logs
+  app.post("/api/activity-logs/create-test", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub || req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      // Create some test activity logs
+      const testLogs = [
+        {
+          userId,
+          action: 'task_completed',
+          description: '完成任务: 学习 React 开发',
+          expGained: 50,
+          date: new Date()
+        },
+        {
+          userId,
+          action: 'skill_levelup',
+          description: '技能升级: 心理 升级到 2 级',
+          expGained: 100,
+          date: new Date(Date.now() - 60000) // 1 minute ago
+        },
+        {
+          userId,
+          action: 'goal_completed',
+          description: '完成目标: 掌握前端开发技能',
+          expGained: 200,
+          date: new Date(Date.now() - 120000) // 2 minutes ago
+        }
+      ];
+
+      const createdLogs = [];
+      for (const log of testLogs) {
+        try {
+          const created = await storage.createActivityLog(log);
+          createdLogs.push(created);
+        } catch (err) {
+          console.error("Failed to create test log:", err);
+        }
+      }
+
+      res.json({
+        message: `Created ${createdLogs.length} test activity logs`,
+        logs: createdLogs
+      });
+    } catch (error) {
+      console.error("Error creating test logs:", error);
+      res.status(500).json({ message: "Failed to create test logs", error: error.message });
+    }
+  });
+
   // Activity logs routes
   app.get("/api/activity-logs", isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {
