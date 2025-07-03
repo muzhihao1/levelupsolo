@@ -191,6 +191,21 @@ export class MockStorage implements IStorage {
     return updatedTask;
   }
 
+  async updateHabitCompletion(taskId: number, userId: string): Promise<Task | undefined> {
+    const task = this.tasks.get(taskId);
+    if (!task || task.userId !== userId || task.taskCategory !== 'habit') {
+      return undefined;
+    }
+
+    const updatedTask = {
+      ...task,
+      lastCompletedAt: new Date(),
+      completionCount: (task.completionCount || 0) + 1
+    };
+    this.tasks.set(taskId, updatedTask);
+    return updatedTask;
+  }
+
   async deleteTask(id: number): Promise<boolean> {
     return this.tasks.delete(id);
   }
