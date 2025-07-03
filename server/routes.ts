@@ -3393,6 +3393,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to test database connection
+  app.get('/api/debug/db-test', async (req, res) => {
+    try {
+      console.log('[DB Test] Starting database connection test...');
+      
+      // Test 1: Basic connection
+      const basicTest = await db.execute(sql`SELECT 1 as test`);
+      console.log('[DB Test] Basic connection test passed');
+      
+      // Test 2: Check tasks table
+      const taskCount = await db.execute(sql`
+        SELECT COUNT(*) as count FROM tasks
+      `);
+      console.log('[DB Test] Tasks table accessible, count:', taskCount.rows[0].count);
+      
+      // Test 3: Connection pool health
+      const { checkPoolHealth } = require('./db-pool');
+      const poolHealth = await checkPoolHealth();
+      console.log('[DB Test] Pool health:', poolHealth);
+      
+      res.json({
+        status: 'success',
+        tests: {
+          basicConnection: 'passed',
+          taskTableAccess: 'passed',
+          taskCount: taskCount.rows[0].count,
+          poolHealth: poolHealth
+        }
+      });
+    } catch (error: any) {
+      console.error('[DB Test] Database test failed:', error);
+      res.status(500).json({
+        status: 'error',
+        error: {
+          message: error.message,
+          code: error.code,
+          detail: error.detail
+        }
+      });
+    }
+  });
+
+  // Direct habit completion endpoint (bypasses complex logic)
+  app.post('/api/debug/complete-habit-direct/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const taskId = parseInt(req.params.id);
+      const userId = (req.user as any)?.claims?.sub;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+      
+      console.log(`[Direct Habit Complete] Starting for task ${taskId}, user ${userId}`);
+      
+      // Direct SQL update to avoid connection pool issues
+      const result = await db.execute(sql`
+        UPDATE tasks 
+        SET 
+          last_completed_at = NOW(),
+          completion_count = COALESCE(completion_count, 0) + 1,
+          updated_at = NOW()
+        WHERE 
+          id = ${taskId} 
+          AND user_id = ${userId}
+          AND task_category = 'habit'
+        RETURNING *
+      `);
+      
+      if (result.rows.length === 0) {
+        return res.status(404).json({ message: "Habit not found or not owned by user" });
+      }
+      
+      const updatedTask = result.rows[0];
+      console.log(`[Direct Habit Complete] Success for task ${taskId}`);
+      
+      res.json({
+        message: "Habit completed successfully",
+        task: updatedTask
+      });
+      
+    } catch (error: any) {
+      console.error('[Direct Habit Complete] Error:', error);
+      res.status(500).json({
+        message: "Failed to complete habit",
+        error: {
+          message: error.message,
+          code: error.code,
+          detail: error.detail
+        }
+      });
+    }
+  });
+
   // Debug endpoint to fix habits without skills
   app.post('/api/debug/fix-habits-skills', isAuthenticated, async (req: any, res) => {
     try {
