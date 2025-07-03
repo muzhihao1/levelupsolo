@@ -648,7 +648,7 @@ export default function UnifiedRPGTaskManager() {
     }
   };
 
-  const handleToggleComplete = (taskId: number) => {
+  const handleToggleComplete = async (taskId: number) => {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
     
@@ -665,13 +665,61 @@ export default function UnifiedRPGTaskManager() {
       }
     }
     
-    updateTaskMutation.mutate({
-      id: taskId,
-      updates: { 
-        completed: !task.completed,
-        completedAt: !task.completed ? new Date() : null
+    // For habits, try normal endpoint first, then fallback to simple-complete
+    if (task.taskCategory === 'habit' && !task.completed) {
+      try {
+        // Try normal update first
+        await updateTaskMutation.mutateAsync({
+          id: taskId,
+          updates: { 
+            completed: true,
+            completedAt: new Date()
+          }
+        });
+      } catch (error: any) {
+        console.log('Normal habit completion failed, trying fallback endpoint...');
+        
+        try {
+          // Use the simple-complete fallback endpoint
+          const response = await fetch(`/api/tasks/${taskId}/simple-complete`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          
+          // Invalidate queries to refresh the data
+          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+          
+          toast({
+            title: "习惯完成！",
+            description: `获得 ${task.expReward || 20} 经验值`,
+          });
+        } catch (fallbackError) {
+          console.error('Fallback endpoint also failed:', fallbackError);
+          toast({
+            title: "完成失败",
+            description: "无法完成习惯，请稍后再试",
+            variant: "destructive",
+          });
+        }
       }
-    });
+    } else {
+      // For non-habits or uncompleting, use normal mutation
+      updateTaskMutation.mutate({
+        id: taskId,
+        updates: { 
+          completed: !task.completed,
+          completedAt: !task.completed ? new Date() : null
+        }
+      });
+    }
   };
 
   const handleDeleteTask = (taskId: number) => {
