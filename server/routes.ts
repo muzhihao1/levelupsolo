@@ -3702,7 +3702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Simple habit completion endpoint - works without tracking columns
-  app.post('/api/tasks/:id/simple-complete', isAuthenticated, async (req: any, res) => {
+  app.post('/api/tasks/:id/simple-complete', isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data']), async (req: any, res) => {
     const taskId = parseInt(req.params.id);
     const userId = (req.user as any)?.claims?.sub;
     
@@ -3713,6 +3713,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log(`[Simple Complete] Starting for task ${taskId}, user ${userId}`);
     
     try {
+      // First get the task to check energy requirements
+      const taskResult = await db.execute(sql`
+        SELECT * FROM tasks 
+        WHERE id = ${taskId} 
+          AND user_id = ${userId}
+          AND task_category = 'habit'
+      `);
+      
+      const task = taskResult.rows?.[0] || taskResult[0];
+      
+      if (!task) {
+        return res.status(404).json({ message: 'Habit not found or not authorized' });
+      }
+      
       // Only update the columns we know exist
       const result = await db.execute(sql`
         UPDATE tasks 
@@ -3729,7 +3743,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedTask = result.rows?.[0] || result[0];
       
       if (!updatedTask) {
-        return res.status(404).json({ message: 'Habit not found or not authorized' });
+        return res.status(404).json({ message: 'Failed to update habit' });
       }
       
       // Try to update tracking columns if they exist (ignore errors)
@@ -3744,6 +3758,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`[Simple Complete] Tracking columns updated`);
       } catch (trackingError) {
         console.log(`[Simple Complete] Tracking columns don't exist, skipped`);
+      }
+      
+      // Handle experience points
+      if (updatedTask.skill_id || updatedTask.skillId) {
+        try {
+          const expToAward = updatedTask.exp_reward || updatedTask.expReward || 20;
+          const skillId = updatedTask.skill_id || updatedTask.skillId;
+          
+          console.log(`[Simple Complete] Awarding ${expToAward} exp to skill ${skillId}`);
+          await storage.addSkillExp(skillId, expToAward);
+        } catch (expError) {
+          console.error(`[Simple Complete] Error awarding skill experience:`, expError);
+          // Don't fail the whole request
+        }
+      }
+      
+      // Handle energy balls
+      if (updatedTask.required_energy_balls || updatedTask.requiredEnergyBalls) {
+        try {
+          const energyRequired = updatedTask.required_energy_balls || updatedTask.requiredEnergyBalls;
+          console.log(`[Simple Complete] Consuming ${energyRequired} energy balls`);
+          await storage.consumeEnergyBalls(userId, energyRequired);
+        } catch (energyError) {
+          console.error(`[Simple Complete] Error consuming energy balls:`, energyError);
+          // Don't fail the whole request
+        }
+      }
+      
+      // Create activity log
+      try {
+        const expGained = updatedTask.exp_reward || updatedTask.expReward || 20;
+        await storage.createActivityLog({
+          userId,
+          taskId: updatedTask.id,
+          skillId: updatedTask.skill_id || updatedTask.skillId || null,
+          expGained,
+          action: 'task_completed',
+          details: { description: `完成习惯: ${updatedTask.title}` }
+        });
+        console.log(`[Simple Complete] Activity log created`);
+      } catch (logError) {
+        console.error(`[Simple Complete] Error creating activity log:`, logError);
+        // Don't fail the whole request
       }
       
       console.log(`[Simple Complete] Success! Habit ${taskId} completed`);

@@ -665,23 +665,31 @@ export default function UnifiedRPGTaskManager() {
       }
     }
     
-    // For habits, try normal endpoint first, then fallback to simple-complete
+    // For habits, use the simple-complete endpoint directly
     if (task.taskCategory === 'habit' && !task.completed) {
       try {
-        // Try normal update first
-        await updateTaskMutation.mutateAsync({
-          id: taskId,
-          updates: { 
-            completed: true,
-            completedAt: new Date()
-          }
+        // Use the simple-complete endpoint directly for habits
+        await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
+        
+        // Invalidate queries to refresh the data
+        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+        
+        toast({
+          title: "习惯完成！",
+          description: `获得 ${task.expReward || 20} 经验值`,
         });
       } catch (error: any) {
-        console.log('Normal habit completion failed, trying fallback endpoint...');
+        console.error('Simple-complete endpoint failed:', error);
         
+        // Try smart-complete as fallback
         try {
-          // Use the simple-complete fallback endpoint with proper authentication
-          await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
+          console.log('Trying smart-complete endpoint as fallback...');
+          const smartResult = await apiRequest('POST', `/api/tasks/${taskId}/smart-complete`);
+          
+          if (smartResult.debug) {
+            console.log('Smart complete debug info:', smartResult.debug);
+          }
           
           // Invalidate queries to refresh the data
           await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
@@ -689,36 +697,15 @@ export default function UnifiedRPGTaskManager() {
           
           toast({
             title: "习惯完成！",
-            description: `获得 ${task.expReward || 20} 经验值`,
+            description: `获得 ${task.expReward || 20} 经验值（智能模式）`,
           });
-        } catch (fallbackError) {
-          console.error('Simple-complete endpoint also failed:', fallbackError);
-          
-          // Try smart-complete as final fallback
-          try {
-            console.log('Trying smart-complete endpoint as final fallback...');
-            const smartResult = await apiRequest('POST', `/api/tasks/${taskId}/smart-complete`);
-            
-            if (smartResult.debug) {
-              console.log('Smart complete debug info:', smartResult.debug);
-            }
-            
-            // Invalidate queries to refresh the data
-            await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
-            await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
-            
-            toast({
-              title: "习惯完成！",
-              description: `获得 ${task.expReward || 20} 经验值（智能模式）`,
-            });
-          } catch (smartError) {
-            console.error('All endpoints failed:', smartError);
-            toast({
-              title: "完成失败",
-              description: "无法完成习惯，请检查数据库连接",
-              variant: "destructive",
-            });
-          }
+        } catch (smartError) {
+          console.error('All endpoints failed:', smartError);
+          toast({
+            title: "完成失败",
+            description: "无法完成习惯，请检查数据库连接",
+            variant: "destructive",
+          });
         }
       }
     } else {
