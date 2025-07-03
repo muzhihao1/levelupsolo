@@ -3342,6 +3342,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const { db } = require('./db');
             
             try {
+              // First get basic task data without potentially missing columns
               const userTasks = await db.execute(sql`
                 SELECT 
                   id, user_id as "userId", title, description, completed, 
@@ -3351,8 +3352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   started_at as "startedAt", created_at as "createdAt", completed_at as "completedAt",
                   task_category as "taskCategory", task_type as "taskType", 
                   parent_task_id as "parentTaskId", "order", tags, difficulty,
-                  required_energy_balls as "requiredEnergyBalls", 
-                  last_completed_at as "lastCompletedAt", completion_count as "completionCount"
+                  required_energy_balls as "requiredEnergyBalls"
                 FROM tasks
                 WHERE user_id = ${userId}
                 ORDER BY created_at DESC
@@ -3361,7 +3361,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const tasksWithDefaults = (userTasks.rows || userTasks).map((task: any) => ({
                 ...task,
                 skills: [],
-                microTasks: []
+                microTasks: [],
+                // Add default values for potentially missing columns
+                lastCompletedAt: task.lastCompletedAt || null,
+                completionCount: task.completionCount || 0
               }));
               
               return res.json(tasksWithDefaults);

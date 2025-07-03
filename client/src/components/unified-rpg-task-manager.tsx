@@ -699,15 +699,27 @@ export default function UnifiedRPGTaskManager() {
         const result = await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
         console.log('Simple-complete response:', result);
         
-        // Invalidate queries to refresh the data
-        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
-        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
-        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
-        
-        toast({
-          title: "习惯完成！",
-          description: `获得 ${task.expReward || 20} 经验值`,
-        });
+        // Check if the response indicates success
+        if (result && result.success) {
+          console.log('Habit completed successfully, refreshing data...');
+          
+          // Force refetch all data immediately
+          await Promise.all([
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
+          ]);
+          
+          console.log('Data refresh complete');
+          
+          toast({
+            title: "习惯完成！",
+            description: `获得 ${task.expReward || 20} 经验值`,
+          });
+        } else {
+          console.error('Unexpected response format:', result);
+          throw new Error('Invalid response from server');
+        }
       } catch (error: any) {
         console.error('Simple-complete endpoint failed:', error);
         
@@ -721,10 +733,14 @@ export default function UnifiedRPGTaskManager() {
             console.log('Smart complete debug info:', smartResult.debug);
           }
           
-          // Invalidate queries to refresh the data
-          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
-          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
-          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
+          // Force refetch all data immediately
+          await Promise.all([
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
+            queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
+          ]);
+          
+          console.log('Data refresh complete (smart mode)');
           
           toast({
             title: "习惯完成！",

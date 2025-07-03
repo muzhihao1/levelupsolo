@@ -95,6 +95,7 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   // Reusable task selector (ONLY includes columns that actually exist in DB)
+  // Core columns that always exist
   private readonly taskSelectColumns = {
     id: tasks.id,
     userId: tasks.userId,
@@ -119,8 +120,7 @@ export class DatabaseStorage implements IStorage {
     tags: tasks.tags,
     difficulty: tasks.difficulty,
     requiredEnergyBalls: tasks.requiredEnergyBalls,
-    lastCompletedAt: tasks.lastCompletedAt,
-    completionCount: tasks.completionCount,
+    // NOTE: lastCompletedAt and completionCount removed as they may not exist
   };
 
   // User operations (required for authentication)
@@ -466,10 +466,13 @@ export class DatabaseStorage implements IStorage {
           .where(eq(microTasks.taskId, task.id))
           .orderBy(microTasks.order);
         
-        // Add microTasks to the task object
+        // Add microTasks and default values for potentially missing columns
         return { 
           ...task, 
-          microTasks: taskMicroTasks 
+          microTasks: taskMicroTasks,
+          // Add defaults for columns that may not exist
+          lastCompletedAt: (task as any).lastCompletedAt || null,
+          completionCount: (task as any).completionCount || 0
         };
       })
     );
@@ -482,7 +485,12 @@ export class DatabaseStorage implements IStorage {
     
     if (!task) return undefined;
     
-    return task;
+    // Add defaults for columns that may not exist
+    return {
+      ...task,
+      lastCompletedAt: (task as any).lastCompletedAt || null,
+      completionCount: (task as any).completionCount || 0
+    };
   }
 
   async createTask(task: InsertTask): Promise<Task> {
