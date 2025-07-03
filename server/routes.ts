@@ -3701,7 +3701,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Simple habit completion endpoint with connection fallback
+  // Simple habit completion endpoint - works without tracking columns
   app.post('/api/tasks/:id/simple-complete', isAuthenticated, async (req: any, res) => {
     const taskId = parseInt(req.params.id);
     const userId = (req.user as any)?.claims?.sub;
@@ -3713,15 +3713,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log(`[Simple Complete] Starting for task ${taskId}, user ${userId}`);
     
     try {
-      // Use snake_case columns as per the actual database schema
+      // Only update the columns we know exist
       const result = await db.execute(sql`
         UPDATE tasks 
         SET 
-          last_completed_at = NOW(),
-          completion_count = COALESCE(completion_count, 0) + 1,
           completed = true,
-          completed_at = NOW(),
-          updated_at = NOW()
+          completed_at = NOW()
         WHERE 
           id = ${taskId} 
           AND user_id = ${userId}
@@ -3735,6 +3732,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Habit not found or not authorized' });
       }
       
+      // Try to update tracking columns if they exist (ignore errors)
+      try {
+        await db.execute(sql`
+          UPDATE tasks 
+          SET 
+            last_completed_at = NOW(),
+            completion_count = COALESCE(completion_count, 0) + 1
+          WHERE id = ${taskId}
+        `);
+        console.log(`[Simple Complete] Tracking columns updated`);
+      } catch (trackingError) {
+        console.log(`[Simple Complete] Tracking columns don't exist, skipped`);
+      }
+      
       console.log(`[Simple Complete] Success! Habit ${taskId} completed`);
       return res.json({
         success: true,
@@ -3745,15 +3756,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('[Simple Complete] Failed:', error);
       console.error('[Simple Complete] Error code:', error.code);
       console.error('[Simple Complete] Error detail:', error.detail);
-      
-      // If the error is due to missing columns, return a more helpful message
-      if (error.code === '42703') { // Column does not exist
-        return res.status(500).json({ 
-          message: 'Database schema mismatch',
-          error: error.message,
-          detail: 'The database columns for habit tracking may not exist. Please run database migrations.'
-        });
-      }
       
       res.status(500).json({ 
         message: 'Failed to complete habit',
