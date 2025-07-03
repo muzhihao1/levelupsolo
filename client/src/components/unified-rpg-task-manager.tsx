@@ -105,7 +105,18 @@ const TaskCard = memo(function TaskCard({
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => onComplete(task.id)}
+            onClick={() => {
+              console.log('=== TaskCard button clicked ===', { 
+                taskId: task.id, 
+                title: task.title,
+                canCompleteTask,
+                completed: task.completed,
+                hasEnoughEnergy,
+                requiredEnergy,
+                userStats: userStats?.energyBalls
+              });
+              onComplete(task.id);
+            }}
             disabled={!canCompleteTask}
             className={`mt-1 h-10 w-10 p-0 rounded-full touch-manipulation ${
               task.completed 
@@ -649,13 +660,27 @@ export default function UnifiedRPGTaskManager() {
   };
 
   const handleToggleComplete = async (taskId: number) => {
+    console.log('=== handleToggleComplete called ===', { taskId });
+    
     const task = tasks.find(t => t.id === taskId);
-    if (!task) return;
+    if (!task) {
+      console.log('Task not found:', taskId);
+      return;
+    }
+    
+    console.log('Task found:', { 
+      id: task.id, 
+      title: task.title, 
+      category: task.taskCategory, 
+      completed: task.completed,
+      requiredEnergyBalls: task.requiredEnergyBalls
+    });
     
     // 检查能量球是否足够（仅在完成任务时检查）
     if (!task.completed && userStats) {
       const requiredEnergy = task.requiredEnergyBalls || 1;
       if (userStats.energyBalls < requiredEnergy) {
+        console.log('Not enough energy:', { required: requiredEnergy, current: userStats.energyBalls });
         toast({
           title: "能量不足",
           description: `完成此任务需要 ${requiredEnergy} 个能量球，但您只有 ${userStats.energyBalls} 个`,
@@ -667,13 +692,17 @@ export default function UnifiedRPGTaskManager() {
     
     // For habits, use the simple-complete endpoint directly
     if (task.taskCategory === 'habit' && !task.completed) {
+      console.log('Processing habit completion...');
       try {
         // Use the simple-complete endpoint directly for habits
-        await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
+        console.log('Calling simple-complete endpoint...');
+        const result = await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
+        console.log('Simple-complete response:', result);
         
         // Invalidate queries to refresh the data
         await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
         await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+        await queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
         
         toast({
           title: "习惯完成！",
@@ -686,6 +715,7 @@ export default function UnifiedRPGTaskManager() {
         try {
           console.log('Trying smart-complete endpoint as fallback...');
           const smartResult = await apiRequest('POST', `/api/tasks/${taskId}/smart-complete`);
+          console.log('Smart-complete response:', smartResult);
           
           if (smartResult.debug) {
             console.log('Smart complete debug info:', smartResult.debug);
@@ -694,6 +724,7 @@ export default function UnifiedRPGTaskManager() {
           // Invalidate queries to refresh the data
           await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
           await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+          await queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
           
           toast({
             title: "习惯完成！",
@@ -709,6 +740,7 @@ export default function UnifiedRPGTaskManager() {
         }
       }
     } else {
+      console.log('Processing non-habit task or uncompleting...');
       // For non-habits or uncompleting, use normal mutation
       updateTaskMutation.mutate({
         id: taskId,
