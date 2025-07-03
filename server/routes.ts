@@ -3393,6 +3393,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to check actual column names in tasks table
+  app.get('/api/debug/check-columns', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      const columns = await db.execute(sql`
+        SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_name = 'tasks'
+        ORDER BY ordinal_position
+      `);
+      
+      console.log('[Column Check] Tasks table columns:', columns.rows || columns);
+      
+      res.json({
+        columns: columns.rows || columns,
+        note: "These are the actual column names in the database"
+      });
+    } catch (error: any) {
+      console.error('[Column Check] Error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Debug endpoint to test database connection
   app.get('/api/debug/db-test', async (req, res) => {
     try {
@@ -3449,18 +3474,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Method 1: Try with existing db connection
       try {
-        const result = await db.execute(sql`
-          UPDATE tasks 
-          SET 
-            last_completed_at = NOW(),
-            completion_count = COALESCE(completion_count, 0) + 1,
-            updated_at = NOW()
-          WHERE 
-            id = ${taskId} 
-            AND user_id = ${userId}
-            AND task_category = 'habit'
-          RETURNING *
-        `);
+        // Try with camelCase first (might be how table was created)
+        try {
+          const result = await db.execute(sql`
+            UPDATE tasks 
+            SET 
+              "lastCompletedAt" = NOW(),
+              "completionCount" = COALESCE("completionCount", 0) + 1,
+              "updatedAt" = NOW()
+            WHERE 
+              id = ${taskId} 
+              AND "userId" = ${userId}
+              AND "taskCategory" = 'habit'
+            RETURNING *
+          `);
+          
+          if (result.rows.length > 0) {
+            console.log(`[Simple Complete] Success with camelCase columns`);
+            return res.json({
+              success: true,
+              task: result.rows[0]
+            });
+          }
+        } catch (camelError) {
+          console.log(`[Simple Complete] CamelCase failed, trying snake_case:`, camelError.message);
+          
+          // Fallback to snake_case
+          const result = await db.execute(sql`
+            UPDATE tasks 
+            SET 
+              last_completed_at = NOW(),
+              completion_count = COALESCE(completion_count, 0) + 1,
+              updated_at = NOW()
+            WHERE 
+              id = ${taskId} 
+              AND user_id = ${userId}
+              AND task_category = 'habit'
+            RETURNING *
+          `);
+          
+          if (result.rows.length > 0) {
+            console.log(`[Simple Complete] Success with snake_case columns`);
+            return res.json({
+              success: true,
+              task: result.rows[0]
+            });
+          }
+        }
         
         if (result.rows.length > 0) {
           console.log(`[Simple Complete] Success with primary connection`);
@@ -3484,15 +3544,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const client = await pool.connect();
       try {
-        const result = await client.query(
-          `UPDATE tasks 
-           SET last_completed_at = NOW(), 
-               completion_count = COALESCE(completion_count, 0) + 1,
-               updated_at = NOW()
-           WHERE id = $1 AND user_id = $2 AND task_category = 'habit'
-           RETURNING *`,
-          [taskId, userId]
-        );
+        // Try camelCase columns first
+        let result;
+        try {
+          result = await client.query(
+            `UPDATE tasks 
+             SET "lastCompletedAt" = NOW(), 
+                 "completionCount" = COALESCE("completionCount", 0) + 1,
+                 "updatedAt" = NOW()
+             WHERE id = $1 AND "userId" = $2 AND "taskCategory" = 'habit'
+             RETURNING *`,
+            [taskId, userId]
+          );
+        } catch (camelError) {
+          console.log('[Simple Complete] Fallback pool camelCase failed, trying snake_case');
+          // Fallback to snake_case
+          result = await client.query(
+            `UPDATE tasks 
+             SET last_completed_at = NOW(), 
+                 completion_count = COALESCE(completion_count, 0) + 1,
+                 updated_at = NOW()
+             WHERE id = $1 AND user_id = $2 AND task_category = 'habit'
+             RETURNING *`,
+            [taskId, userId]
+          );
+        }
         
         if (result.rows.length === 0) {
           return res.status(404).json({ message: 'Habit not found' });
@@ -3528,19 +3604,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`[Direct Habit Complete] Starting for task ${taskId}, user ${userId}`);
       
-      // Direct SQL update to avoid connection pool issues
-      const result = await db.execute(sql`
-        UPDATE tasks 
-        SET 
-          last_completed_at = NOW(),
-          completion_count = COALESCE(completion_count, 0) + 1,
-          updated_at = NOW()
-        WHERE 
-          id = ${taskId} 
-          AND user_id = ${userId}
-          AND task_category = 'habit'
-        RETURNING *
-      `);
+      // Try both naming conventions
+      let result;
+      try {
+        // Try camelCase first
+        result = await db.execute(sql`
+          UPDATE tasks 
+          SET 
+            "lastCompletedAt" = NOW(),
+            "completionCount" = COALESCE("completionCount", 0) + 1,
+            "updatedAt" = NOW()
+          WHERE 
+            id = ${taskId} 
+            AND "userId" = ${userId}
+            AND "taskCategory" = 'habit'
+          RETURNING *
+        `);
+      } catch (camelError) {
+        console.log('[Direct Habit Complete] CamelCase failed, trying snake_case');
+        // Fallback to snake_case
+        result = await db.execute(sql`
+          UPDATE tasks 
+          SET 
+            last_completed_at = NOW(),
+            completion_count = COALESCE(completion_count, 0) + 1,
+            updated_at = NOW()
+          WHERE 
+            id = ${taskId} 
+            AND user_id = ${userId}
+            AND task_category = 'habit'
+          RETURNING *
+        `);
+      }
       
       if (result.rows.length === 0) {
         return res.status(404).json({ message: "Habit not found or not owned by user" });
