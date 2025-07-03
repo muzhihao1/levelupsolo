@@ -268,6 +268,14 @@ export default function UnifiedRPGTaskManager() {
   const [activeTab, setActiveTab] = useState("side"); // Default to side quests tab
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  // 判断任务是否是今天完成的
+  const isCompletedToday = (task: Task): boolean => {
+    if (!task.completed || !task.completedAt) return false;
+    const completedDate = new Date(task.completedAt);
+    const today = new Date();
+    return completedDate.toDateString() === today.toDateString();
+  };
+
   // 将Font Awesome图标类名转换为emoji
   const getIconEmoji = (fontAwesomeClass: string): string => {
     const iconMap: { [key: string]: string } = {
@@ -1379,11 +1387,11 @@ export default function UnifiedRPGTaskManager() {
             </div>
           )}
 
-          {/* 已完成的支线任务 */}
-          {todos.filter(task => task.completed).length > 0 && (
+          {/* 今日已完成的支线任务 */}
+          {todos.filter(isCompletedToday).length > 0 && (
             <div className="space-y-3">
-              <h4 className="text-sm font-medium text-muted-foreground px-2 border-t border-border pt-4">已完成 ({todos.filter(task => task.completed).length})</h4>
-              {todos.filter(task => task.completed).map((task) => (
+              <h4 className="text-sm font-medium text-muted-foreground px-2 border-t border-border pt-4">今日已完成 ({todos.filter(isCompletedToday).length})</h4>
+              {todos.filter(isCompletedToday).map((task) => (
                 <TaskCard 
                   key={task.id} 
                   task={task} 
