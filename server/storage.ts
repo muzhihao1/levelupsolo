@@ -504,17 +504,30 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined> {
+    console.log(`[storage.updateTask] Updating task ${id} with data:`, JSON.stringify(task, null, 2));
+    
     const updateData: any = { ...task };
     if (task.completed) {
       updateData.completedAt = new Date();
     }
+    
+    console.log(`[storage.updateTask] Final update data:`, JSON.stringify(updateData, null, 2));
 
-    const [updated] = await db
-      .update(tasks)
-      .set(updateData)
-      .where(eq(tasks.id, id))
-      .returning();
-    return updated || undefined;
+    try {
+      const [updated] = await db
+        .update(tasks)
+        .set(updateData)
+        .where(eq(tasks.id, id))
+        .returning();
+      
+      console.log(`[storage.updateTask] Update result:`, updated ? 'Success' : 'No rows updated');
+      
+      return updated || undefined;
+    } catch (error: any) {
+      console.error(`[storage.updateTask] Database error:`, error);
+      console.error(`[storage.updateTask] Error stack:`, error.stack);
+      throw error;
+    }
   }
 
   async deleteTask(id: number): Promise<boolean> {
@@ -1006,10 +1019,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async consumeEnergyBalls(userId: string, amount: number): Promise<UserStats | undefined> {
+    console.log(`[storage.consumeEnergyBalls] Consuming ${amount} energy balls for user ${userId}`);
+    
     const stats = await this.getUserStats(userId);
-    if (!stats) return undefined;
+    if (!stats) {
+      console.error(`[storage.consumeEnergyBalls] No stats found for user ${userId}`);
+      return undefined;
+    }
 
+    console.log(`[storage.consumeEnergyBalls] Current energy balls: ${stats.energyBalls}`);
     const newEnergyBalls = Math.max(0, stats.energyBalls - amount);
+    console.log(`[storage.consumeEnergyBalls] New energy balls will be: ${newEnergyBalls}`);
+    
     return await this.updateUserStats(userId, { energyBalls: newEnergyBalls });
   }
 

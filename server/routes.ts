@@ -538,7 +538,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updates = req.body;
       const userId = (req.user as any)?.claims?.sub;
 
-      console.log(`[PATCH /api/tasks/${taskId}] User: ${userId}, Updates:`, updates);
+      console.log(`[PATCH /api/tasks/${taskId}] Starting update...`);
+      console.log(`[PATCH /api/tasks/${taskId}] User: ${userId}`);
+      console.log(`[PATCH /api/tasks/${taskId}] Updates:`, JSON.stringify(updates, null, 2));
+      console.log(`[PATCH /api/tasks/${taskId}] Headers:`, req.headers);
 
       if (!userId) {
         console.error(`[PATCH /api/tasks/${taskId}] User not authenticated properly`);
@@ -546,11 +549,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get current task to check if it's a habit
+      console.log(`[PATCH /api/tasks/${taskId}] Fetching current task...`);
       const currentTask = await storage.getTask(taskId);
       if (!currentTask) {
         console.error(`[PATCH /api/tasks/${taskId}] Task not found`);
         return res.status(404).json({ message: "Task not found" });
       }
+
+      console.log(`[PATCH /api/tasks/${taskId}] Current task:`, JSON.stringify(currentTask, null, 2));
 
       // Verify task belongs to user
       if (currentTask.userId !== userId) {
@@ -562,6 +568,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let isHabitCompletion = false;
       if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
         const now = new Date();
+        console.log(`[PATCH /api/tasks/${taskId}] Processing habit completion...`);
         
         if (updates.completed) {
           // For habits, update lastCompletedAt and increment completionCount
@@ -572,10 +579,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Don't actually mark habits as "completed" - they're repeatable
           delete updates.completed;
           
-          console.log(`Habit task ${taskId} completed, count: ${updates.completionCount}`);
+          console.log(`[PATCH /api/tasks/${taskId}] Habit task ${taskId} marked for completion, count: ${updates.completionCount}`);
+          console.log(`[PATCH /api/tasks/${taskId}] Updates after habit processing:`, JSON.stringify(updates, null, 2));
         }
       }
 
+      console.log(`[PATCH /api/tasks/${taskId}] Calling storage.updateTask with updates:`, JSON.stringify(updates, null, 2));
       const task = await storage.updateTask(taskId, updates);
 
       if (!task) {
@@ -585,24 +594,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Award experience to associated skill when task is completed (including habits)
       if ((updates.completed || isHabitCompletion) && task.skillId) {
         try {
+          console.log(`[PATCH /api/tasks/${taskId}] Awarding skill experience. SkillId: ${task.skillId}, isHabitCompletion: ${isHabitCompletion}`);
           const expToAward = task.expReward || 20;
           await storage.addSkillExp(task.skillId, expToAward);
 
           // Core skills system - no auto-merge needed
-          console.log(`${isHabitCompletion ? 'Habit' : 'Task'} completed, skill experience awarded to user ${userId}`);
-        } catch (error) {
-          console.error("Error awarding skill experience:", error);
+          console.log(`[PATCH /api/tasks/${taskId}] ${isHabitCompletion ? 'Habit' : 'Task'} completed, skill experience awarded to user ${userId}`);
+        } catch (error: any) {
+          console.error(`[PATCH /api/tasks/${taskId}] Error awarding skill experience:`, error);
+          console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);
+          // Don't fail the whole request for skill exp errors
         }
       }
 
       // Handle energy ball consumption/restoration
       if ((updates.completed !== undefined || isHabitCompletion) && task.requiredEnergyBalls) {
         try {
-          // Use the userId already extracted at the beginning of the function
+          console.log(`[PATCH /api/tasks/${taskId}] Handling energy balls. Required: ${task.requiredEnergyBalls}, isHabitCompletion: ${isHabitCompletion}`);
           
           // First ensure user stats exist
           let stats = await storage.getUserStats(userId);
+          console.log(`[PATCH /api/tasks/${taskId}] User stats:`, stats);
+          
           if (!stats) {
+            console.log(`[PATCH /api/tasks/${taskId}] Creating default user stats...`);
             // Create default user stats if they don't exist
             stats = await storage.createUserStats({
               userId,
@@ -613,52 +628,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
               streak: 0,
               lastEnergyReset: new Date()
             });
+            console.log(`[PATCH /api/tasks/${taskId}] Created user stats:`, stats);
           }
           
           // For habits, always consume energy when completing (isHabitCompletion)
           if (isHabitCompletion) {
+            console.log(`[PATCH /api/tasks/${taskId}] Consuming energy balls for habit completion...`);
             await storage.consumeEnergyBalls(userId, task.requiredEnergyBalls);
           } else if (updates.completed && !currentTask.completed) {
             // Completing a regular task - consume energy balls
+            console.log(`[PATCH /api/tasks/${taskId}] Consuming energy balls for task completion...`);
             await storage.consumeEnergyBalls(userId, task.requiredEnergyBalls);
           } else if (!updates.completed && currentTask.completed) {
             // Uncompleting a regular task - restore energy balls
+            console.log(`[PATCH /api/tasks/${taskId}] Restoring energy balls for task uncompletion...`);
             await storage.restoreEnergyBalls(userId, task.requiredEnergyBalls);
           }
-        } catch (error) {
-          console.error("Error handling energy balls:", error);
+        } catch (error: any) {
+          console.error(`[PATCH /api/tasks/${taskId}] Error handling energy balls:`, error);
+          console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);
+          // Don't fail the whole request for energy ball errors
         }
       }
 
       // Create activity log for task completion (including habits)
       if ((updates.completed && !currentTask.completed) || isHabitCompletion) {
         try {
+          console.log(`[PATCH /api/tasks/${taskId}] Creating activity log...`);
           const expGained = task.expReward || 20;
-          await storage.createActivityLog({
+          const logData = {
             userId,
             taskId: task.id,
             skillId: task.skillId || null,
             expGained,
             action: isHabitCompletion ? 'task_completed' : 'task_completed',
             details: { description: `完成任务: ${task.title}` } // Use details as JSONB
-          });
-          console.log(`Activity log created for ${isHabitCompletion ? 'habit' : 'task'} ${task.id} completion`);
-        } catch (error) {
-          console.error("Error creating activity log:", error);
+          };
+          console.log(`[PATCH /api/tasks/${taskId}] Activity log data:`, JSON.stringify(logData, null, 2));
+          
+          await storage.createActivityLog(logData);
+          console.log(`[PATCH /api/tasks/${taskId}] Activity log created for ${isHabitCompletion ? 'habit' : 'task'} ${task.id} completion`);
+        } catch (error: any) {
+          console.error(`[PATCH /api/tasks/${taskId}] Error creating activity log:`, error);
+          console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);
+          // Don't fail the whole request for activity log errors
         }
       }
 
+      console.log(`[PATCH /api/tasks/${taskId}] Successfully updated task, returning response...`);
       res.json(task);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
+        console.error(`[PATCH /api/tasks/${req.params.id}] Zod validation error:`, error.errors);
         res.status(400).json({ message: "Invalid task data", errors: error.errors });
       } else {
-        console.error(`[PATCH /api/tasks/${req.params.id}] Error updating task:`, error);
-        console.error('Error stack:', error.stack);
+        console.error(`[PATCH /api/tasks/${req.params.id}] Fatal error updating task:`, error);
+        console.error(`[PATCH /api/tasks/${req.params.id}] Error type:`, error.constructor.name);
+        console.error(`[PATCH /api/tasks/${req.params.id}] Error message:`, error.message);
+        console.error(`[PATCH /api/tasks/${req.params.id}] Error stack:`, error.stack);
+        console.error(`[PATCH /api/tasks/${req.params.id}] Request body was:`, req.body);
+        console.error(`[PATCH /api/tasks/${req.params.id}] User ID was:`, (req.user as any)?.claims?.sub);
+        
         res.status(500).json({ 
           message: "Failed to update task",
           error: error.message || "Unknown error",
-          taskId: req.params.id
+          errorType: error.constructor.name,
+          taskId: req.params.id,
+          debug: {
+            userId: (req.user as any)?.claims?.sub,
+            updates: req.body
+          }
         });
       }
     }
