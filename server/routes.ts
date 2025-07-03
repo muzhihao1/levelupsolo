@@ -566,26 +566,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Handle habit completion logic using existing database fields
       let isHabitCompletion = false;
+      let task: Task | undefined;
+      
       if (currentTask.taskCategory === "habit" && updates.completed !== undefined) {
-        const now = new Date();
         console.log(`[PATCH /api/tasks/${taskId}] Processing habit completion...`);
         
         if (updates.completed) {
-          // For habits, update lastCompletedAt and increment completionCount
-          updates.lastCompletedAt = now;
-          updates.completionCount = (currentTask.completionCount || 0) + 1;
-          isHabitCompletion = true; // Mark this as a habit completion for activity log
+          // Use the dedicated habit completion method to avoid field name issues
+          isHabitCompletion = true;
+          console.log(`[PATCH /api/tasks/${taskId}] Using updateHabitCompletion method...`);
+          task = await storage.updateHabitCompletion(taskId, userId);
           
-          // Don't actually mark habits as "completed" - they're repeatable
-          delete updates.completed;
+          // If there are other updates besides completion, apply them separately
+          const otherUpdates = { ...updates };
+          delete otherUpdates.completed;
+          delete otherUpdates.lastCompletedAt;
+          delete otherUpdates.completionCount;
           
-          console.log(`[PATCH /api/tasks/${taskId}] Habit task ${taskId} marked for completion, count: ${updates.completionCount}`);
-          console.log(`[PATCH /api/tasks/${taskId}] Updates after habit processing:`, JSON.stringify(updates, null, 2));
+          if (Object.keys(otherUpdates).length > 0 && task) {
+            console.log(`[PATCH /api/tasks/${taskId}] Applying additional updates:`, otherUpdates);
+            task = await storage.updateTask(taskId, otherUpdates);
+          }
+        } else {
+          // Not completing a habit, just update normally
+          console.log(`[PATCH /api/tasks/${taskId}] Regular update for habit task`);
+          task = await storage.updateTask(taskId, updates);
         }
+      } else {
+        // Not a habit or not changing completion status
+        console.log(`[PATCH /api/tasks/${taskId}] Calling storage.updateTask with updates:`, JSON.stringify(updates, null, 2));
+        task = await storage.updateTask(taskId, updates);
       }
-
-      console.log(`[PATCH /api/tasks/${taskId}] Calling storage.updateTask with updates:`, JSON.stringify(updates, null, 2));
-      const task = await storage.updateTask(taskId, updates);
 
       if (!task) {
         return res.status(404).json({ message: "Task not found" });
@@ -3588,6 +3599,180 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: 'Failed to complete habit',
         error: error.message 
+      });
+    }
+  });
+
+  // Smart habit completion with dynamic column detection
+  app.post('/api/tasks/:id/smart-complete', isAuthenticated, async (req: any, res) => {
+    const taskId = parseInt(req.params.id);
+    const userId = (req.user as any)?.claims?.sub;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    
+    console.log(`[Smart Complete] Starting for task ${taskId}, user ${userId}`);
+    
+    try {
+      // Step 1: Detect actual column names
+      const columnInfo = await db.execute(sql`
+        SELECT 
+          column_name,
+          data_type,
+          table_schema
+        FROM information_schema.columns 
+        WHERE table_name = 'tasks' 
+        ORDER BY ordinal_position
+      `);
+      
+      console.log('[Smart Complete] Found columns:', columnInfo.rows.map(r => r.column_name));
+      
+      // Find the actual column names
+      let userIdCol = 'user_id';
+      let taskCategoryCol = 'task_category';
+      let lastCompletedCol = null;
+      let completionCountCol = null;
+      let updatedAtCol = null;
+      
+      for (const col of columnInfo.rows) {
+        const name = col.column_name.toLowerCase();
+        
+        // User ID column
+        if (name === 'userid' || name === 'user_id') {
+          userIdCol = col.column_name;
+        }
+        
+        // Task category column
+        if (name === 'taskcategory' || name === 'task_category') {
+          taskCategoryCol = col.column_name;
+        }
+        
+        // Last completed column
+        if ((name.includes('last') && name.includes('complet')) || 
+            name === 'lastcompletedat' || 
+            name === 'last_completed_at') {
+          lastCompletedCol = col.column_name;
+        }
+        
+        // Completion count column
+        if ((name.includes('complet') && name.includes('count')) ||
+            name === 'completioncount' ||
+            name === 'completion_count') {
+          completionCountCol = col.column_name;
+        }
+        
+        // Updated at column
+        if (name === 'updatedat' || name === 'updated_at') {
+          updatedAtCol = col.column_name;
+        }
+      }
+      
+      console.log('[Smart Complete] Detected columns:', {
+        userIdCol,
+        taskCategoryCol,
+        lastCompletedCol,
+        completionCountCol,
+        updatedAtCol
+      });
+      
+      // Step 2: Build dynamic UPDATE query
+      if (!lastCompletedCol || !completionCountCol) {
+        // If columns don't exist, try to update only what exists
+        console.warn('[Smart Complete] Some columns missing, attempting partial update');
+        
+        let setClauses = [];
+        if (lastCompletedCol) setClauses.push(`"${lastCompletedCol}" = NOW()`);
+        if (completionCountCol) setClauses.push(`"${completionCountCol}" = COALESCE("${completionCountCol}", 0) + 1`);
+        if (updatedAtCol) setClauses.push(`"${updatedAtCol}" = NOW()`);
+        
+        if (setClauses.length === 0) {
+          return res.status(500).json({ 
+            error: 'No completion-related columns found in tasks table',
+            availableColumns: columnInfo.rows.map(r => r.column_name)
+          });
+        }
+        
+        const partialQuery = `
+          UPDATE tasks 
+          SET ${setClauses.join(', ')}
+          WHERE id = $1 
+            AND "${userIdCol}" = $2 
+            AND "${taskCategoryCol}" = 'habit'
+          RETURNING *
+        `;
+        
+        console.log('[Smart Complete] Executing partial query:', partialQuery);
+        
+        const { Pool } = require('pg');
+        const pool = new Pool({
+          connectionString: process.env.DATABASE_URL,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        });
+        
+        const result = await pool.query(partialQuery, [taskId, userId]);
+        await pool.end();
+        
+        if (result.rows.length > 0) {
+          return res.json({
+            success: true,
+            task: result.rows[0],
+            debug: {
+              method: 'partial_update',
+              columnsUpdated: setClauses
+            }
+          });
+        }
+      } else {
+        // All columns exist, do full update
+        const fullQuery = `
+          UPDATE tasks 
+          SET 
+            "${lastCompletedCol}" = NOW(),
+            "${completionCountCol}" = COALESCE("${completionCountCol}", 0) + 1
+            ${updatedAtCol ? `, "${updatedAtCol}" = NOW()` : ''}
+          WHERE id = $1 
+            AND "${userIdCol}" = $2 
+            AND "${taskCategoryCol}" = 'habit'
+          RETURNING *
+        `;
+        
+        console.log('[Smart Complete] Executing full query:', fullQuery);
+        
+        const { Pool } = require('pg');
+        const pool = new Pool({
+          connectionString: process.env.DATABASE_URL,
+          ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        });
+        
+        const result = await pool.query(fullQuery, [taskId, userId]);
+        await pool.end();
+        
+        if (result.rows.length > 0) {
+          return res.json({
+            success: true,
+            task: result.rows[0],
+            debug: {
+              method: 'full_update',
+              columnsDetected: {
+                lastCompletedCol,
+                completionCountCol,
+                updatedAtCol
+              }
+            }
+          });
+        }
+      }
+      
+      res.status(404).json({ message: 'Habit not found' });
+      
+    } catch (error: any) {
+      console.error('[Smart Complete] Error:', error);
+      res.status(500).json({ 
+        error: error.message,
+        code: error.code,
+        detail: error.detail,
+        hint: 'Try checking the table structure in Supabase dashboard'
       });
     }
   });

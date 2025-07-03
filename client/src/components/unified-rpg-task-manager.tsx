@@ -692,12 +692,33 @@ export default function UnifiedRPGTaskManager() {
             description: `获得 ${task.expReward || 20} 经验值`,
           });
         } catch (fallbackError) {
-          console.error('Fallback endpoint also failed:', fallbackError);
-          toast({
-            title: "完成失败",
-            description: "无法完成习惯，请稍后再试",
-            variant: "destructive",
-          });
+          console.error('Simple-complete endpoint also failed:', fallbackError);
+          
+          // Try smart-complete as final fallback
+          try {
+            console.log('Trying smart-complete endpoint as final fallback...');
+            const smartResult = await apiRequest('POST', `/api/tasks/${taskId}/smart-complete`);
+            
+            if (smartResult.debug) {
+              console.log('Smart complete debug info:', smartResult.debug);
+            }
+            
+            // Invalidate queries to refresh the data
+            await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+            await queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+            
+            toast({
+              title: "习惯完成！",
+              description: `获得 ${task.expReward || 20} 经验值（智能模式）`,
+            });
+          } catch (smartError) {
+            console.error('All endpoints failed:', smartError);
+            toast({
+              title: "完成失败",
+              description: "无法完成习惯，请检查数据库连接",
+              variant: "destructive",
+            });
+          }
         }
       }
     } else {
