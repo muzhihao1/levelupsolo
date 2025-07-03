@@ -70,6 +70,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     let tablesExist = false;
     let tableList: string[] = [];
     
+    // Add deployment timestamp to verify new code is deployed
+    const deploymentTime = '2025-07-03T12:30:00Z';
+    
     try {
       // First check if db is initialized
       const { isDatabaseInitialized } = require('./db-check');
@@ -112,6 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({
       status: dbStatus === 'connected' ? 'ok' : 'degraded',
       timestamp: new Date().toISOString(),
+      deploymentTime: deploymentTime, // Added to verify deployment
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
       database: {
@@ -1403,35 +1407,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/tasks/reset-daily-habits", isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
-
-      // Get all habit tasks for the user
-      const habitTasks = await storage.getTasks(userId);
-      const habits = habitTasks.filter((task: any) => task.taskCategory === "habit");
-
-      let resetCount = 0;
-      for (const habit of habits) {
-        // Reset all completed habits to be available again
-        if (habit.completed) {
-          await storage.updateTask(habit.id, { 
-            completed: false
-          });
-          resetCount++;
-        }
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Check if energy balls need daily reset
-      const energyBallsRestored = await storage.checkAndResetEnergyBalls(userId);
+      console.log(`[Reset Habits] Starting reset for user ${userId}`);
 
-      console.log(`Reset ${resetCount} habits and ${energyBallsRestored ? 'restored energy balls' : 'energy already restored today'} for user ${userId}`);
+      // Use direct SQL to avoid column issues
+      try {
+        const result = await db.execute(sql`
+          UPDATE tasks 
+          SET 
+            completed = false,
+            completed_at = NULL
+          WHERE 
+            user_id = ${userId} 
+            AND task_category = 'habit'
+            AND completed = true
+          RETURNING id
+        `);
+        
+        const resetCount = result.rows?.length || 0;
+        console.log(`[Reset Habits] Reset ${resetCount} habits`);
 
-      res.json({ 
-        message: `Reset ${resetCount} habits for new day${energyBallsRestored ? ' and restored energy balls' : ''}`, 
-        resetCount,
-        energyBallsRestored 
+        // Try to reset tracking columns if they exist
+        if (resetCount > 0) {
+          try {
+            await db.execute(sql`
+              UPDATE tasks 
+              SET 
+                last_completed_at = NULL,
+                completion_count = 0
+              WHERE 
+                user_id = ${userId} 
+                AND task_category = 'habit'
+            `);
+            console.log(`[Reset Habits] Tracking columns reset`);
+          } catch (trackingError) {
+            console.log(`[Reset Habits] Tracking columns don't exist, skipped`);
+          }
+        }
+
+        // Check if energy balls need daily reset
+        const energyBallsRestored = await storage.checkAndResetEnergyBalls(userId);
+
+        console.log(`[Reset Habits] Completed: ${resetCount} habits reset, energy restored: ${energyBallsRestored}`);
+
+        res.json({ 
+          message: `Reset ${resetCount} habits for new day${energyBallsRestored ? ' and restored energy balls' : ''}`, 
+          resetCount,
+          energyBallsRestored 
+        });
+      } catch (dbError: any) {
+        console.error("[Reset Habits] Database error:", dbError);
+        res.status(500).json({ 
+          message: "Failed to reset daily habits",
+          error: dbError.message
+        });
+      }
+    } catch (error: any) {
+      console.error("[Reset Habits] Unexpected error:", error);
+      res.status(500).json({ 
+        message: "Failed to reset daily habits",
+        error: error.message
       });
-    } catch (error) {
-      console.error("Error resetting daily habits:", error);
-      res.status(500).json({ message: "Failed to reset daily habits" });
     }
   });
 
@@ -3817,6 +3857,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: 'Failed to complete habit',
         error: error.message 
+      });
+    }
+  });
+
+  // Debug endpoint to test habit completion
+  app.get('/api/debug/test-habit/:id', isAuthenticated, async (req: any, res) => {
+    const taskId = parseInt(req.params.id);
+    const userId = (req.user as any)?.claims?.sub;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    
+    try {
+      // Get task details
+      const taskResult = await db.execute(sql`
+        SELECT * FROM tasks 
+        WHERE id = ${taskId} 
+          AND user_id = ${userId}
+      `);
+      
+      const task = taskResult.rows?.[0] || taskResult[0];
+      
+      // Get user stats
+      const statsResult = await db.execute(sql`
+        SELECT * FROM user_stats 
+        WHERE user_id = ${userId}
+      `);
+      
+      const stats = statsResult.rows?.[0] || statsResult[0];
+      
+      // Check column existence
+      const columnCheck = await db.execute(sql`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'tasks'
+      `);
+      
+      const columns = (columnCheck.rows || columnCheck).map((row: any) => row.column_name);
+      
+      res.json({
+        task: task || 'Task not found',
+        userStats: {
+          energyBalls: stats?.energy_balls || stats?.energyBalls || 0,
+          maxEnergyBalls: stats?.max_energy_balls || stats?.maxEnergyBalls || 18
+        },
+        availableColumns: columns,
+        hasTrackingColumns: {
+          last_completed_at: columns.includes('last_completed_at'),
+          completion_count: columns.includes('completion_count')
+        },
+        simpleCompleteEndpoint: '/api/tasks/:id/simple-complete',
+        debugInfo: {
+          deploymentTime: '2025-07-03T12:30:00Z',
+          endpointReady: true
+        }
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        message: 'Debug check failed',
+        error: error.message
       });
     }
   });
