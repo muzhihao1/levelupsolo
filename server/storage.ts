@@ -15,6 +15,7 @@ import { db } from "./db";
 import { eq, desc, and, asc } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { isDatabaseInitialized, getDatabaseError } from "./db-check";
+import { getPool } from "./db-pool";
 
 export interface IStorage {
   // User operations (required for authentication)
@@ -37,6 +38,7 @@ export interface IStorage {
   getTask(id: number): Promise<Task | undefined>;
   createTask(task: InsertTask): Promise<Task>;
   updateTask(id: number, task: Partial<InsertTask>): Promise<Task | undefined>;
+  updateHabitCompletion(taskId: number, userId: string): Promise<Task | undefined>;
   deleteTask(id: number): Promise<boolean>;
   // Hierarchical task methods
   getTasksByType(userId: string, taskType: string): Promise<Task[]>;
@@ -511,6 +513,104 @@ export class DatabaseStorage implements IStorage {
       updateData.completedAt = new Date();
     }
     
+    // Handle potential field name mismatches for habit-specific fields
+    // The schema defines these as camelCase in TypeScript but snake_case in DB
+    if ('lastCompletedAt' in updateData || 'completionCount' in updateData) {
+      console.log(`[storage.updateTask] Detected habit-specific fields, checking column names...`);
+      
+      // For habits, we might receive these fields from routes.ts
+      // We need to ensure they match the actual database column names
+      // The Drizzle schema should handle this, but if not, we'll use raw SQL
+      
+      try {
+        // First try the standard Drizzle update
+        console.log(`[storage.updateTask] Attempting standard Drizzle update...`);
+        const [updated] = await db
+          .update(tasks)
+          .set(updateData)
+          .where(eq(tasks.id, id))
+          .returning();
+        
+        console.log(`[storage.updateTask] Update result:`, updated ? 'Success' : 'No rows updated');
+        return updated || undefined;
+        
+      } catch (drizzleError: any) {
+        console.error(`[storage.updateTask] Drizzle update failed:`, drizzleError.message);
+        console.error(`[storage.updateTask] Error code:`, drizzleError.code);
+        
+        // If it's a column not found error, try raw SQL with snake_case
+        if (drizzleError.code === '42703') {
+          console.log(`[storage.updateTask] Column not found, attempting raw SQL with snake_case...`);
+          
+          // Build update query with proper column names
+          const setClauses: string[] = [];
+          const values: any[] = [];
+          let paramIndex = 2; // $1 is for id
+          
+          // Map camelCase to snake_case for known problematic fields
+          const fieldMapping: Record<string, string> = {
+            lastCompletedAt: 'last_completed_at',
+            completionCount: 'completion_count',
+            userId: 'user_id',
+            taskCategory: 'task_category',
+            taskType: 'task_type',
+            skillId: 'skill_id',
+            goalId: 'goal_id',
+            parentTaskId: 'parent_task_id',
+            expReward: 'exp_reward',
+            estimatedDuration: 'estimated_duration',
+            actualDuration: 'actual_duration',
+            accumulatedTime: 'accumulated_time',
+            pomodoroSessionId: 'pomodoro_session_id',
+            startedAt: 'started_at',
+            createdAt: 'created_at',
+            completedAt: 'completed_at',
+            requiredEnergyBalls: 'required_energy_balls'
+          };
+          
+          for (const [key, value] of Object.entries(updateData)) {
+            const dbColumn = fieldMapping[key] || key;
+            setClauses.push(`${dbColumn} = $${paramIndex}`);
+            values.push(value);
+            paramIndex++;
+          }
+          
+          const query = `
+            UPDATE tasks 
+            SET ${setClauses.join(', ')}
+            WHERE id = $1
+            RETURNING *
+          `;
+          
+          console.log(`[storage.updateTask] Raw SQL query:`, query);
+          console.log(`[storage.updateTask] Query values:`, [id, ...values]);
+          
+          // Use the connection pool directly
+          const pool = getPool();
+          const client = await pool.connect();
+          
+          try {
+            const result = await client.query(query, [id, ...values]);
+            
+            if (result.rows.length > 0) {
+              console.log(`[storage.updateTask] Raw SQL update successful`);
+              return result.rows[0] as Task;
+            }
+            
+            console.log(`[storage.updateTask] No rows updated`);
+            return undefined;
+            
+          } finally {
+            client.release();
+          }
+        }
+        
+        // If it's not a column error, re-throw
+        throw drizzleError;
+      }
+    }
+    
+    // For non-habit updates, use standard Drizzle update
     console.log(`[storage.updateTask] Final update data:`, JSON.stringify(updateData, null, 2));
 
     try {
@@ -526,6 +626,126 @@ export class DatabaseStorage implements IStorage {
     } catch (error: any) {
       console.error(`[storage.updateTask] Database error:`, error);
       console.error(`[storage.updateTask] Error stack:`, error.stack);
+      throw error;
+    }
+  }
+
+  // Habit-specific update method to handle column name issues
+  async updateHabitCompletion(taskId: number, userId: string): Promise<Task | undefined> {
+    console.log(`[storage.updateHabitCompletion] Updating habit ${taskId} for user ${userId}`);
+    
+    try {
+      // First check what columns actually exist
+      const pool = getPool();
+      const client = await pool.connect();
+      
+      try {
+        // Check if the completion tracking columns exist
+        const columnCheck = await client.query(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'tasks' 
+            AND column_name IN ('last_completed_at', 'completion_count', 'lastCompletedAt', 'completionCount')
+        `);
+        
+        const existingColumns = columnCheck.rows.map(r => r.column_name);
+        console.log(`[storage.updateHabitCompletion] Found columns:`, existingColumns);
+        
+        // Build query based on what columns exist
+        let setClauses = [];
+        
+        // Check for last_completed_at variations
+        if (existingColumns.includes('last_completed_at')) {
+          setClauses.push('last_completed_at = NOW()');
+        } else if (existingColumns.includes('lastCompletedAt')) {
+          setClauses.push('"lastCompletedAt" = NOW()');
+        }
+        
+        // Check for completion_count variations
+        if (existingColumns.includes('completion_count')) {
+          setClauses.push('completion_count = COALESCE(completion_count, 0) + 1');
+        } else if (existingColumns.includes('completionCount')) {
+          setClauses.push('"completionCount" = COALESCE("completionCount", 0) + 1');
+        }
+        
+        // If no completion tracking columns exist, just update completed_at
+        if (setClauses.length === 0) {
+          console.warn(`[storage.updateHabitCompletion] No completion tracking columns found, using completed_at`);
+          setClauses.push('completed_at = NOW()');
+          setClauses.push('completed = true');
+        }
+        
+        // Always update updated_at if it exists
+        const updatedAtCheck = await client.query(`
+          SELECT column_name 
+          FROM information_schema.columns 
+          WHERE table_name = 'tasks' 
+            AND column_name IN ('updated_at', 'updatedAt')
+        `);
+        
+        if (updatedAtCheck.rows.find(r => r.column_name === 'updated_at')) {
+          setClauses.push('updated_at = NOW()');
+        } else if (updatedAtCheck.rows.find(r => r.column_name === 'updatedAt')) {
+          setClauses.push('"updatedAt" = NOW()');
+        }
+        
+        const query = `
+          UPDATE tasks 
+          SET ${setClauses.join(', ')}
+          WHERE 
+            id = $1 
+            AND user_id = $2
+            AND task_category = 'habit'
+          RETURNING *
+        `;
+        
+        console.log(`[storage.updateHabitCompletion] Executing query:`, query);
+        const result = await client.query(query, [taskId, userId]);
+        
+        if (result.rows.length > 0) {
+          console.log(`[storage.updateHabitCompletion] Habit updated successfully`);
+          // Convert snake_case fields back to camelCase for TypeScript
+          const row = result.rows[0];
+          const task: Task = {
+            id: row.id,
+            userId: row.user_id || row.userId,
+            title: row.title,
+            description: row.description,
+            completed: row.completed,
+            skillId: row.skill_id || row.skillId,
+            goalId: row.goal_id || row.goalId,
+            goalTags: row.goal_tags || row.goalTags,
+            expReward: row.exp_reward || row.expReward,
+            estimatedDuration: row.estimated_duration || row.estimatedDuration,
+            actualDuration: row.actual_duration || row.actualDuration,
+            accumulatedTime: row.accumulated_time || row.accumulatedTime,
+            pomodoroSessionId: row.pomodoro_session_id || row.pomodoroSessionId,
+            startedAt: row.started_at || row.startedAt,
+            createdAt: row.created_at || row.createdAt,
+            completedAt: row.completed_at || row.completedAt,
+            taskCategory: row.task_category || row.taskCategory,
+            taskType: row.task_type || row.taskType,
+            parentTaskId: row.parent_task_id || row.parentTaskId,
+            order: row.order,
+            tags: row.tags,
+            difficulty: row.difficulty,
+            requiredEnergyBalls: row.required_energy_balls || row.requiredEnergyBalls,
+            lastCompletedAt: row.last_completed_at || row.lastCompletedAt,
+            completionCount: row.completion_count || row.completionCount
+          };
+          return task;
+        }
+        
+        console.log(`[storage.updateHabitCompletion] No habit found with id ${taskId} for user ${userId}`);
+        return undefined;
+        
+      } finally {
+        client.release();
+      }
+    } catch (error: any) {
+      console.error(`[storage.updateHabitCompletion] Database error:`, error);
+      console.error(`[storage.updateHabitCompletion] Error code:`, error.code);
+      console.error(`[storage.updateHabitCompletion] Error detail:`, error.detail);
       throw error;
     }
   }
