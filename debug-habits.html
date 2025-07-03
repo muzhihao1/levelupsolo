@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Habits - Level Up Solo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d1fae5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+        }
+        .error {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #7f1d1d;
+        }
+        .info {
+            background: #e0e7ff;
+            border: 1px solid #a5b4fc;
+            color: #312e81;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .section:last-child {
+            border-bottom: none;
+        }
+        input {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 200px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Level Up Solo - 习惯调试工具</h1>
+        
+        <div class="section">
+            <h2>1. 修复没有技能的习惯</h2>
+            <p>这会自动为所有没有分配技能的习惯分配合适的技能。</p>
+            <button onclick="fixHabitsSkills()">修复习惯技能</button>
+            <div id="fixResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>2. 测试习惯完成</h2>
+            <p>输入习惯ID来测试完成功能：</p>
+            <input type="number" id="habitId" placeholder="习惯ID (如: 140)" />
+            <button onclick="testHabitCompletion()">测试完成</button>
+            <div id="testResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>3. 查看所有习惯</h2>
+            <p>查看你的所有习惯任务及其技能分配情况。</p>
+            <button onclick="viewAllHabits()">查看所有习惯</button>
+            <div id="habitsResult" class="result" style="display:none;"></div>
+        </div>
+
+        <div class="section">
+            <h2>4. 检查服务器日志</h2>
+            <p>最近的错误信息将显示在这里。</p>
+            <button onclick="checkLogs()">刷新日志</button>
+            <div id="logsResult" class="result info" style="display:block;">
+                点击"刷新日志"按钮查看最新的服务器日志...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get auth token from localStorage or cookies
+        function getAuthToken() {
+            // Try localStorage first
+            const token = localStorage.getItem('accessToken');
+            if (token) return token;
+            
+            // Try to get from cookies
+            const cookies = document.cookie.split(';');
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'accessToken') return value;
+            }
+            
+            return null;
+        }
+
+        async function makeRequest(url, method = 'GET', body = null) {
+            const token = getAuthToken();
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const options = {
+                method,
+                headers,
+                credentials: 'include', // Include cookies
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(url, options);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP ${response.status}`);
+                }
+                
+                return data;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function fixHabitsSkills() {
+            const resultDiv = document.getElementById('fixResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '正在修复习惯技能...';
+
+            try {
+                const result = await makeRequest('/api/debug/fix-habits-skills', 'POST');
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `成功！${result.message}\n\n修复的习惯：\n` + 
+                    JSON.stringify(result.results, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `错误：${error.message}`;
+            }
+        }
+
+        async function testHabitCompletion() {
+            const habitId = document.getElementById('habitId').value;
+            if (!habitId) {
+                alert('请输入习惯ID');
+                return;
+            }
+
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = `正在测试完成习惯 ID: ${habitId}...`;
+
+            try {
+                const result = await makeRequest(`/api/tasks/${habitId}`, 'PATCH', { completed: true });
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `成功完成习惯！\n\n任务详情：\n` + JSON.stringify(result, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `错误：${error.message}\n\n这可能是导致500错误的原因。`;
+            }
+        }
+
+        async function viewAllHabits() {
+            const resultDiv = document.getElementById('habitsResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '正在加载习惯列表...';
+
+            try {
+                const tasks = await makeRequest('/api/data?type=tasks');
+                const habits = tasks.filter(t => t.taskCategory === 'habit');
+                
+                resultDiv.className = 'result success';
+                let content = `找到 ${habits.length} 个习惯：\n\n`;
+                
+                habits.forEach(habit => {
+                    content += `ID: ${habit.id} - "${habit.title}"\n`;
+                    content += `  技能ID: ${habit.skillId || '未分配'}\n`;
+                    content += `  完成次数: ${habit.completionCount || 0}\n`;
+                    content += `  最后完成: ${habit.lastCompletedAt || '从未'}\n\n`;
+                });
+                
+                resultDiv.textContent = content;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `错误：${error.message}`;
+            }
+        }
+
+        let logMessages = [];
+        
+        async function checkLogs() {
+            const resultDiv = document.getElementById('logsResult');
+            resultDiv.textContent = '日志监控已启动...\n\n最新日志将显示在这里。\n\n提示：尝试在主应用中完成一个习惯，然后查看这里的错误信息。';
+            
+            // This would normally connect to a log endpoint, but for now we'll show instructions
+            resultDiv.innerHTML += '\n\n<strong>调试步骤：</strong>\n' +
+                '1. 在主应用中尝试完成"八段锦"习惯\n' +
+                '2. 如果出现500错误，检查浏览器控制台\n' +
+                '3. 查看Railway部署日志获取详细错误信息\n' +
+                '4. 错误可能原因：\n' +
+                '   - 数据库连接问题\n' +
+                '   - 任务数据结构问题\n' +
+                '   - 能量球扣除失败\n' +
+                '   - 活动日志创建失败';
+        }
+
+        // Auto-check if user is not authenticated
+        window.onload = () => {
+            const token = getAuthToken();
+            if (!token) {
+                alert('请先登录 Level Up Solo 应用');
+                window.location.href = '/';
+            }
+        };
+    </script>
+</body>
+</html>

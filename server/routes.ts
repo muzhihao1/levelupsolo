@@ -3393,6 +3393,106 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to fix habits without skills
+  app.post('/api/debug/fix-habits-skills', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+      
+      console.log(`[Fix Habits Skills] Starting for user ${userId}`);
+      
+      // Initialize core skills if needed
+      await (storage as any).initializeCoreSkills(userId);
+      
+      // Find habits without skills
+      const habitsWithoutSkills = await db.execute(sql`
+        SELECT id, title 
+        FROM tasks 
+        WHERE user_id = ${userId} 
+          AND task_category = 'habit' 
+          AND skill_id IS NULL
+      `);
+      
+      console.log(`[Fix Habits Skills] Found ${habitsWithoutSkills.rows.length} habits without skills`);
+      
+      if (habitsWithoutSkills.rows.length === 0) {
+        return res.json({ 
+          message: "All habits already have skills assigned",
+          fixed: 0 
+        });
+      }
+      
+      // Get user's skills
+      const userSkills = await storage.getSkills(userId);
+      
+      let fixedCount = 0;
+      const results = [];
+      
+      for (const habit of habitsWithoutSkills.rows) {
+        // Determine appropriate skill based on habit title
+        let skillName = '意志执行力'; // Default
+        
+        const title = habit.title.toLowerCase();
+        
+        if (title.includes('运动') || title.includes('锻炼') || 
+            title.includes('跑步') || title.includes('八段锦') || 
+            title.includes('健身') || title.includes('瑜伽')) {
+          skillName = '身体掌控力';
+        } else if (title.includes('学习') || title.includes('阅读') || 
+                   title.includes('看书') || title.includes('编程')) {
+          skillName = '心智成长力';
+        } else if (title.includes('写作') || title.includes('工作') || 
+                   title.includes('任务')) {
+          skillName = '意志执行力';
+        } else if (title.includes('社交') || title.includes('沟通') || 
+                   title.includes('家人')) {
+          skillName = '关系经营力';
+        } else if (title.includes('理财') || title.includes('投资') || 
+                   title.includes('记账')) {
+          skillName = '财富掌控力';
+        } else if (title.includes('冥想') || title.includes('情绪') || 
+                   title.includes('日记')) {
+          skillName = '情绪稳定力';
+        }
+        
+        const targetSkill = userSkills.find(s => s.name === skillName);
+        
+        if (targetSkill) {
+          await db.execute(sql`
+            UPDATE tasks 
+            SET skill_id = ${targetSkill.id}
+            WHERE id = ${habit.id}
+          `);
+          
+          fixedCount++;
+          results.push({
+            habitId: habit.id,
+            title: habit.title,
+            assignedSkill: skillName
+          });
+          
+          console.log(`[Fix Habits Skills] Fixed habit "${habit.title}" with skill "${skillName}"`);
+        }
+      }
+      
+      res.json({ 
+        message: `Fixed ${fixedCount} habits`,
+        fixed: fixedCount,
+        results: results
+      });
+      
+    } catch (error: any) {
+      console.error('[Fix Habits Skills] Error:', error);
+      res.status(500).json({ 
+        message: "Failed to fix habits",
+        error: error.message 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
