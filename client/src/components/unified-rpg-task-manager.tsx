@@ -680,18 +680,8 @@ export default function UnifiedRPGTaskManager() {
         console.log('Normal habit completion failed, trying fallback endpoint...');
         
         try {
-          // Use the simple-complete fallback endpoint
-          const response = await fetch(`/api/tasks/${taskId}/simple-complete`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          });
-          
-          if (!response.ok) {
-            throw new Error(`HTTP ${response.status}`);
-          }
+          // Use the simple-complete fallback endpoint with proper authentication
+          await apiRequest('POST', `/api/tasks/${taskId}/simple-complete`);
           
           // Invalidate queries to refresh the data
           await queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
