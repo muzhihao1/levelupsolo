@@ -275,6 +275,202 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Test habit completion columns
+  app.get('/api/test/habit-columns', async (req, res) => {
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      // Check column existence
+      const columnCheck = await db.execute(sql`
+        SELECT 
+          column_name,
+          data_type,
+          is_nullable,
+          column_default
+        FROM information_schema.columns 
+        WHERE table_name = 'tasks' 
+        AND column_name IN (
+          'last_completed_at', 'completion_count', 'lastCompletedAt', 'completionCount',
+          'completed', 'completed_at', 'task_category', 'user_id', 'userId'
+        )
+        ORDER BY column_name
+      `);
+      
+      // Get a sample habit task
+      const sampleHabit = await db.execute(sql`
+        SELECT * FROM tasks 
+        WHERE task_category = 'habit' 
+        LIMIT 1
+      `);
+      
+      res.json({
+        columns: columnCheck.rows || columnCheck,
+        sampleHabit: sampleHabit.rows?.[0] || sampleHabit[0] || null,
+        dbType: db.constructor.name,
+        hasPool: !!getPool
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        error: error.message,
+        code: error.code,
+        detail: error.detail
+      });
+    }
+  });
+
+  // Test habit completion update directly
+  app.post('/api/test/habit-complete/:id', isAuthenticated, async (req: any, res) => {
+    const taskId = parseInt(req.params.id);
+    const userId = (req.user as any)?.claims?.sub;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      
+      console.log(`[Test Habit Complete] Starting for task ${taskId}, user ${userId}`);
+      
+      // First, verify the task exists and is a habit
+      const taskCheck = await db.execute(sql`
+        SELECT id, task_category, user_id
+        FROM tasks
+        WHERE id = ${taskId}
+      `);
+      
+      const task = taskCheck.rows?.[0] || taskCheck[0];
+      if (!task) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      
+      if (task.user_id !== userId) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+      
+      if (task.task_category !== 'habit') {
+        return res.status(400).json({ message: "Task is not a habit" });
+      }
+      
+      // Try the update with proper column names
+      const updateResult = await db.execute(sql`
+        UPDATE tasks 
+        SET 
+          last_completed_at = NOW(),
+          completion_count = COALESCE(completion_count, 0) + 1,
+          completed = true,
+          completed_at = NOW(),
+          updated_at = NOW()
+        WHERE 
+          id = ${taskId} 
+          AND user_id = ${userId}
+          AND task_category = 'habit'
+        RETURNING *
+      `);
+      
+      if (updateResult.rows?.length > 0 || updateResult.length > 0) {
+        const updatedTask = updateResult.rows?.[0] || updateResult[0];
+        console.log(`[Test Habit Complete] Success! Updated task:`, updatedTask);
+        res.json({
+          success: true,
+          task: updatedTask,
+          message: "Habit completed successfully"
+        });
+      } else {
+        res.status(404).json({ message: "Failed to update habit" });
+      }
+    } catch (error: any) {
+      console.error('[Test Habit Complete] Error:', error);
+      res.status(500).json({
+        error: error.message,
+        code: error.code,
+        detail: error.detail,
+        hint: error.hint,
+        stack: error.stack
+      });
+    }
+  });
+
+  // Diagnostic endpoint to check habit completion issues
+  app.get('/api/diagnose/habit/:id', isAuthenticated, async (req: any, res) => {
+    const taskId = parseInt(req.params.id);
+    const userId = (req.user as any)?.claims?.sub;
+    
+    try {
+      const { sql } = require('drizzle-orm');
+      const { db } = require('./db');
+      const pool = getPool();
+      
+      const diagnosis: any = {
+        taskId,
+        userId,
+        timestamp: new Date().toISOString()
+      };
+      
+      // Check task details
+      try {
+        const taskResult = await db.execute(sql`
+          SELECT * FROM tasks WHERE id = ${taskId}
+        `);
+        diagnosis.task = taskResult.rows?.[0] || taskResult[0] || null;
+      } catch (e: any) {
+        diagnosis.taskError = { message: e.message, code: e.code };
+      }
+      
+      // Check column names
+      try {
+        const columnsResult = await db.execute(sql`
+          SELECT column_name, data_type 
+          FROM information_schema.columns 
+          WHERE table_name = 'tasks' 
+          AND column_name IN ('last_completed_at', 'completion_count', 'completed', 'completed_at', 'updated_at')
+        `);
+        diagnosis.relevantColumns = columnsResult.rows || columnsResult;
+      } catch (e: any) {
+        diagnosis.columnsError = { message: e.message, code: e.code };
+      }
+      
+      // Check pool health
+      try {
+        diagnosis.poolStats = {
+          totalConnections: pool.totalCount,
+          idleConnections: pool.idleCount,
+          waitingRequests: pool.waitingCount
+        };
+      } catch (e: any) {
+        diagnosis.poolError = { message: e.message };
+      }
+      
+      // Test a simple update (non-destructive)
+      try {
+        const testResult = await db.execute(sql`
+          SELECT 
+            last_completed_at,
+            completion_count,
+            completed,
+            task_category,
+            user_id
+          FROM tasks 
+          WHERE id = ${taskId}
+        `);
+        diagnosis.canReadTask = true;
+        diagnosis.taskData = testResult.rows?.[0] || testResult[0];
+      } catch (e: any) {
+        diagnosis.readError = { message: e.message, code: e.code };
+      }
+      
+      res.json(diagnosis);
+    } catch (error: any) {
+      res.status(500).json({
+        error: error.message,
+        code: error.code,
+        detail: error.detail
+      });
+    }
+  });
+
 
 
   // Test endpoint to create a test user (REMOVE IN PRODUCTION)
@@ -575,7 +771,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Use the dedicated habit completion method to avoid field name issues
           isHabitCompletion = true;
           console.log(`[PATCH /api/tasks/${taskId}] Using updateHabitCompletion method...`);
-          task = await storage.updateHabitCompletion(taskId, userId);
+          
+          try {
+            task = await storage.updateHabitCompletion(taskId, userId);
+            console.log(`[PATCH /api/tasks/${taskId}] Habit completion successful`);
+          } catch (habitError: any) {
+            console.error(`[PATCH /api/tasks/${taskId}] updateHabitCompletion failed:`, habitError);
+            console.error(`[PATCH /api/tasks/${taskId}] Error code:`, habitError.code);
+            console.error(`[PATCH /api/tasks/${taskId}] Error detail:`, habitError.detail);
+            
+            // If updateHabitCompletion fails, try a direct update as fallback
+            console.log(`[PATCH /api/tasks/${taskId}] Attempting direct SQL update as fallback...`);
+            const { sql } = require('drizzle-orm');
+            const { db } = require('./db');
+            
+            const fallbackResult = await db.execute(sql`
+              UPDATE tasks 
+              SET 
+                last_completed_at = NOW(),
+                completion_count = COALESCE(completion_count, 0) + 1,
+                completed = true,
+                completed_at = NOW(),
+                updated_at = NOW()
+              WHERE 
+                id = ${taskId} 
+                AND user_id = ${userId}
+                AND task_category = 'habit'
+              RETURNING *
+            `);
+            
+            task = fallbackResult.rows?.[0] || fallbackResult[0];
+            if (!task) {
+              throw new Error('Failed to update habit with fallback method');
+            }
+            console.log(`[PATCH /api/tasks/${taskId}] Fallback SQL update successful`);
+          }
           
           // If there are other updates besides completion, apply them separately
           const otherUpdates = { ...updates };
@@ -3483,119 +3713,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.log(`[Simple Complete] Starting for task ${taskId}, user ${userId}`);
     
     try {
-      // Method 1: Try with existing db connection
-      try {
-        // Try with camelCase first (might be how table was created)
-        try {
-          const result = await db.execute(sql`
-            UPDATE tasks 
-            SET 
-              "lastCompletedAt" = NOW(),
-              "completionCount" = COALESCE("completionCount", 0) + 1,
-              "updatedAt" = NOW()
-            WHERE 
-              id = ${taskId} 
-              AND "userId" = ${userId}
-              AND "taskCategory" = 'habit'
-            RETURNING *
-          `);
-          
-          if (result.rows.length > 0) {
-            console.log(`[Simple Complete] Success with camelCase columns`);
-            return res.json({
-              success: true,
-              task: result.rows[0]
-            });
-          }
-        } catch (camelError) {
-          console.log(`[Simple Complete] CamelCase failed, trying snake_case:`, camelError.message);
-          
-          // Fallback to snake_case
-          const result = await db.execute(sql`
-            UPDATE tasks 
-            SET 
-              last_completed_at = NOW(),
-              completion_count = COALESCE(completion_count, 0) + 1,
-              updated_at = NOW()
-            WHERE 
-              id = ${taskId} 
-              AND user_id = ${userId}
-              AND task_category = 'habit'
-            RETURNING *
-          `);
-          
-          if (result.rows.length > 0) {
-            console.log(`[Simple Complete] Success with snake_case columns`);
-            return res.json({
-              success: true,
-              task: result.rows[0]
-            });
-          }
-        }
-        
-        if (result.rows.length > 0) {
-          console.log(`[Simple Complete] Success with primary connection`);
-          return res.json({
-            success: true,
-            task: result.rows[0]
-          });
-        }
-      } catch (primaryError) {
-        console.error(`[Simple Complete] Primary connection failed:`, primaryError);
+      // Use snake_case columns as per the actual database schema
+      const result = await db.execute(sql`
+        UPDATE tasks 
+        SET 
+          last_completed_at = NOW(),
+          completion_count = COALESCE(completion_count, 0) + 1,
+          completed = true,
+          completed_at = NOW(),
+          updated_at = NOW()
+        WHERE 
+          id = ${taskId} 
+          AND user_id = ${userId}
+          AND task_category = 'habit'
+        RETURNING *
+      `);
+      
+      const updatedTask = result.rows?.[0] || result[0];
+      
+      if (!updatedTask) {
+        return res.status(404).json({ message: 'Habit not found or not authorized' });
       }
       
-      // Method 2: Create new single connection
-      const { Pool } = require('pg');
-      const pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
-        max: 1,
-        connectionTimeoutMillis: 30000
+      console.log(`[Simple Complete] Success! Habit ${taskId} completed`);
+      return res.json({
+        success: true,
+        task: updatedTask
       });
       
-      const client = await pool.connect();
-      try {
-        // Try camelCase columns first
-        let result;
-        try {
-          result = await client.query(
-            `UPDATE tasks 
-             SET "lastCompletedAt" = NOW(), 
-                 "completionCount" = COALESCE("completionCount", 0) + 1,
-                 "updatedAt" = NOW()
-             WHERE id = $1 AND "userId" = $2 AND "taskCategory" = 'habit'
-             RETURNING *`,
-            [taskId, userId]
-          );
-        } catch (camelError) {
-          console.log('[Simple Complete] Fallback pool camelCase failed, trying snake_case');
-          // Fallback to snake_case
-          result = await client.query(
-            `UPDATE tasks 
-             SET last_completed_at = NOW(), 
-                 completion_count = COALESCE(completion_count, 0) + 1,
-                 updated_at = NOW()
-             WHERE id = $1 AND user_id = $2 AND task_category = 'habit'
-             RETURNING *`,
-            [taskId, userId]
-          );
-        }
-        
-        if (result.rows.length === 0) {
-          return res.status(404).json({ message: 'Habit not found' });
-        }
-        
-        console.log(`[Simple Complete] Success with fallback connection`);
-        res.json({
-          success: true,
-          task: result.rows[0]
-        });
-      } finally {
-        client.release();
-        await pool.end();
-      }
     } catch (error: any) {
-      console.error('[Simple Complete] All methods failed:', error);
+      console.error('[Simple Complete] Failed:', error);
+      console.error('[Simple Complete] Error code:', error.code);
+      console.error('[Simple Complete] Error detail:', error.detail);
+      
+      // If the error is due to missing columns, return a more helpful message
+      if (error.code === '42703') { // Column does not exist
+        return res.status(500).json({ 
+          message: 'Database schema mismatch',
+          error: error.message,
+          detail: 'The database columns for habit tracking may not exist. Please run database migrations.'
+        });
+      }
+      
       res.status(500).json({ 
         message: 'Failed to complete habit',
         error: error.message 
@@ -3944,6 +4103,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Failed to fix habits",
         error: error.message 
       });
+    }
+  });
+
+  // Diagnostic endpoint for habit issues
+  app.get('/api/diagnose/habit/:id', isAuthenticated, async (req: any, res) => {
+    const habitId = parseInt(req.params.id);
+    const userId = (req.user as any)?.claims?.sub;
+    
+    const diagnosis: any = {
+      habitId,
+      userId,
+      timestamp: new Date().toISOString(),
+      checks: []
+    };
+    
+    try {
+      // Check 1: Does the task exist?
+      const taskCheck = await db.execute(sql`
+        SELECT id, title, task_category, user_id 
+        FROM tasks 
+        WHERE id = ${habitId}
+      `);
+      
+      const task = taskCheck.rows?.[0];
+      diagnosis.checks.push({
+        name: 'Task exists',
+        passed: !!task,
+        details: task || 'Task not found'
+      });
+      
+      if (!task) {
+        return res.json(diagnosis);
+      }
+      
+      // Check 2: Is it a habit?
+      diagnosis.checks.push({
+        name: 'Is habit',
+        passed: task.task_category === 'habit',
+        details: `task_category: ${task.task_category}`
+      });
+      
+      // Check 3: Does user own it?
+      diagnosis.checks.push({
+        name: 'User owns task',
+        passed: task.user_id === userId,
+        details: `task.user_id: ${task.user_id}, request.userId: ${userId}`
+      });
+      
+      // Check 4: What columns exist?
+      const columnCheck = await db.execute(sql`
+        SELECT column_name, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'tasks' 
+        AND column_name IN (
+          'last_completed_at', 'completion_count', 
+          'lastCompletedAt', 'completionCount',
+          'completed', 'completed_at', 'updated_at'
+        )
+      `);
+      
+      diagnosis.checks.push({
+        name: 'Required columns exist',
+        passed: columnCheck.rows?.length > 0,
+        details: columnCheck.rows || []
+      });
+      
+      // Check 5: Try a simple update
+      try {
+        await db.execute(sql`
+          UPDATE tasks 
+          SET completed = completed 
+          WHERE id = ${habitId}
+        `);
+        diagnosis.checks.push({
+          name: 'Can update task',
+          passed: true,
+          details: 'Basic update successful'
+        });
+      } catch (updateError: any) {
+        diagnosis.checks.push({
+          name: 'Can update task',
+          passed: false,
+          details: updateError.message
+        });
+      }
+      
+      // Check 6: Database connection info
+      diagnosis.databaseInfo = {
+        hasConnectionString: !!process.env.DATABASE_URL,
+        nodeEnv: process.env.NODE_ENV,
+        ssl: process.env.NODE_ENV === 'production'
+      };
+      
+      res.json(diagnosis);
+      
+    } catch (error: any) {
+      diagnosis.error = {
+        message: error.message,
+        code: error.code,
+        detail: error.detail
+      };
+      res.status(500).json(diagnosis);
     }
   });
 
