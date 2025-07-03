@@ -802,6 +802,32 @@ export default function UnifiedRPGTaskManager() {
     resetHabitsMutation.mutate();
   };
 
+  // Restore energy balls mutation
+  const restoreEnergyMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", "/api/debug/restore-energy");
+    },
+    onSuccess: (data: any) => {
+      console.log('Energy restored:', data);
+      // Refresh all data
+      queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"] });
+      queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"] });
+      
+      toast({
+        title: "能量已恢复！",
+        description: data.message || `能量球已恢复到 ${data.currentEnergy || 18}`,
+      });
+    },
+    onError: (error) => {
+      console.error('Failed to restore energy:', error);
+      toast({
+        title: "恢复失败",
+        description: "无法恢复能量球，请稍后重试",
+        variant: "destructive",
+      });
+    },
+  });
+
   // 关闭番茄钟弹窗但保持状态
 ;
 
@@ -1090,8 +1116,27 @@ export default function UnifiedRPGTaskManager() {
                     {userStats.energyBalls * 15}分钟可用
                   </div>
                   {userStats.energyBalls === 0 && (
-                    <div className="text-xs text-red-500 font-medium mt-2 bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
-                      需要休息恢复
+                    <div className="space-y-2 mt-2">
+                      <div className="text-xs text-red-500 font-medium bg-red-100 dark:bg-red-900/30 px-2 py-1 rounded-full">
+                        需要休息恢复
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => restoreEnergyMutation.mutate()}
+                        disabled={restoreEnergyMutation.isPending}
+                        className="w-full h-7 text-xs border-blue-500 text-blue-600 hover:bg-blue-50"
+                      >
+                        {restoreEnergyMutation.isPending ? (
+                          <span className="flex items-center gap-1">
+                            <span className="animate-spin">⚡</span> 恢复中...
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <Battery className="h-3 w-3" /> 立即恢复能量
+                          </span>
+                        )}
+                      </Button>
                     </div>
                   )}
                 </div>

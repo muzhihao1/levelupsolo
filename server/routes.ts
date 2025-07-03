@@ -3864,6 +3864,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Debug endpoint to restore energy balls
+  app.post('/api/debug/restore-energy', isAuthenticated, async (req: any, res) => {
+    const userId = (req.user as any)?.claims?.sub;
+    
+    if (!userId) {
+      return res.status(401).json({ message: "User not authenticated" });
+    }
+    
+    try {
+      // Force reset energy balls to max
+      const stats = await storage.getUserStats(userId);
+      if (!stats) {
+        return res.status(404).json({ message: "User stats not found" });
+      }
+      
+      const maxEnergy = stats.maxEnergyBalls || 18;
+      const updated = await storage.updateUserStats(userId, {
+        energyBalls: maxEnergy,
+        lastEnergyReset: new Date()
+      });
+      
+      console.log(`[Debug] Restored energy balls for user ${userId}: ${stats.energyBalls} -> ${maxEnergy}`);
+      
+      res.json({
+        success: true,
+        message: `能量球已恢复到 ${maxEnergy}`,
+        previousEnergy: stats.energyBalls,
+        currentEnergy: maxEnergy,
+        stats: updated
+      });
+    } catch (error: any) {
+      console.error('[Debug] Failed to restore energy:', error);
+      res.status(500).json({
+        message: 'Failed to restore energy balls',
+        error: error.message
+      });
+    }
+  });
+
   // Debug endpoint to test habit completion
   app.get('/api/debug/test-habit/:id', isAuthenticated, async (req: any, res) => {
     const taskId = parseInt(req.params.id);
