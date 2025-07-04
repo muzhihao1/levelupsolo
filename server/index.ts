@@ -10,6 +10,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 import express, { type Request, Response, NextFunction } from "express";
+import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import aiRoutes from "./ai";
@@ -31,6 +32,20 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
+
+// Add compression middleware for better performance
+app.use(compression({
+  level: 6, // Balanced compression level
+  threshold: 1024, // Only compress responses larger than 1KB
+  filter: (req, res) => {
+    // Don't compress if already compressed
+    if (res.getHeader('Content-Encoding')) {
+      return false;
+    }
+    // Use default compression filter
+    return compression.filter(req, res);
+  }
+}));
 
 // Security middleware - always apply security headers
 app.use((req, res, next) => {

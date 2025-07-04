@@ -3320,6 +3320,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Batch data endpoint for performance optimization
+  app.get('/api/data/batch', isAuthenticated, cacheMiddleware, async (req: any, res) => {
+    try {
+      const userId = (req.user as any)?.claims?.sub;
+      const types = req.query.types?.split(',') || [];
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const results: any = {};
+      const errors: any = {};
+
+      // Process each requested type in parallel
+      const promises = types.map(async (type: string) => {
+        try {
+          switch (type) {
+            case 'tasks':
+              const tasks = await storage.getTasks(userId);
+              results.tasks = tasks;
+              break;
+            
+            case 'skills':
+              await (storage as any).initializeCoreSkills(userId);
+              const skills = await storage.getSkills(userId);
+              results.skills = skills;
+              break;
+            
+            case 'goals':
+              const goals = await storage.getGoals(userId);
+              const goalsWithCompleted = goals.map(goal => ({
+                ...goal,
+                completed: !!goal.completedAt
+              }));
+              results.goals = goalsWithCompleted;
+              break;
+            
+            case 'stats':
+              let stats = await storage.getUserStats(userId);
+              if (!stats) {
+                stats = await storage.createUserStats({
+                  userId,
+                  level: 1,
+                  experience: 0,
+                  experienceToNext: 100,
+                  energyBalls: 18,
+                  maxEnergyBalls: 18,
+                  energyBallDuration: 15,
+                  streak: 0,
+                  totalTasksCompleted: 0,
+                });
+              }
+              await storage.checkAndResetEnergyBalls(userId);
+              stats = await storage.getUserStats(userId);
+              results.stats = stats;
+              break;
+            
+            case 'profile':
+              const profile = await storage.getUserProfile(userId);
+              results.profile = profile;
+              break;
+            
+            default:
+              errors[type] = "Invalid data type";
+          }
+        } catch (error) {
+          console.error(`Error fetching ${type}:`, error);
+          errors[type] = error.message;
+        }
+      });
+
+      await Promise.all(promises);
+
+      // Return both results and errors
+      return res.json({
+        data: results,
+        errors: Object.keys(errors).length > 0 ? errors : undefined
+      });
+    } catch (error) {
+      console.error("Error fetching batch data:", error);
+      res.status(500).json({ message: "Failed to fetch batch data", error: error.message });
+    }
+  });
+
   // Generic data endpoint for client compatibility
   app.get('/api/data', isAuthenticated, cacheMiddleware, async (req: any, res) => {
     try {

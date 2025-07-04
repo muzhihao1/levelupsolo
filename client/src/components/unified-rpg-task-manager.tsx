@@ -13,6 +13,7 @@ import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pau
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useFilteredTasks } from "@/hooks/use-filtered-tasks";
+import { useBatchDataWithSelectors } from "@/hooks/use-batch-data";
 import type { Task, InsertTask, Skill } from "@shared/schema";
 
 interface MicroTask {
@@ -343,41 +344,39 @@ export default function UnifiedRPGTaskManager() {
 
   
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   
-  const { data: tasks = [], isLoading, isError, error } = useQuery<Task[]>({
-    queryKey: ["/api/data?type=tasks"],
-    staleTime: 0, // Always consider data stale to ensure fresh data after mutations
-    gcTime: 5 * 60 * 1000, // Keep cache for 5 minutes
-    refetchOnMount: true,
-    refetchOnWindowFocus: false, // Disable auto-refetch on window focus to prevent unwanted refreshes
-    select: (data) => {
-      // Return data without logging to improve performance
-      return data;
-    }
-  });
+  // Use batch data hook to fetch all data in a single request
+  const { 
+    tasks, 
+    skills, 
+    goals, 
+    stats: userStats, 
+    isLoading, 
+    isError, 
+    error,
+    errors 
+  } = useBatchDataWithSelectors(['tasks', 'skills', 'goals', 'stats']);
+  
+  // Helper function to invalidate all data queries
+  const invalidateAllData = () => {
+    // Invalidate both batch and individual endpoints for compatibility
+    queryClient.invalidateQueries({ queryKey: ['/api/data/batch'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/data?type=stats'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
+    queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
+  };
   
   // Log errors only
   useEffect(() => {
     if (isError) {
-      console.error('Error fetching tasks:', error);
+      console.error('Error fetching data:', error);
     }
-  }, [isError, error]);
-  
-
-  const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ["/api/data?type=skills"],
-  });
-
-  const { toast } = useToast();
-
-  const { data: goals = [] } = useQuery<any[]>({
-    queryKey: ["/api/data?type=goals"],
-  });
-
-  // 获取用户状态数据（包含能量球信息）
-  const { data: userStats } = useQuery<any>({
-    queryKey: ["/api/data?type=stats"],
-  });
+    if (errors) {
+      console.error('Batch data errors:', errors);
+    }
+  }, [isError, error, errors]);
 
   // Silent reset mutation for automatic daily reset
   const silentResetHabitsMutation = useMutation({
@@ -712,10 +711,9 @@ export default function UnifiedRPGTaskManager() {
             );
           });
           
-          // Invalidate queries without waiting - let them refresh in background
+          // Invalidate only affected queries - habits don't directly affect skills
           queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
           queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
-          queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
           
           console.log('Data refresh complete');
           
@@ -748,10 +746,9 @@ export default function UnifiedRPGTaskManager() {
             );
           });
           
-          // Invalidate queries without waiting - let them refresh in background
+          // Invalidate only affected queries - habits don't directly affect skills
           queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
           queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
-          queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
           
           console.log('Data refresh complete (smart mode)');
           
