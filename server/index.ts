@@ -16,7 +16,6 @@ import { setupVite, serveStatic, log } from "./vite";
 import aiRoutes from "./ai";
 import { registerMobileRoutes } from "./mobile-routes";
 import { setupAuth } from "./simpleAuth";
-import { setupSimpleAuth } from "./auth-simple";
 
 // Global error handlers
 process.on('uncaughtException', (error) => {
@@ -146,7 +145,7 @@ app.use((req, res, next) => {
     
     console.log('🔐 Setting up authentication...');
     // Setup new simple authentication
-    setupSimpleAuth(app);
+    setupAuth(app);
     console.log('✅ Simple authentication setup complete');
     
     console.log('📱 Registering mobile routes...');

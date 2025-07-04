@@ -71,5 +71,28 @@ export default defineConfig({
       "levelupsolo.net",
       "www.levelupsolo.net"
     ]
-  }
+  },
+  test: {
+    // Use happy-dom for better performance than jsdom
+    environment: 'happy-dom',
+    // Setup files to run before tests
+    setupFiles: './src/test-setup.ts',
+    // Global test utilities
+    globals: true,
+    // CSS handling
+    css: true,
+    // Coverage configuration
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/test-setup.ts',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/mockData.ts',
+        'src/test-utils/**',
+      ],
+    },
+  },
 });

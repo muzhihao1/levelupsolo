@@ -10,6 +10,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { Router } from 'wouter';
 import { Toaster } from '@/components/ui/toaster';
+import { vi } from 'vitest';
 
 /**
  * Extended render options
