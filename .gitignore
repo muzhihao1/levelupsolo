@@ -1,23 +1,26 @@
-node_modules
-dist
-.DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
 
-# 环境变量文件 - 绝不要提交！
+!.env.*.example
+!.env.example
+!.env.production
+.DS_Store
 .env
 .env.*
-!.env.example
-!.env.*.example
-!.env.production
-
-# 备份文件
+.vercel/
 *.backup
 *.bak
-
-# Vercel
-.vercel/
-
+*.log
+*.pid
+*.tar.gz
+*.txt
+# 备份文件
 # 敏感配置文件
+# 环境变量文件 - 绝不要提交！
+# Cleanup additions
+# Vercel
+attached_assets/archive/
+dist
+node_modules
+scripts/debug/
+server/public
 VERCEL_ENV_SETUP.md/public
+vite.config.ts.*
