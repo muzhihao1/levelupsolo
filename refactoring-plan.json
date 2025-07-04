@@ -1,0 +1,6655 @@
+[
+  {
+    "file": "client/src/components/unified-rpg-task-manager.tsx",
+    "stats": {
+      "totalLines": 1973,
+      "imports": 16,
+      "functions": [
+        {
+          "name": "getEnergyStatus",
+          "line": 44
+        },
+        {
+          "name": "percentage",
+          "line": 45
+        },
+        {
+          "name": "category",
+          "line": 90
+        },
+        {
+          "name": "difficulty",
+          "line": 91
+        },
+        {
+          "name": "isCurrentPomodoroTask",
+          "line": 93
+        },
+        {
+          "name": "showPomodoroControls",
+          "line": 94
+        },
+        {
+          "name": "requiredEnergy",
+          "line": 96
+        },
+        {
+          "name": "hasEnoughEnergy",
+          "line": 97
+        },
+        {
+          "name": "canCompleteTask",
+          "line": 98
+        },
+        {
+          "name": "linkedSkill",
+          "line": 166
+        },
+        {
+          "name": "isCompletedToday",
+          "line": 283
+        },
+        {
+          "name": "completedDate",
+          "line": 285
+        },
+        {
+          "name": "today",
+          "line": 286
+        },
+        {
+          "name": "getIconEmoji",
+          "line": 291
+        },
+        {
+          "name": "iconMap",
+          "line": 292
+        },
+        {
+          "name": "queryClient",
+          "line": 345
+        },
+        {
+          "name": "tasksQuery",
+          "line": 349
+        },
+        {
+          "name": "skillsQuery",
+          "line": 355
+        },
+        {
+          "name": "goalsQuery",
+          "line": 361
+        },
+        {
+          "name": "statsQuery",
+          "line": 367
+        },
+        {
+          "name": "tasks",
+          "line": 374
+        },
+        {
+          "name": "skills",
+          "line": 375
+        },
+        {
+          "name": "goals",
+          "line": 376
+        },
+        {
+          "name": "isLoading",
+          "line": 379
+        },
+        {
+          "name": "isError",
+          "line": 380
+        },
+        {
+          "name": "error",
+          "line": 381
+        },
+        {
+          "name": "invalidateAllData",
+          "line": 384
+        },
+        {
+          "name": "silentResetHabitsMutation",
+          "line": 416
+        },
+        {
+          "name": "lastResetDate",
+          "line": 433
+        },
+        {
+          "name": "today",
+          "line": 434
+        },
+        {
+          "name": "createTaskMutation",
+          "line": 443
+        },
+        {
+          "name": "difficulty",
+          "line": 445
+        },
+        {
+          "name": "response",
+          "line": 446
+        },
+        {
+          "name": "result",
+          "line": 452
+        },
+        {
+          "name": "previousTasks",
+          "line": 462
+        },
+        {
+          "name": "difficulty",
+          "line": 465
+        },
+        {
+          "name": "optimisticTask",
+          "line": 466
+        },
+        {
+          "name": "updateTaskMutation",
+          "line": 539
+        },
+        {
+          "name": "previousTasks",
+          "line": 549
+        },
+        {
+          "name": "previousStats",
+          "line": 550
+        },
+        {
+          "name": "task",
+          "line": 576
+        },
+        {
+          "name": "energyCost",
+          "line": 578
+        },
+        {
+          "name": "deleteTaskMutation",
+          "line": 594
+        },
+        {
+          "name": "previousTasks",
+          "line": 603
+        },
+        {
+          "name": "handleCreateTask",
+          "line": 633
+        },
+        {
+          "name": "response",
+          "line": 641
+        },
+        {
+          "name": "result",
+          "line": 648
+        },
+        {
+          "name": "categoryName",
+          "line": 656
+        },
+        {
+          "name": "handleToggleComplete",
+          "line": 699
+        },
+        {
+          "name": "task",
+          "line": 702
+        },
+        {
+          "name": "requiredEnergy",
+          "line": 718
+        },
+        {
+          "name": "result",
+          "line": 736
+        },
+        {
+          "name": "smartResult",
+          "line": 771
+        },
+        {
+          "name": "handleDeleteTask",
+          "line": 818
+        },
+        {
+          "name": "resetHabitsMutation",
+          "line": 823
+        },
+        {
+          "name": "resetHabits",
+          "line": 848
+        },
+        {
+          "name": "restoreEnergyMutation",
+          "line": 853
+        },
+        {
+          "name": "timerStartRef",
+          "line": 884
+        },
+        {
+          "name": "pausedTimeRef",
+          "line": 885
+        },
+        {
+          "name": "updateTimer",
+          "line": 899
+        },
+        {
+          "name": "now",
+          "line": 902
+        },
+        {
+          "name": "runningElapsed",
+          "line": 903
+        },
+        {
+          "name": "totalElapsed",
+          "line": 904
+        },
+        {
+          "name": "newTimeLeft",
+          "line": 905
+        },
+        {
+          "name": "isGoalTask",
+          "line": 913
+        },
+        {
+          "name": "completionMessage",
+          "line": 932
+        },
+        {
+          "name": "interval",
+          "line": 959
+        },
+        {
+          "name": "startPomodoro",
+          "line": 964
+        },
+        {
+          "name": "pausePomodoro",
+          "line": 975
+        },
+        {
+          "name": "now",
+          "line": 978
+        },
+        {
+          "name": "runningElapsed",
+          "line": 979
+        },
+        {
+          "name": "resumePomodoro",
+          "line": 986
+        },
+        {
+          "name": "closePomodoroDialog",
+          "line": 990
+        },
+        {
+          "name": "resetPomodoro",
+          "line": 994
+        },
+        {
+          "name": "formatTime",
+          "line": 1009
+        },
+        {
+          "name": "mins",
+          "line": 1010
+        },
+        {
+          "name": "secs",
+          "line": 1011
+        },
+        {
+          "name": "habits",
+          "line": 1042
+        },
+        {
+          "name": "today",
+          "line": 1043
+        },
+        {
+          "name": "completedDate",
+          "line": 1045
+        },
+        {
+          "name": "todos",
+          "line": 1058
+        },
+        {
+          "name": "allFilteredTasks",
+          "line": 1059
+        },
+        {
+          "name": "completedToday",
+          "line": 1060
+        },
+        {
+          "name": "progress",
+          "line": 1352
+        },
+        {
+          "name": "progress",
+          "line": 1700
+        },
+        {
+          "name": "progress",
+          "line": 1711
+        },
+        {
+          "name": "queryClient",
+          "line": 1824
+        },
+        {
+          "name": "generateMicroTasks",
+          "line": 1826
+        },
+        {
+          "name": "existingResponse",
+          "line": 1831
+        },
+        {
+          "name": "existingTasks",
+          "line": 1832
+        },
+        {
+          "name": "newResponse",
+          "line": 1841
+        },
+        {
+          "name": "newMicroTasks",
+          "line": 1842
+        },
+        {
+          "name": "completeMicroTask",
+          "line": 1857
+        }
+      ],
+      "components": [
+        {
+          "name": "TASK_CATEGORIES",
+          "line": 30
+        },
+        {
+          "name": "DIFFICULTY_LEVELS",
+          "line": 36
+        },
+        {
+          "name": "TaskCard",
+          "line": 76
+        },
+        {
+          "name": "UnifiedRPGTaskManager",
+          "line": 272
+        },
+        {
+          "name": "MicroTasksButton",
+          "line": 1819
+        }
+      ],
+      "hooks": [
+        {
+          "name": "userStats",
+          "line": 377
+        }
+      ],
+      "complexity": 64
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 1973 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "TASK_CATEGORIES",
+            "line": 30
+          },
+          {
+            "name": "DIFFICULTY_LEVELS",
+            "line": 36
+          },
+          {
+            "name": "TaskCard",
+            "line": 76
+          },
+          {
+            "name": "UnifiedRPGTaskManager",
+            "line": 272
+          },
+          {
+            "name": "MicroTasksButton",
+            "line": 1819
+          }
+        ],
+        "recommendation": "Extract 5 sub-components to separate files"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "getEnergyStatus",
+            "line": 44
+          },
+          {
+            "name": "percentage",
+            "line": 45
+          },
+          {
+            "name": "category",
+            "line": 90
+          },
+          {
+            "name": "difficulty",
+            "line": 91
+          },
+          {
+            "name": "isCurrentPomodoroTask",
+            "line": 93
+          },
+          {
+            "name": "showPomodoroControls",
+            "line": 94
+          },
+          {
+            "name": "requiredEnergy",
+            "line": 96
+          },
+          {
+            "name": "hasEnoughEnergy",
+            "line": 97
+          },
+          {
+            "name": "canCompleteTask",
+            "line": 98
+          },
+          {
+            "name": "linkedSkill",
+            "line": 166
+          },
+          {
+            "name": "isCompletedToday",
+            "line": 283
+          },
+          {
+            "name": "completedDate",
+            "line": 285
+          },
+          {
+            "name": "today",
+            "line": 286
+          },
+          {
+            "name": "getIconEmoji",
+            "line": 291
+          },
+          {
+            "name": "iconMap",
+            "line": 292
+          },
+          {
+            "name": "queryClient",
+            "line": 345
+          },
+          {
+            "name": "tasksQuery",
+            "line": 349
+          },
+          {
+            "name": "skillsQuery",
+            "line": 355
+          },
+          {
+            "name": "goalsQuery",
+            "line": 361
+          },
+          {
+            "name": "statsQuery",
+            "line": 367
+          },
+          {
+            "name": "tasks",
+            "line": 374
+          },
+          {
+            "name": "skills",
+            "line": 375
+          },
+          {
+            "name": "goals",
+            "line": 376
+          },
+          {
+            "name": "isLoading",
+            "line": 379
+          },
+          {
+            "name": "isError",
+            "line": 380
+          },
+          {
+            "name": "error",
+            "line": 381
+          },
+          {
+            "name": "invalidateAllData",
+            "line": 384
+          },
+          {
+            "name": "silentResetHabitsMutation",
+            "line": 416
+          },
+          {
+            "name": "lastResetDate",
+            "line": 433
+          },
+          {
+            "name": "today",
+            "line": 434
+          },
+          {
+            "name": "createTaskMutation",
+            "line": 443
+          },
+          {
+            "name": "difficulty",
+            "line": 445
+          },
+          {
+            "name": "response",
+            "line": 446
+          },
+          {
+            "name": "result",
+            "line": 452
+          },
+          {
+            "name": "previousTasks",
+            "line": 462
+          },
+          {
+            "name": "difficulty",
+            "line": 465
+          },
+          {
+            "name": "optimisticTask",
+            "line": 466
+          },
+          {
+            "name": "updateTaskMutation",
+            "line": 539
+          },
+          {
+            "name": "previousTasks",
+            "line": 549
+          },
+          {
+            "name": "previousStats",
+            "line": 550
+          },
+          {
+            "name": "task",
+            "line": 576
+          },
+          {
+            "name": "energyCost",
+            "line": 578
+          },
+          {
+            "name": "deleteTaskMutation",
+            "line": 594
+          },
+          {
+            "name": "previousTasks",
+            "line": 603
+          },
+          {
+            "name": "handleCreateTask",
+            "line": 633
+          },
+          {
+            "name": "response",
+            "line": 641
+          },
+          {
+            "name": "result",
+            "line": 648
+          },
+          {
+            "name": "categoryName",
+            "line": 656
+          },
+          {
+            "name": "handleToggleComplete",
+            "line": 699
+          },
+          {
+            "name": "task",
+            "line": 702
+          },
+          {
+            "name": "requiredEnergy",
+            "line": 718
+          },
+          {
+            "name": "result",
+            "line": 736
+          },
+          {
+            "name": "smartResult",
+            "line": 771
+          },
+          {
+            "name": "handleDeleteTask",
+            "line": 818
+          },
+          {
+            "name": "resetHabitsMutation",
+            "line": 823
+          },
+          {
+            "name": "resetHabits",
+            "line": 848
+          },
+          {
+            "name": "restoreEnergyMutation",
+            "line": 853
+          },
+          {
+            "name": "timerStartRef",
+            "line": 884
+          },
+          {
+            "name": "pausedTimeRef",
+            "line": 885
+          },
+          {
+            "name": "updateTimer",
+            "line": 899
+          },
+          {
+            "name": "now",
+            "line": 902
+          },
+          {
+            "name": "runningElapsed",
+            "line": 903
+          },
+          {
+            "name": "totalElapsed",
+            "line": 904
+          },
+          {
+            "name": "newTimeLeft",
+            "line": 905
+          },
+          {
+            "name": "isGoalTask",
+            "line": 913
+          },
+          {
+            "name": "completionMessage",
+            "line": 932
+          },
+          {
+            "name": "interval",
+            "line": 959
+          },
+          {
+            "name": "startPomodoro",
+            "line": 964
+          },
+          {
+            "name": "pausePomodoro",
+            "line": 975
+          },
+          {
+            "name": "now",
+            "line": 978
+          },
+          {
+            "name": "runningElapsed",
+            "line": 979
+          },
+          {
+            "name": "resumePomodoro",
+            "line": 986
+          },
+          {
+            "name": "closePomodoroDialog",
+            "line": 990
+          },
+          {
+            "name": "resetPomodoro",
+            "line": 994
+          },
+          {
+            "name": "formatTime",
+            "line": 1009
+          },
+          {
+            "name": "mins",
+            "line": 1010
+          },
+          {
+            "name": "secs",
+            "line": 1011
+          },
+          {
+            "name": "habits",
+            "line": 1042
+          },
+          {
+            "name": "today",
+            "line": 1043
+          },
+          {
+            "name": "completedDate",
+            "line": 1045
+          },
+          {
+            "name": "todos",
+            "line": 1058
+          },
+          {
+            "name": "allFilteredTasks",
+            "line": 1059
+          },
+          {
+            "name": "completedToday",
+            "line": 1060
+          },
+          {
+            "name": "progress",
+            "line": 1352
+          },
+          {
+            "name": "progress",
+            "line": 1700
+          },
+          {
+            "name": "progress",
+            "line": 1711
+          },
+          {
+            "name": "queryClient",
+            "line": 1824
+          },
+          {
+            "name": "generateMicroTasks",
+            "line": 1826
+          },
+          {
+            "name": "existingResponse",
+            "line": 1831
+          },
+          {
+            "name": "existingTasks",
+            "line": 1832
+          },
+          {
+            "name": "newResponse",
+            "line": 1841
+          },
+          {
+            "name": "newMicroTasks",
+            "line": 1842
+          },
+          {
+            "name": "completeMicroTask",
+            "line": 1857
+          }
+        ],
+        "recommendation": "Extract 93 utility functions to a utils file"
+      },
+      {
+        "type": "reduce-complexity",
+        "complexity": 64,
+        "recommendation": "Consider simplifying logic or extracting complex calculations"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/unified-rpg-task-manager.tsx",
+      "stats": {
+        "totalLines": 1973,
+        "imports": 16,
+        "functions": [
+          {
+            "name": "getEnergyStatus",
+            "line": 44
+          },
+          {
+            "name": "percentage",
+            "line": 45
+          },
+          {
+            "name": "category",
+            "line": 90
+          },
+          {
+            "name": "difficulty",
+            "line": 91
+          },
+          {
+            "name": "isCurrentPomodoroTask",
+            "line": 93
+          },
+          {
+            "name": "showPomodoroControls",
+            "line": 94
+          },
+          {
+            "name": "requiredEnergy",
+            "line": 96
+          },
+          {
+            "name": "hasEnoughEnergy",
+            "line": 97
+          },
+          {
+            "name": "canCompleteTask",
+            "line": 98
+          },
+          {
+            "name": "linkedSkill",
+            "line": 166
+          },
+          {
+            "name": "isCompletedToday",
+            "line": 283
+          },
+          {
+            "name": "completedDate",
+            "line": 285
+          },
+          {
+            "name": "today",
+            "line": 286
+          },
+          {
+            "name": "getIconEmoji",
+            "line": 291
+          },
+          {
+            "name": "iconMap",
+            "line": 292
+          },
+          {
+            "name": "queryClient",
+            "line": 345
+          },
+          {
+            "name": "tasksQuery",
+            "line": 349
+          },
+          {
+            "name": "skillsQuery",
+            "line": 355
+          },
+          {
+            "name": "goalsQuery",
+            "line": 361
+          },
+          {
+            "name": "statsQuery",
+            "line": 367
+          },
+          {
+            "name": "tasks",
+            "line": 374
+          },
+          {
+            "name": "skills",
+            "line": 375
+          },
+          {
+            "name": "goals",
+            "line": 376
+          },
+          {
+            "name": "isLoading",
+            "line": 379
+          },
+          {
+            "name": "isError",
+            "line": 380
+          },
+          {
+            "name": "error",
+            "line": 381
+          },
+          {
+            "name": "invalidateAllData",
+            "line": 384
+          },
+          {
+            "name": "silentResetHabitsMutation",
+            "line": 416
+          },
+          {
+            "name": "lastResetDate",
+            "line": 433
+          },
+          {
+            "name": "today",
+            "line": 434
+          },
+          {
+            "name": "createTaskMutation",
+            "line": 443
+          },
+          {
+            "name": "difficulty",
+            "line": 445
+          },
+          {
+            "name": "response",
+            "line": 446
+          },
+          {
+            "name": "result",
+            "line": 452
+          },
+          {
+            "name": "previousTasks",
+            "line": 462
+          },
+          {
+            "name": "difficulty",
+            "line": 465
+          },
+          {
+            "name": "optimisticTask",
+            "line": 466
+          },
+          {
+            "name": "updateTaskMutation",
+            "line": 539
+          },
+          {
+            "name": "previousTasks",
+            "line": 549
+          },
+          {
+            "name": "previousStats",
+            "line": 550
+          },
+          {
+            "name": "task",
+            "line": 576
+          },
+          {
+            "name": "energyCost",
+            "line": 578
+          },
+          {
+            "name": "deleteTaskMutation",
+            "line": 594
+          },
+          {
+            "name": "previousTasks",
+            "line": 603
+          },
+          {
+            "name": "handleCreateTask",
+            "line": 633
+          },
+          {
+            "name": "response",
+            "line": 641
+          },
+          {
+            "name": "result",
+            "line": 648
+          },
+          {
+            "name": "categoryName",
+            "line": 656
+          },
+          {
+            "name": "handleToggleComplete",
+            "line": 699
+          },
+          {
+            "name": "task",
+            "line": 702
+          },
+          {
+            "name": "requiredEnergy",
+            "line": 718
+          },
+          {
+            "name": "result",
+            "line": 736
+          },
+          {
+            "name": "smartResult",
+            "line": 771
+          },
+          {
+            "name": "handleDeleteTask",
+            "line": 818
+          },
+          {
+            "name": "resetHabitsMutation",
+            "line": 823
+          },
+          {
+            "name": "resetHabits",
+            "line": 848
+          },
+          {
+            "name": "restoreEnergyMutation",
+            "line": 853
+          },
+          {
+            "name": "timerStartRef",
+            "line": 884
+          },
+          {
+            "name": "pausedTimeRef",
+            "line": 885
+          },
+          {
+            "name": "updateTimer",
+            "line": 899
+          },
+          {
+            "name": "now",
+            "line": 902
+          },
+          {
+            "name": "runningElapsed",
+            "line": 903
+          },
+          {
+            "name": "totalElapsed",
+            "line": 904
+          },
+          {
+            "name": "newTimeLeft",
+            "line": 905
+          },
+          {
+            "name": "isGoalTask",
+            "line": 913
+          },
+          {
+            "name": "completionMessage",
+            "line": 932
+          },
+          {
+            "name": "interval",
+            "line": 959
+          },
+          {
+            "name": "startPomodoro",
+            "line": 964
+          },
+          {
+            "name": "pausePomodoro",
+            "line": 975
+          },
+          {
+            "name": "now",
+            "line": 978
+          },
+          {
+            "name": "runningElapsed",
+            "line": 979
+          },
+          {
+            "name": "resumePomodoro",
+            "line": 986
+          },
+          {
+            "name": "closePomodoroDialog",
+            "line": 990
+          },
+          {
+            "name": "resetPomodoro",
+            "line": 994
+          },
+          {
+            "name": "formatTime",
+            "line": 1009
+          },
+          {
+            "name": "mins",
+            "line": 1010
+          },
+          {
+            "name": "secs",
+            "line": 1011
+          },
+          {
+            "name": "habits",
+            "line": 1042
+          },
+          {
+            "name": "today",
+            "line": 1043
+          },
+          {
+            "name": "completedDate",
+            "line": 1045
+          },
+          {
+            "name": "todos",
+            "line": 1058
+          },
+          {
+            "name": "allFilteredTasks",
+            "line": 1059
+          },
+          {
+            "name": "completedToday",
+            "line": 1060
+          },
+          {
+            "name": "progress",
+            "line": 1352
+          },
+          {
+            "name": "progress",
+            "line": 1700
+          },
+          {
+            "name": "progress",
+            "line": 1711
+          },
+          {
+            "name": "queryClient",
+            "line": 1824
+          },
+          {
+            "name": "generateMicroTasks",
+            "line": 1826
+          },
+          {
+            "name": "existingResponse",
+            "line": 1831
+          },
+          {
+            "name": "existingTasks",
+            "line": 1832
+          },
+          {
+            "name": "newResponse",
+            "line": 1841
+          },
+          {
+            "name": "newMicroTasks",
+            "line": 1842
+          },
+          {
+            "name": "completeMicroTask",
+            "line": 1857
+          }
+        ],
+        "components": [
+          {
+            "name": "TASK_CATEGORIES",
+            "line": 30
+          },
+          {
+            "name": "DIFFICULTY_LEVELS",
+            "line": 36
+          },
+          {
+            "name": "TaskCard",
+            "line": 76
+          },
+          {
+            "name": "UnifiedRPGTaskManager",
+            "line": 272
+          },
+          {
+            "name": "MicroTasksButton",
+            "line": 1819
+          }
+        ],
+        "hooks": [
+          {
+            "name": "userStats",
+            "line": 377
+          }
+        ],
+        "complexity": 64
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 1973 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "TASK_CATEGORIES",
+              "line": 30
+            },
+            {
+              "name": "DIFFICULTY_LEVELS",
+              "line": 36
+            },
+            {
+              "name": "TaskCard",
+              "line": 76
+            },
+            {
+              "name": "UnifiedRPGTaskManager",
+              "line": 272
+            },
+            {
+              "name": "MicroTasksButton",
+              "line": 1819
+            }
+          ],
+          "recommendation": "Extract 5 sub-components to separate files"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "getEnergyStatus",
+              "line": 44
+            },
+            {
+              "name": "percentage",
+              "line": 45
+            },
+            {
+              "name": "category",
+              "line": 90
+            },
+            {
+              "name": "difficulty",
+              "line": 91
+            },
+            {
+              "name": "isCurrentPomodoroTask",
+              "line": 93
+            },
+            {
+              "name": "showPomodoroControls",
+              "line": 94
+            },
+            {
+              "name": "requiredEnergy",
+              "line": 96
+            },
+            {
+              "name": "hasEnoughEnergy",
+              "line": 97
+            },
+            {
+              "name": "canCompleteTask",
+              "line": 98
+            },
+            {
+              "name": "linkedSkill",
+              "line": 166
+            },
+            {
+              "name": "isCompletedToday",
+              "line": 283
+            },
+            {
+              "name": "completedDate",
+              "line": 285
+            },
+            {
+              "name": "today",
+              "line": 286
+            },
+            {
+              "name": "getIconEmoji",
+              "line": 291
+            },
+            {
+              "name": "iconMap",
+              "line": 292
+            },
+            {
+              "name": "queryClient",
+              "line": 345
+            },
+            {
+              "name": "tasksQuery",
+              "line": 349
+            },
+            {
+              "name": "skillsQuery",
+              "line": 355
+            },
+            {
+              "name": "goalsQuery",
+              "line": 361
+            },
+            {
+              "name": "statsQuery",
+              "line": 367
+            },
+            {
+              "name": "tasks",
+              "line": 374
+            },
+            {
+              "name": "skills",
+              "line": 375
+            },
+            {
+              "name": "goals",
+              "line": 376
+            },
+            {
+              "name": "isLoading",
+              "line": 379
+            },
+            {
+              "name": "isError",
+              "line": 380
+            },
+            {
+              "name": "error",
+              "line": 381
+            },
+            {
+              "name": "invalidateAllData",
+              "line": 384
+            },
+            {
+              "name": "silentResetHabitsMutation",
+              "line": 416
+            },
+            {
+              "name": "lastResetDate",
+              "line": 433
+            },
+            {
+              "name": "today",
+              "line": 434
+            },
+            {
+              "name": "createTaskMutation",
+              "line": 443
+            },
+            {
+              "name": "difficulty",
+              "line": 445
+            },
+            {
+              "name": "response",
+              "line": 446
+            },
+            {
+              "name": "result",
+              "line": 452
+            },
+            {
+              "name": "previousTasks",
+              "line": 462
+            },
+            {
+              "name": "difficulty",
+              "line": 465
+            },
+            {
+              "name": "optimisticTask",
+              "line": 466
+            },
+            {
+              "name": "updateTaskMutation",
+              "line": 539
+            },
+            {
+              "name": "previousTasks",
+              "line": 549
+            },
+            {
+              "name": "previousStats",
+              "line": 550
+            },
+            {
+              "name": "task",
+              "line": 576
+            },
+            {
+              "name": "energyCost",
+              "line": 578
+            },
+            {
+              "name": "deleteTaskMutation",
+              "line": 594
+            },
+            {
+              "name": "previousTasks",
+              "line": 603
+            },
+            {
+              "name": "handleCreateTask",
+              "line": 633
+            },
+            {
+              "name": "response",
+              "line": 641
+            },
+            {
+              "name": "result",
+              "line": 648
+            },
+            {
+              "name": "categoryName",
+              "line": 656
+            },
+            {
+              "name": "handleToggleComplete",
+              "line": 699
+            },
+            {
+              "name": "task",
+              "line": 702
+            },
+            {
+              "name": "requiredEnergy",
+              "line": 718
+            },
+            {
+              "name": "result",
+              "line": 736
+            },
+            {
+              "name": "smartResult",
+              "line": 771
+            },
+            {
+              "name": "handleDeleteTask",
+              "line": 818
+            },
+            {
+              "name": "resetHabitsMutation",
+              "line": 823
+            },
+            {
+              "name": "resetHabits",
+              "line": 848
+            },
+            {
+              "name": "restoreEnergyMutation",
+              "line": 853
+            },
+            {
+              "name": "timerStartRef",
+              "line": 884
+            },
+            {
+              "name": "pausedTimeRef",
+              "line": 885
+            },
+            {
+              "name": "updateTimer",
+              "line": 899
+            },
+            {
+              "name": "now",
+              "line": 902
+            },
+            {
+              "name": "runningElapsed",
+              "line": 903
+            },
+            {
+              "name": "totalElapsed",
+              "line": 904
+            },
+            {
+              "name": "newTimeLeft",
+              "line": 905
+            },
+            {
+              "name": "isGoalTask",
+              "line": 913
+            },
+            {
+              "name": "completionMessage",
+              "line": 932
+            },
+            {
+              "name": "interval",
+              "line": 959
+            },
+            {
+              "name": "startPomodoro",
+              "line": 964
+            },
+            {
+              "name": "pausePomodoro",
+              "line": 975
+            },
+            {
+              "name": "now",
+              "line": 978
+            },
+            {
+              "name": "runningElapsed",
+              "line": 979
+            },
+            {
+              "name": "resumePomodoro",
+              "line": 986
+            },
+            {
+              "name": "closePomodoroDialog",
+              "line": 990
+            },
+            {
+              "name": "resetPomodoro",
+              "line": 994
+            },
+            {
+              "name": "formatTime",
+              "line": 1009
+            },
+            {
+              "name": "mins",
+              "line": 1010
+            },
+            {
+              "name": "secs",
+              "line": 1011
+            },
+            {
+              "name": "habits",
+              "line": 1042
+            },
+            {
+              "name": "today",
+              "line": 1043
+            },
+            {
+              "name": "completedDate",
+              "line": 1045
+            },
+            {
+              "name": "todos",
+              "line": 1058
+            },
+            {
+              "name": "allFilteredTasks",
+              "line": 1059
+            },
+            {
+              "name": "completedToday",
+              "line": 1060
+            },
+            {
+              "name": "progress",
+              "line": 1352
+            },
+            {
+              "name": "progress",
+              "line": 1700
+            },
+            {
+              "name": "progress",
+              "line": 1711
+            },
+            {
+              "name": "queryClient",
+              "line": 1824
+            },
+            {
+              "name": "generateMicroTasks",
+              "line": 1826
+            },
+            {
+              "name": "existingResponse",
+              "line": 1831
+            },
+            {
+              "name": "existingTasks",
+              "line": 1832
+            },
+            {
+              "name": "newResponse",
+              "line": 1841
+            },
+            {
+              "name": "newMicroTasks",
+              "line": 1842
+            },
+            {
+              "name": "completeMicroTask",
+              "line": 1857
+            }
+          ],
+          "recommendation": "Extract 93 utility functions to a utils file"
+        },
+        {
+          "type": "reduce-complexity",
+          "complexity": 64,
+          "recommendation": "Consider simplifying logic or extracting complex calculations"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/unified-rpg-task-manager.tsx",
+          "description": "Main unified-rpg-task-manager component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/hooks/userStats.ts",
+          "description": "Custom hook: userStats",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/components/unified-rpg-task-manager/TASK_CATEGORIES.tsx",
+          "description": "Sub-component: TASK_CATEGORIES",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/unified-rpg-task-manager/DIFFICULTY_LEVELS.tsx",
+          "description": "Sub-component: DIFFICULTY_LEVELS",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/unified-rpg-task-manager/TaskCard.tsx",
+          "description": "Sub-component: TaskCard",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/unified-rpg-task-manager/UnifiedRPGTaskManager.tsx",
+          "description": "Sub-component: UnifiedRPGTaskManager",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/unified-rpg-task-manager/MicroTasksButton.tsx",
+          "description": "Sub-component: MicroTasksButton",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/utils/unified-rpg-task-manager.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "getEnergyStatus",
+            "percentage",
+            "category",
+            "difficulty",
+            "isCurrentPomodoroTask",
+            "showPomodoroControls",
+            "requiredEnergy",
+            "hasEnoughEnergy",
+            "canCompleteTask",
+            "linkedSkill",
+            "isCompletedToday",
+            "completedDate",
+            "today",
+            "getIconEmoji",
+            "iconMap",
+            "queryClient",
+            "tasksQuery",
+            "skillsQuery",
+            "goalsQuery",
+            "statsQuery",
+            "tasks",
+            "skills",
+            "goals",
+            "isLoading",
+            "isError",
+            "error",
+            "invalidateAllData",
+            "silentResetHabitsMutation",
+            "lastResetDate",
+            "today",
+            "createTaskMutation",
+            "difficulty",
+            "response",
+            "result",
+            "previousTasks",
+            "difficulty",
+            "optimisticTask",
+            "updateTaskMutation",
+            "previousTasks",
+            "previousStats",
+            "task",
+            "energyCost",
+            "deleteTaskMutation",
+            "previousTasks",
+            "handleCreateTask",
+            "response",
+            "result",
+            "categoryName",
+            "handleToggleComplete",
+            "task",
+            "requiredEnergy",
+            "result",
+            "smartResult",
+            "handleDeleteTask",
+            "resetHabitsMutation",
+            "resetHabits",
+            "restoreEnergyMutation",
+            "timerStartRef",
+            "pausedTimeRef",
+            "updateTimer",
+            "now",
+            "runningElapsed",
+            "totalElapsed",
+            "newTimeLeft",
+            "isGoalTask",
+            "completionMessage",
+            "interval",
+            "startPomodoro",
+            "pausePomodoro",
+            "now",
+            "runningElapsed",
+            "resumePomodoro",
+            "closePomodoroDialog",
+            "resetPomodoro",
+            "formatTime",
+            "mins",
+            "secs",
+            "habits",
+            "today",
+            "completedDate",
+            "todos",
+            "allFilteredTasks",
+            "completedToday",
+            "progress",
+            "progress",
+            "progress",
+            "queryClient",
+            "generateMicroTasks",
+            "existingResponse",
+            "existingTasks",
+            "newResponse",
+            "newMicroTasks",
+            "completeMicroTask"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/templates-section.tsx",
+    "stats": {
+      "totalLines": 360,
+      "imports": 9,
+      "functions": [
+        {
+          "name": "queryClient",
+          "line": 145
+        },
+        {
+          "name": "createTaskMutation",
+          "line": 148
+        },
+        {
+          "name": "createGoalMutation",
+          "line": 171
+        },
+        {
+          "name": "handleUseTemplate",
+          "line": 192
+        },
+        {
+          "name": "goalData",
+          "line": 194
+        },
+        {
+          "name": "estimatedDuration",
+          "line": 202
+        },
+        {
+          "name": "taskData",
+          "line": 203
+        },
+        {
+          "name": "categories",
+          "line": 221
+        },
+        {
+          "name": "filteredTemplates",
+          "line": 229
+        },
+        {
+          "name": "getDifficultyColor",
+          "line": 233
+        },
+        {
+          "name": "getDifficultyLabel",
+          "line": 242
+        }
+      ],
+      "components": [
+        {
+          "name": "TEMPLATE_DATA",
+          "line": 36
+        },
+        {
+          "name": "TemplatesSection",
+          "line": 142
+        }
+      ],
+      "hooks": [],
+      "complexity": 1
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 360 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "TEMPLATE_DATA",
+            "line": 36
+          },
+          {
+            "name": "TemplatesSection",
+            "line": 142
+          }
+        ],
+        "recommendation": "Extract 2 sub-components to separate files"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "queryClient",
+            "line": 145
+          },
+          {
+            "name": "createTaskMutation",
+            "line": 148
+          },
+          {
+            "name": "createGoalMutation",
+            "line": 171
+          },
+          {
+            "name": "handleUseTemplate",
+            "line": 192
+          },
+          {
+            "name": "goalData",
+            "line": 194
+          },
+          {
+            "name": "estimatedDuration",
+            "line": 202
+          },
+          {
+            "name": "taskData",
+            "line": 203
+          },
+          {
+            "name": "categories",
+            "line": 221
+          },
+          {
+            "name": "filteredTemplates",
+            "line": 229
+          },
+          {
+            "name": "getDifficultyColor",
+            "line": 233
+          },
+          {
+            "name": "getDifficultyLabel",
+            "line": 242
+          }
+        ],
+        "recommendation": "Extract 11 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/templates-section.tsx",
+      "stats": {
+        "totalLines": 360,
+        "imports": 9,
+        "functions": [
+          {
+            "name": "queryClient",
+            "line": 145
+          },
+          {
+            "name": "createTaskMutation",
+            "line": 148
+          },
+          {
+            "name": "createGoalMutation",
+            "line": 171
+          },
+          {
+            "name": "handleUseTemplate",
+            "line": 192
+          },
+          {
+            "name": "goalData",
+            "line": 194
+          },
+          {
+            "name": "estimatedDuration",
+            "line": 202
+          },
+          {
+            "name": "taskData",
+            "line": 203
+          },
+          {
+            "name": "categories",
+            "line": 221
+          },
+          {
+            "name": "filteredTemplates",
+            "line": 229
+          },
+          {
+            "name": "getDifficultyColor",
+            "line": 233
+          },
+          {
+            "name": "getDifficultyLabel",
+            "line": 242
+          }
+        ],
+        "components": [
+          {
+            "name": "TEMPLATE_DATA",
+            "line": 36
+          },
+          {
+            "name": "TemplatesSection",
+            "line": 142
+          }
+        ],
+        "hooks": [],
+        "complexity": 1
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 360 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "TEMPLATE_DATA",
+              "line": 36
+            },
+            {
+              "name": "TemplatesSection",
+              "line": 142
+            }
+          ],
+          "recommendation": "Extract 2 sub-components to separate files"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "queryClient",
+              "line": 145
+            },
+            {
+              "name": "createTaskMutation",
+              "line": 148
+            },
+            {
+              "name": "createGoalMutation",
+              "line": 171
+            },
+            {
+              "name": "handleUseTemplate",
+              "line": 192
+            },
+            {
+              "name": "goalData",
+              "line": 194
+            },
+            {
+              "name": "estimatedDuration",
+              "line": 202
+            },
+            {
+              "name": "taskData",
+              "line": 203
+            },
+            {
+              "name": "categories",
+              "line": 221
+            },
+            {
+              "name": "filteredTemplates",
+              "line": 229
+            },
+            {
+              "name": "getDifficultyColor",
+              "line": 233
+            },
+            {
+              "name": "getDifficultyLabel",
+              "line": 242
+            }
+          ],
+          "recommendation": "Extract 11 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/templates-section.tsx",
+          "description": "Main templates-section component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/templates-section/TEMPLATE_DATA.tsx",
+          "description": "Sub-component: TEMPLATE_DATA",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/templates-section/TemplatesSection.tsx",
+          "description": "Sub-component: TemplatesSection",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/utils/templates-section.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "queryClient",
+            "createTaskMutation",
+            "createGoalMutation",
+            "handleUseTemplate",
+            "goalData",
+            "estimatedDuration",
+            "taskData",
+            "categories",
+            "filteredTemplates",
+            "getDifficultyColor",
+            "getDifficultyLabel"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/pomodoro-timer.tsx",
+    "stats": {
+      "totalLines": 486,
+      "imports": 12,
+      "functions": [
+        {
+          "name": "handleReopenTimer",
+          "line": 56
+        },
+        {
+          "name": "startPomodoroMutation",
+          "line": 69
+        },
+        {
+          "name": "response",
+          "line": 71
+        },
+        {
+          "name": "completePomodoroMutation",
+          "line": 85
+        },
+        {
+          "name": "response",
+          "line": 87
+        },
+        {
+          "name": "handleTimerComplete",
+          "line": 107
+        },
+        {
+          "name": "notification",
+          "line": 112
+        },
+        {
+          "name": "audio",
+          "line": 127
+        },
+        {
+          "name": "sessionSeconds",
+          "line": 136
+        },
+        {
+          "name": "sessionMinutes",
+          "line": 137
+        },
+        {
+          "name": "startTimestamp",
+          "line": 167
+        },
+        {
+          "name": "initialTimeLeft",
+          "line": 168
+        },
+        {
+          "name": "updateTimer",
+          "line": 170
+        },
+        {
+          "name": "elapsed",
+          "line": 171
+        },
+        {
+          "name": "newTimeLeft",
+          "line": 172
+        },
+        {
+          "name": "interval",
+          "line": 187
+        },
+        {
+          "name": "handleStartTimer",
+          "line": 192
+        },
+        {
+          "name": "handlePauseTimer",
+          "line": 214
+        },
+        {
+          "name": "sessionSeconds",
+          "line": 218
+        },
+        {
+          "name": "sessionMinutes",
+          "line": 219
+        },
+        {
+          "name": "handleCompleteTask",
+          "line": 227
+        },
+        {
+          "name": "sessionSeconds",
+          "line": 231
+        },
+        {
+          "name": "sessionMinutes",
+          "line": 232
+        },
+        {
+          "name": "formatTime",
+          "line": 240
+        },
+        {
+          "name": "mins",
+          "line": 241
+        },
+        {
+          "name": "secs",
+          "line": 242
+        },
+        {
+          "name": "progress",
+          "line": 246
+        }
+      ],
+      "components": [
+        {
+          "name": "PomodoroTimer",
+          "line": 19
+        }
+      ],
+      "hooks": [],
+      "complexity": 18
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 486 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "handleReopenTimer",
+            "line": 56
+          },
+          {
+            "name": "startPomodoroMutation",
+            "line": 69
+          },
+          {
+            "name": "response",
+            "line": 71
+          },
+          {
+            "name": "completePomodoroMutation",
+            "line": 85
+          },
+          {
+            "name": "response",
+            "line": 87
+          },
+          {
+            "name": "handleTimerComplete",
+            "line": 107
+          },
+          {
+            "name": "notification",
+            "line": 112
+          },
+          {
+            "name": "audio",
+            "line": 127
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 136
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 137
+          },
+          {
+            "name": "startTimestamp",
+            "line": 167
+          },
+          {
+            "name": "initialTimeLeft",
+            "line": 168
+          },
+          {
+            "name": "updateTimer",
+            "line": 170
+          },
+          {
+            "name": "elapsed",
+            "line": 171
+          },
+          {
+            "name": "newTimeLeft",
+            "line": 172
+          },
+          {
+            "name": "interval",
+            "line": 187
+          },
+          {
+            "name": "handleStartTimer",
+            "line": 192
+          },
+          {
+            "name": "handlePauseTimer",
+            "line": 214
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 218
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 219
+          },
+          {
+            "name": "handleCompleteTask",
+            "line": 227
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 231
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 232
+          },
+          {
+            "name": "formatTime",
+            "line": 240
+          },
+          {
+            "name": "mins",
+            "line": 241
+          },
+          {
+            "name": "secs",
+            "line": 242
+          },
+          {
+            "name": "progress",
+            "line": 246
+          }
+        ],
+        "recommendation": "Extract 27 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/pomodoro-timer.tsx",
+      "stats": {
+        "totalLines": 486,
+        "imports": 12,
+        "functions": [
+          {
+            "name": "handleReopenTimer",
+            "line": 56
+          },
+          {
+            "name": "startPomodoroMutation",
+            "line": 69
+          },
+          {
+            "name": "response",
+            "line": 71
+          },
+          {
+            "name": "completePomodoroMutation",
+            "line": 85
+          },
+          {
+            "name": "response",
+            "line": 87
+          },
+          {
+            "name": "handleTimerComplete",
+            "line": 107
+          },
+          {
+            "name": "notification",
+            "line": 112
+          },
+          {
+            "name": "audio",
+            "line": 127
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 136
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 137
+          },
+          {
+            "name": "startTimestamp",
+            "line": 167
+          },
+          {
+            "name": "initialTimeLeft",
+            "line": 168
+          },
+          {
+            "name": "updateTimer",
+            "line": 170
+          },
+          {
+            "name": "elapsed",
+            "line": 171
+          },
+          {
+            "name": "newTimeLeft",
+            "line": 172
+          },
+          {
+            "name": "interval",
+            "line": 187
+          },
+          {
+            "name": "handleStartTimer",
+            "line": 192
+          },
+          {
+            "name": "handlePauseTimer",
+            "line": 214
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 218
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 219
+          },
+          {
+            "name": "handleCompleteTask",
+            "line": 227
+          },
+          {
+            "name": "sessionSeconds",
+            "line": 231
+          },
+          {
+            "name": "sessionMinutes",
+            "line": 232
+          },
+          {
+            "name": "formatTime",
+            "line": 240
+          },
+          {
+            "name": "mins",
+            "line": 241
+          },
+          {
+            "name": "secs",
+            "line": 242
+          },
+          {
+            "name": "progress",
+            "line": 246
+          }
+        ],
+        "components": [
+          {
+            "name": "PomodoroTimer",
+            "line": 19
+          }
+        ],
+        "hooks": [],
+        "complexity": 18
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 486 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "handleReopenTimer",
+              "line": 56
+            },
+            {
+              "name": "startPomodoroMutation",
+              "line": 69
+            },
+            {
+              "name": "response",
+              "line": 71
+            },
+            {
+              "name": "completePomodoroMutation",
+              "line": 85
+            },
+            {
+              "name": "response",
+              "line": 87
+            },
+            {
+              "name": "handleTimerComplete",
+              "line": 107
+            },
+            {
+              "name": "notification",
+              "line": 112
+            },
+            {
+              "name": "audio",
+              "line": 127
+            },
+            {
+              "name": "sessionSeconds",
+              "line": 136
+            },
+            {
+              "name": "sessionMinutes",
+              "line": 137
+            },
+            {
+              "name": "startTimestamp",
+              "line": 167
+            },
+            {
+              "name": "initialTimeLeft",
+              "line": 168
+            },
+            {
+              "name": "updateTimer",
+              "line": 170
+            },
+            {
+              "name": "elapsed",
+              "line": 171
+            },
+            {
+              "name": "newTimeLeft",
+              "line": 172
+            },
+            {
+              "name": "interval",
+              "line": 187
+            },
+            {
+              "name": "handleStartTimer",
+              "line": 192
+            },
+            {
+              "name": "handlePauseTimer",
+              "line": 214
+            },
+            {
+              "name": "sessionSeconds",
+              "line": 218
+            },
+            {
+              "name": "sessionMinutes",
+              "line": 219
+            },
+            {
+              "name": "handleCompleteTask",
+              "line": 227
+            },
+            {
+              "name": "sessionSeconds",
+              "line": 231
+            },
+            {
+              "name": "sessionMinutes",
+              "line": 232
+            },
+            {
+              "name": "formatTime",
+              "line": 240
+            },
+            {
+              "name": "mins",
+              "line": 241
+            },
+            {
+              "name": "secs",
+              "line": 242
+            },
+            {
+              "name": "progress",
+              "line": 246
+            }
+          ],
+          "recommendation": "Extract 27 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/pomodoro-timer.tsx",
+          "description": "Main pomodoro-timer component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/pomodoro-timer/PomodoroTimer.tsx",
+          "description": "Sub-component: PomodoroTimer",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/utils/pomodoro-timer.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "handleReopenTimer",
+            "startPomodoroMutation",
+            "response",
+            "completePomodoroMutation",
+            "response",
+            "handleTimerComplete",
+            "notification",
+            "audio",
+            "sessionSeconds",
+            "sessionMinutes",
+            "startTimestamp",
+            "initialTimeLeft",
+            "updateTimer",
+            "elapsed",
+            "newTimeLeft",
+            "interval",
+            "handleStartTimer",
+            "handlePauseTimer",
+            "sessionSeconds",
+            "sessionMinutes",
+            "handleCompleteTask",
+            "sessionSeconds",
+            "sessionMinutes",
+            "formatTime",
+            "mins",
+            "secs",
+            "progress"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/navigation.tsx",
+    "stats": {
+      "totalLines": 309,
+      "imports": 8,
+      "functions": [
+        {
+          "name": "handleLogout",
+          "line": 35
+        },
+        {
+          "name": "navigationItems",
+          "line": 46
+        },
+        {
+          "name": "handleNavItemClick",
+          "line": 91
+        },
+        {
+          "name": "getActivePageFromLocation",
+          "line": 97
+        },
+        {
+          "name": "activePage",
+          "line": 107
+        }
+      ],
+      "components": [
+        {
+          "name": "Navigation",
+          "line": 23
+        },
+        {
+          "name": "IconComponent",
+          "line": 128
+        },
+        {
+          "name": "IconComponent",
+          "line": 267
+        }
+      ],
+      "hooks": [],
+      "complexity": 6
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 309 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "Navigation",
+            "line": 23
+          },
+          {
+            "name": "IconComponent",
+            "line": 128
+          },
+          {
+            "name": "IconComponent",
+            "line": 267
+          }
+        ],
+        "recommendation": "Extract 3 sub-components to separate files"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/navigation.tsx",
+      "stats": {
+        "totalLines": 309,
+        "imports": 8,
+        "functions": [
+          {
+            "name": "handleLogout",
+            "line": 35
+          },
+          {
+            "name": "navigationItems",
+            "line": 46
+          },
+          {
+            "name": "handleNavItemClick",
+            "line": 91
+          },
+          {
+            "name": "getActivePageFromLocation",
+            "line": 97
+          },
+          {
+            "name": "activePage",
+            "line": 107
+          }
+        ],
+        "components": [
+          {
+            "name": "Navigation",
+            "line": 23
+          },
+          {
+            "name": "IconComponent",
+            "line": 128
+          },
+          {
+            "name": "IconComponent",
+            "line": 267
+          }
+        ],
+        "hooks": [],
+        "complexity": 6
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 309 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "Navigation",
+              "line": 23
+            },
+            {
+              "name": "IconComponent",
+              "line": 128
+            },
+            {
+              "name": "IconComponent",
+              "line": 267
+            }
+          ],
+          "recommendation": "Extract 3 sub-components to separate files"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/navigation.tsx",
+          "description": "Main navigation component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/navigation/Navigation.tsx",
+          "description": "Sub-component: Navigation",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/navigation/IconComponent.tsx",
+          "description": "Sub-component: IconComponent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/navigation/IconComponent.tsx",
+          "description": "Sub-component: IconComponent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/ai-assistant.tsx",
+    "stats": {
+      "totalLines": 377,
+      "imports": 10,
+      "functions": [
+        {
+          "name": "messagesEndRef",
+          "line": 39
+        },
+        {
+          "name": "queryClient",
+          "line": 41
+        },
+        {
+          "name": "scrollToBottom",
+          "line": 49
+        },
+        {
+          "name": "aiChatMutation",
+          "line": 58
+        },
+        {
+          "name": "response",
+          "line": 60
+        },
+        {
+          "name": "aiMessage",
+          "line": 72
+        },
+        {
+          "name": "aiSuggestionsMutation",
+          "line": 93
+        },
+        {
+          "name": "response",
+          "line": 95
+        },
+        {
+          "name": "suggestionMessage",
+          "line": 107
+        },
+        {
+          "name": "handleSendMessage",
+          "line": 119
+        },
+        {
+          "name": "handleKeyPress",
+          "line": 136
+        },
+        {
+          "name": "getCategoryIcon",
+          "line": 143
+        },
+        {
+          "name": "getCategoryLabel",
+          "line": 152
+        },
+        {
+          "name": "message",
+          "line": 328
+        },
+        {
+          "name": "message",
+          "line": 341
+        }
+      ],
+      "components": [
+        {
+          "name": "AIAssistant",
+          "line": 26
+        }
+      ],
+      "hooks": [
+        {
+          "name": "userMessage",
+          "line": 122
+        }
+      ],
+      "complexity": 5
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 377 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "messagesEndRef",
+            "line": 39
+          },
+          {
+            "name": "queryClient",
+            "line": 41
+          },
+          {
+            "name": "scrollToBottom",
+            "line": 49
+          },
+          {
+            "name": "aiChatMutation",
+            "line": 58
+          },
+          {
+            "name": "response",
+            "line": 60
+          },
+          {
+            "name": "aiMessage",
+            "line": 72
+          },
+          {
+            "name": "aiSuggestionsMutation",
+            "line": 93
+          },
+          {
+            "name": "response",
+            "line": 95
+          },
+          {
+            "name": "suggestionMessage",
+            "line": 107
+          },
+          {
+            "name": "handleSendMessage",
+            "line": 119
+          },
+          {
+            "name": "handleKeyPress",
+            "line": 136
+          },
+          {
+            "name": "getCategoryIcon",
+            "line": 143
+          },
+          {
+            "name": "getCategoryLabel",
+            "line": 152
+          },
+          {
+            "name": "message",
+            "line": 328
+          },
+          {
+            "name": "message",
+            "line": 341
+          }
+        ],
+        "recommendation": "Extract 15 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/ai-assistant.tsx",
+      "stats": {
+        "totalLines": 377,
+        "imports": 10,
+        "functions": [
+          {
+            "name": "messagesEndRef",
+            "line": 39
+          },
+          {
+            "name": "queryClient",
+            "line": 41
+          },
+          {
+            "name": "scrollToBottom",
+            "line": 49
+          },
+          {
+            "name": "aiChatMutation",
+            "line": 58
+          },
+          {
+            "name": "response",
+            "line": 60
+          },
+          {
+            "name": "aiMessage",
+            "line": 72
+          },
+          {
+            "name": "aiSuggestionsMutation",
+            "line": 93
+          },
+          {
+            "name": "response",
+            "line": 95
+          },
+          {
+            "name": "suggestionMessage",
+            "line": 107
+          },
+          {
+            "name": "handleSendMessage",
+            "line": 119
+          },
+          {
+            "name": "handleKeyPress",
+            "line": 136
+          },
+          {
+            "name": "getCategoryIcon",
+            "line": 143
+          },
+          {
+            "name": "getCategoryLabel",
+            "line": 152
+          },
+          {
+            "name": "message",
+            "line": 328
+          },
+          {
+            "name": "message",
+            "line": 341
+          }
+        ],
+        "components": [
+          {
+            "name": "AIAssistant",
+            "line": 26
+          }
+        ],
+        "hooks": [
+          {
+            "name": "userMessage",
+            "line": 122
+          }
+        ],
+        "complexity": 5
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 377 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "messagesEndRef",
+              "line": 39
+            },
+            {
+              "name": "queryClient",
+              "line": 41
+            },
+            {
+              "name": "scrollToBottom",
+              "line": 49
+            },
+            {
+              "name": "aiChatMutation",
+              "line": 58
+            },
+            {
+              "name": "response",
+              "line": 60
+            },
+            {
+              "name": "aiMessage",
+              "line": 72
+            },
+            {
+              "name": "aiSuggestionsMutation",
+              "line": 93
+            },
+            {
+              "name": "response",
+              "line": 95
+            },
+            {
+              "name": "suggestionMessage",
+              "line": 107
+            },
+            {
+              "name": "handleSendMessage",
+              "line": 119
+            },
+            {
+              "name": "handleKeyPress",
+              "line": 136
+            },
+            {
+              "name": "getCategoryIcon",
+              "line": 143
+            },
+            {
+              "name": "getCategoryLabel",
+              "line": 152
+            },
+            {
+              "name": "message",
+              "line": 328
+            },
+            {
+              "name": "message",
+              "line": 341
+            }
+          ],
+          "recommendation": "Extract 15 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/ai-assistant.tsx",
+          "description": "Main ai-assistant component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/hooks/userMessage.ts",
+          "description": "Custom hook: userMessage",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/components/ai-assistant/AIAssistant.tsx",
+          "description": "Sub-component: AIAssistant",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/utils/ai-assistant.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "messagesEndRef",
+            "queryClient",
+            "scrollToBottom",
+            "aiChatMutation",
+            "response",
+            "aiMessage",
+            "aiSuggestionsMutation",
+            "response",
+            "suggestionMessage",
+            "handleSendMessage",
+            "handleKeyPress",
+            "getCategoryIcon",
+            "getCategoryLabel",
+            "message",
+            "message"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/ui/sidebar.tsx",
+    "stats": {
+      "totalLines": 772,
+      "imports": 12,
+      "functions": [
+        {
+          "name": "context",
+          "line": 46
+        },
+        {
+          "name": "isMobile",
+          "line": 74
+        },
+        {
+          "name": "open",
+          "line": 80
+        },
+        {
+          "name": "setOpen",
+          "line": 81
+        },
+        {
+          "name": "openState",
+          "line": 83
+        },
+        {
+          "name": "toggleSidebar",
+          "line": 97
+        },
+        {
+          "name": "handleKeyDown",
+          "line": 105
+        },
+        {
+          "name": "state",
+          "line": 121
+        },
+        {
+          "name": "contextValue",
+          "line": 123
+        },
+        {
+          "name": "sidebarMenuButtonVariants",
+          "line": 522
+        },
+        {
+          "name": "button",
+          "line": 567
+        },
+        {
+          "name": "width",
+          "line": 662
+        }
+      ],
+      "components": [
+        {
+          "name": "SIDEBAR_COOKIE_NAME",
+          "line": 26
+        },
+        {
+          "name": "SIDEBAR_COOKIE_MAX_AGE",
+          "line": 27
+        },
+        {
+          "name": "SIDEBAR_WIDTH",
+          "line": 28
+        },
+        {
+          "name": "SIDEBAR_WIDTH_MOBILE",
+          "line": 29
+        },
+        {
+          "name": "SIDEBAR_WIDTH_ICON",
+          "line": 30
+        },
+        {
+          "name": "SIDEBAR_KEYBOARD_SHORTCUT",
+          "line": 31
+        },
+        {
+          "name": "SidebarContext",
+          "line": 43
+        },
+        {
+          "name": "SidebarProvider",
+          "line": 54
+        },
+        {
+          "name": "Sidebar",
+          "line": 163
+        },
+        {
+          "name": "SidebarTrigger",
+          "line": 270
+        },
+        {
+          "name": "SidebarRail",
+          "line": 296
+        },
+        {
+          "name": "SidebarInset",
+          "line": 325
+        },
+        {
+          "name": "SidebarInput",
+          "line": 343
+        },
+        {
+          "name": "SidebarHeader",
+          "line": 361
+        },
+        {
+          "name": "SidebarFooter",
+          "line": 376
+        },
+        {
+          "name": "SidebarSeparator",
+          "line": 391
+        },
+        {
+          "name": "SidebarContent",
+          "line": 406
+        },
+        {
+          "name": "SidebarGroup",
+          "line": 424
+        },
+        {
+          "name": "SidebarGroupLabel",
+          "line": 439
+        },
+        {
+          "name": "Comp",
+          "line": 443
+        },
+        {
+          "name": "SidebarGroupAction",
+          "line": 460
+        },
+        {
+          "name": "Comp",
+          "line": 464
+        },
+        {
+          "name": "SidebarGroupContent",
+          "line": 483
+        },
+        {
+          "name": "SidebarMenu",
+          "line": 496
+        },
+        {
+          "name": "SidebarMenuItem",
+          "line": 509
+        },
+        {
+          "name": "SidebarMenuButton",
+          "line": 544
+        },
+        {
+          "name": "Comp",
+          "line": 564
+        },
+        {
+          "name": "SidebarMenuAction",
+          "line": 603
+        },
+        {
+          "name": "Comp",
+          "line": 610
+        },
+        {
+          "name": "SidebarMenuBadge",
+          "line": 634
+        },
+        {
+          "name": "SidebarMenuSkeleton",
+          "line": 655
+        },
+        {
+          "name": "SidebarMenuSub",
+          "line": 693
+        },
+        {
+          "name": "SidebarMenuSubItem",
+          "line": 710
+        },
+        {
+          "name": "SidebarMenuSubButton",
+          "line": 716
+        },
+        {
+          "name": "Comp",
+          "line": 724
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useSidebar",
+          "line": 45
+        }
+      ],
+      "complexity": 9
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 772 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "SIDEBAR_COOKIE_NAME",
+            "line": 26
+          },
+          {
+            "name": "SIDEBAR_COOKIE_MAX_AGE",
+            "line": 27
+          },
+          {
+            "name": "SIDEBAR_WIDTH",
+            "line": 28
+          },
+          {
+            "name": "SIDEBAR_WIDTH_MOBILE",
+            "line": 29
+          },
+          {
+            "name": "SIDEBAR_WIDTH_ICON",
+            "line": 30
+          },
+          {
+            "name": "SIDEBAR_KEYBOARD_SHORTCUT",
+            "line": 31
+          },
+          {
+            "name": "SidebarContext",
+            "line": 43
+          },
+          {
+            "name": "SidebarProvider",
+            "line": 54
+          },
+          {
+            "name": "Sidebar",
+            "line": 163
+          },
+          {
+            "name": "SidebarTrigger",
+            "line": 270
+          },
+          {
+            "name": "SidebarRail",
+            "line": 296
+          },
+          {
+            "name": "SidebarInset",
+            "line": 325
+          },
+          {
+            "name": "SidebarInput",
+            "line": 343
+          },
+          {
+            "name": "SidebarHeader",
+            "line": 361
+          },
+          {
+            "name": "SidebarFooter",
+            "line": 376
+          },
+          {
+            "name": "SidebarSeparator",
+            "line": 391
+          },
+          {
+            "name": "SidebarContent",
+            "line": 406
+          },
+          {
+            "name": "SidebarGroup",
+            "line": 424
+          },
+          {
+            "name": "SidebarGroupLabel",
+            "line": 439
+          },
+          {
+            "name": "Comp",
+            "line": 443
+          },
+          {
+            "name": "SidebarGroupAction",
+            "line": 460
+          },
+          {
+            "name": "Comp",
+            "line": 464
+          },
+          {
+            "name": "SidebarGroupContent",
+            "line": 483
+          },
+          {
+            "name": "SidebarMenu",
+            "line": 496
+          },
+          {
+            "name": "SidebarMenuItem",
+            "line": 509
+          },
+          {
+            "name": "SidebarMenuButton",
+            "line": 544
+          },
+          {
+            "name": "Comp",
+            "line": 564
+          },
+          {
+            "name": "SidebarMenuAction",
+            "line": 603
+          },
+          {
+            "name": "Comp",
+            "line": 610
+          },
+          {
+            "name": "SidebarMenuBadge",
+            "line": 634
+          },
+          {
+            "name": "SidebarMenuSkeleton",
+            "line": 655
+          },
+          {
+            "name": "SidebarMenuSub",
+            "line": 693
+          },
+          {
+            "name": "SidebarMenuSubItem",
+            "line": 710
+          },
+          {
+            "name": "SidebarMenuSubButton",
+            "line": 716
+          },
+          {
+            "name": "Comp",
+            "line": 724
+          }
+        ],
+        "recommendation": "Extract 35 sub-components to separate files"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "context",
+            "line": 46
+          },
+          {
+            "name": "isMobile",
+            "line": 74
+          },
+          {
+            "name": "open",
+            "line": 80
+          },
+          {
+            "name": "setOpen",
+            "line": 81
+          },
+          {
+            "name": "openState",
+            "line": 83
+          },
+          {
+            "name": "toggleSidebar",
+            "line": 97
+          },
+          {
+            "name": "handleKeyDown",
+            "line": 105
+          },
+          {
+            "name": "state",
+            "line": 121
+          },
+          {
+            "name": "contextValue",
+            "line": 123
+          },
+          {
+            "name": "sidebarMenuButtonVariants",
+            "line": 522
+          },
+          {
+            "name": "button",
+            "line": 567
+          },
+          {
+            "name": "width",
+            "line": 662
+          }
+        ],
+        "recommendation": "Extract 12 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/ui/sidebar.tsx",
+      "stats": {
+        "totalLines": 772,
+        "imports": 12,
+        "functions": [
+          {
+            "name": "context",
+            "line": 46
+          },
+          {
+            "name": "isMobile",
+            "line": 74
+          },
+          {
+            "name": "open",
+            "line": 80
+          },
+          {
+            "name": "setOpen",
+            "line": 81
+          },
+          {
+            "name": "openState",
+            "line": 83
+          },
+          {
+            "name": "toggleSidebar",
+            "line": 97
+          },
+          {
+            "name": "handleKeyDown",
+            "line": 105
+          },
+          {
+            "name": "state",
+            "line": 121
+          },
+          {
+            "name": "contextValue",
+            "line": 123
+          },
+          {
+            "name": "sidebarMenuButtonVariants",
+            "line": 522
+          },
+          {
+            "name": "button",
+            "line": 567
+          },
+          {
+            "name": "width",
+            "line": 662
+          }
+        ],
+        "components": [
+          {
+            "name": "SIDEBAR_COOKIE_NAME",
+            "line": 26
+          },
+          {
+            "name": "SIDEBAR_COOKIE_MAX_AGE",
+            "line": 27
+          },
+          {
+            "name": "SIDEBAR_WIDTH",
+            "line": 28
+          },
+          {
+            "name": "SIDEBAR_WIDTH_MOBILE",
+            "line": 29
+          },
+          {
+            "name": "SIDEBAR_WIDTH_ICON",
+            "line": 30
+          },
+          {
+            "name": "SIDEBAR_KEYBOARD_SHORTCUT",
+            "line": 31
+          },
+          {
+            "name": "SidebarContext",
+            "line": 43
+          },
+          {
+            "name": "SidebarProvider",
+            "line": 54
+          },
+          {
+            "name": "Sidebar",
+            "line": 163
+          },
+          {
+            "name": "SidebarTrigger",
+            "line": 270
+          },
+          {
+            "name": "SidebarRail",
+            "line": 296
+          },
+          {
+            "name": "SidebarInset",
+            "line": 325
+          },
+          {
+            "name": "SidebarInput",
+            "line": 343
+          },
+          {
+            "name": "SidebarHeader",
+            "line": 361
+          },
+          {
+            "name": "SidebarFooter",
+            "line": 376
+          },
+          {
+            "name": "SidebarSeparator",
+            "line": 391
+          },
+          {
+            "name": "SidebarContent",
+            "line": 406
+          },
+          {
+            "name": "SidebarGroup",
+            "line": 424
+          },
+          {
+            "name": "SidebarGroupLabel",
+            "line": 439
+          },
+          {
+            "name": "Comp",
+            "line": 443
+          },
+          {
+            "name": "SidebarGroupAction",
+            "line": 460
+          },
+          {
+            "name": "Comp",
+            "line": 464
+          },
+          {
+            "name": "SidebarGroupContent",
+            "line": 483
+          },
+          {
+            "name": "SidebarMenu",
+            "line": 496
+          },
+          {
+            "name": "SidebarMenuItem",
+            "line": 509
+          },
+          {
+            "name": "SidebarMenuButton",
+            "line": 544
+          },
+          {
+            "name": "Comp",
+            "line": 564
+          },
+          {
+            "name": "SidebarMenuAction",
+            "line": 603
+          },
+          {
+            "name": "Comp",
+            "line": 610
+          },
+          {
+            "name": "SidebarMenuBadge",
+            "line": 634
+          },
+          {
+            "name": "SidebarMenuSkeleton",
+            "line": 655
+          },
+          {
+            "name": "SidebarMenuSub",
+            "line": 693
+          },
+          {
+            "name": "SidebarMenuSubItem",
+            "line": 710
+          },
+          {
+            "name": "SidebarMenuSubButton",
+            "line": 716
+          },
+          {
+            "name": "Comp",
+            "line": 724
+          }
+        ],
+        "hooks": [
+          {
+            "name": "useSidebar",
+            "line": 45
+          }
+        ],
+        "complexity": 9
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 772 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "SIDEBAR_COOKIE_NAME",
+              "line": 26
+            },
+            {
+              "name": "SIDEBAR_COOKIE_MAX_AGE",
+              "line": 27
+            },
+            {
+              "name": "SIDEBAR_WIDTH",
+              "line": 28
+            },
+            {
+              "name": "SIDEBAR_WIDTH_MOBILE",
+              "line": 29
+            },
+            {
+              "name": "SIDEBAR_WIDTH_ICON",
+              "line": 30
+            },
+            {
+              "name": "SIDEBAR_KEYBOARD_SHORTCUT",
+              "line": 31
+            },
+            {
+              "name": "SidebarContext",
+              "line": 43
+            },
+            {
+              "name": "SidebarProvider",
+              "line": 54
+            },
+            {
+              "name": "Sidebar",
+              "line": 163
+            },
+            {
+              "name": "SidebarTrigger",
+              "line": 270
+            },
+            {
+              "name": "SidebarRail",
+              "line": 296
+            },
+            {
+              "name": "SidebarInset",
+              "line": 325
+            },
+            {
+              "name": "SidebarInput",
+              "line": 343
+            },
+            {
+              "name": "SidebarHeader",
+              "line": 361
+            },
+            {
+              "name": "SidebarFooter",
+              "line": 376
+            },
+            {
+              "name": "SidebarSeparator",
+              "line": 391
+            },
+            {
+              "name": "SidebarContent",
+              "line": 406
+            },
+            {
+              "name": "SidebarGroup",
+              "line": 424
+            },
+            {
+              "name": "SidebarGroupLabel",
+              "line": 439
+            },
+            {
+              "name": "Comp",
+              "line": 443
+            },
+            {
+              "name": "SidebarGroupAction",
+              "line": 460
+            },
+            {
+              "name": "Comp",
+              "line": 464
+            },
+            {
+              "name": "SidebarGroupContent",
+              "line": 483
+            },
+            {
+              "name": "SidebarMenu",
+              "line": 496
+            },
+            {
+              "name": "SidebarMenuItem",
+              "line": 509
+            },
+            {
+              "name": "SidebarMenuButton",
+              "line": 544
+            },
+            {
+              "name": "Comp",
+              "line": 564
+            },
+            {
+              "name": "SidebarMenuAction",
+              "line": 603
+            },
+            {
+              "name": "Comp",
+              "line": 610
+            },
+            {
+              "name": "SidebarMenuBadge",
+              "line": 634
+            },
+            {
+              "name": "SidebarMenuSkeleton",
+              "line": 655
+            },
+            {
+              "name": "SidebarMenuSub",
+              "line": 693
+            },
+            {
+              "name": "SidebarMenuSubItem",
+              "line": 710
+            },
+            {
+              "name": "SidebarMenuSubButton",
+              "line": 716
+            },
+            {
+              "name": "Comp",
+              "line": 724
+            }
+          ],
+          "recommendation": "Extract 35 sub-components to separate files"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "context",
+              "line": 46
+            },
+            {
+              "name": "isMobile",
+              "line": 74
+            },
+            {
+              "name": "open",
+              "line": 80
+            },
+            {
+              "name": "setOpen",
+              "line": 81
+            },
+            {
+              "name": "openState",
+              "line": 83
+            },
+            {
+              "name": "toggleSidebar",
+              "line": 97
+            },
+            {
+              "name": "handleKeyDown",
+              "line": 105
+            },
+            {
+              "name": "state",
+              "line": 121
+            },
+            {
+              "name": "contextValue",
+              "line": 123
+            },
+            {
+              "name": "sidebarMenuButtonVariants",
+              "line": 522
+            },
+            {
+              "name": "button",
+              "line": 567
+            },
+            {
+              "name": "width",
+              "line": 662
+            }
+          ],
+          "recommendation": "Extract 12 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/ui/sidebar.tsx",
+          "description": "Main sidebar component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/hooks/useSidebar.ts",
+          "description": "Custom hook: useSidebar",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_COOKIE_NAME.tsx",
+          "description": "Sub-component: SIDEBAR_COOKIE_NAME",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_COOKIE_MAX_AGE.tsx",
+          "description": "Sub-component: SIDEBAR_COOKIE_MAX_AGE",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_WIDTH.tsx",
+          "description": "Sub-component: SIDEBAR_WIDTH",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_WIDTH_MOBILE.tsx",
+          "description": "Sub-component: SIDEBAR_WIDTH_MOBILE",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_WIDTH_ICON.tsx",
+          "description": "Sub-component: SIDEBAR_WIDTH_ICON",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SIDEBAR_KEYBOARD_SHORTCUT.tsx",
+          "description": "Sub-component: SIDEBAR_KEYBOARD_SHORTCUT",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarContext.tsx",
+          "description": "Sub-component: SidebarContext",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarProvider.tsx",
+          "description": "Sub-component: SidebarProvider",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Sidebar.tsx",
+          "description": "Sub-component: Sidebar",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarTrigger.tsx",
+          "description": "Sub-component: SidebarTrigger",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarRail.tsx",
+          "description": "Sub-component: SidebarRail",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarInset.tsx",
+          "description": "Sub-component: SidebarInset",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarInput.tsx",
+          "description": "Sub-component: SidebarInput",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarHeader.tsx",
+          "description": "Sub-component: SidebarHeader",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarFooter.tsx",
+          "description": "Sub-component: SidebarFooter",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarSeparator.tsx",
+          "description": "Sub-component: SidebarSeparator",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarContent.tsx",
+          "description": "Sub-component: SidebarContent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarGroup.tsx",
+          "description": "Sub-component: SidebarGroup",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarGroupLabel.tsx",
+          "description": "Sub-component: SidebarGroupLabel",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Comp.tsx",
+          "description": "Sub-component: Comp",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarGroupAction.tsx",
+          "description": "Sub-component: SidebarGroupAction",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Comp.tsx",
+          "description": "Sub-component: Comp",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarGroupContent.tsx",
+          "description": "Sub-component: SidebarGroupContent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenu.tsx",
+          "description": "Sub-component: SidebarMenu",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuItem.tsx",
+          "description": "Sub-component: SidebarMenuItem",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuButton.tsx",
+          "description": "Sub-component: SidebarMenuButton",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Comp.tsx",
+          "description": "Sub-component: Comp",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuAction.tsx",
+          "description": "Sub-component: SidebarMenuAction",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Comp.tsx",
+          "description": "Sub-component: Comp",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuBadge.tsx",
+          "description": "Sub-component: SidebarMenuBadge",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuSkeleton.tsx",
+          "description": "Sub-component: SidebarMenuSkeleton",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuSub.tsx",
+          "description": "Sub-component: SidebarMenuSub",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuSubItem.tsx",
+          "description": "Sub-component: SidebarMenuSubItem",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/SidebarMenuSubButton.tsx",
+          "description": "Sub-component: SidebarMenuSubButton",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/sidebar/Comp.tsx",
+          "description": "Sub-component: Comp",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/utils/sidebar.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "context",
+            "isMobile",
+            "open",
+            "setOpen",
+            "openState",
+            "toggleSidebar",
+            "handleKeyDown",
+            "state",
+            "contextValue",
+            "sidebarMenuButtonVariants",
+            "button",
+            "width"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/components/ui/chart.tsx",
+    "stats": {
+      "totalLines": 366,
+      "imports": 3,
+      "functions": [
+        {
+          "name": "context",
+          "line": 28
+        },
+        {
+          "name": "uniqueId",
+          "line": 46
+        },
+        {
+          "name": "chartId",
+          "line": 47
+        },
+        {
+          "name": "colorConfig",
+          "line": 71
+        },
+        {
+          "name": "color",
+          "line": 88
+        },
+        {
+          "name": "tooltipLabel",
+          "line": 136
+        },
+        {
+          "name": "key",
+          "line": 142
+        },
+        {
+          "name": "itemConfig",
+          "line": 143
+        },
+        {
+          "name": "value",
+          "line": 144
+        },
+        {
+          "name": "nestLabel",
+          "line": 176
+        },
+        {
+          "name": "key",
+          "line": 189
+        },
+        {
+          "name": "itemConfig",
+          "line": 190
+        },
+        {
+          "name": "indicatorColor",
+          "line": 191
+        },
+        {
+          "name": "key",
+          "line": 289
+        },
+        {
+          "name": "itemConfig",
+          "line": 290
+        },
+        {
+          "name": "getPayloadConfigFromPayload",
+          "line": 320
+        },
+        {
+          "name": "payloadPayload",
+          "line": 329
+        }
+      ],
+      "components": [
+        {
+          "name": "THEMES",
+          "line": 9
+        },
+        {
+          "name": "ChartContext",
+          "line": 25
+        },
+        {
+          "name": "ChartContainer",
+          "line": 37
+        },
+        {
+          "name": "ChartStyle",
+          "line": 70
+        },
+        {
+          "name": "ChartTooltip",
+          "line": 103
+        },
+        {
+          "name": "ChartTooltipContent",
+          "line": 105
+        },
+        {
+          "name": "ChartLegend",
+          "line": 259
+        },
+        {
+          "name": "ChartLegendContent",
+          "line": 261
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useChart",
+          "line": 27
+        }
+      ],
+      "complexity": 10
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 366 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "THEMES",
+            "line": 9
+          },
+          {
+            "name": "ChartContext",
+            "line": 25
+          },
+          {
+            "name": "ChartContainer",
+            "line": 37
+          },
+          {
+            "name": "ChartStyle",
+            "line": 70
+          },
+          {
+            "name": "ChartTooltip",
+            "line": 103
+          },
+          {
+            "name": "ChartTooltipContent",
+            "line": 105
+          },
+          {
+            "name": "ChartLegend",
+            "line": 259
+          },
+          {
+            "name": "ChartLegendContent",
+            "line": 261
+          }
+        ],
+        "recommendation": "Extract 8 sub-components to separate files"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "context",
+            "line": 28
+          },
+          {
+            "name": "uniqueId",
+            "line": 46
+          },
+          {
+            "name": "chartId",
+            "line": 47
+          },
+          {
+            "name": "colorConfig",
+            "line": 71
+          },
+          {
+            "name": "color",
+            "line": 88
+          },
+          {
+            "name": "tooltipLabel",
+            "line": 136
+          },
+          {
+            "name": "key",
+            "line": 142
+          },
+          {
+            "name": "itemConfig",
+            "line": 143
+          },
+          {
+            "name": "value",
+            "line": 144
+          },
+          {
+            "name": "nestLabel",
+            "line": 176
+          },
+          {
+            "name": "key",
+            "line": 189
+          },
+          {
+            "name": "itemConfig",
+            "line": 190
+          },
+          {
+            "name": "indicatorColor",
+            "line": 191
+          },
+          {
+            "name": "key",
+            "line": 289
+          },
+          {
+            "name": "itemConfig",
+            "line": 290
+          },
+          {
+            "name": "getPayloadConfigFromPayload",
+            "line": 320
+          },
+          {
+            "name": "payloadPayload",
+            "line": 329
+          }
+        ],
+        "recommendation": "Extract 17 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/components/ui/chart.tsx",
+      "stats": {
+        "totalLines": 366,
+        "imports": 3,
+        "functions": [
+          {
+            "name": "context",
+            "line": 28
+          },
+          {
+            "name": "uniqueId",
+            "line": 46
+          },
+          {
+            "name": "chartId",
+            "line": 47
+          },
+          {
+            "name": "colorConfig",
+            "line": 71
+          },
+          {
+            "name": "color",
+            "line": 88
+          },
+          {
+            "name": "tooltipLabel",
+            "line": 136
+          },
+          {
+            "name": "key",
+            "line": 142
+          },
+          {
+            "name": "itemConfig",
+            "line": 143
+          },
+          {
+            "name": "value",
+            "line": 144
+          },
+          {
+            "name": "nestLabel",
+            "line": 176
+          },
+          {
+            "name": "key",
+            "line": 189
+          },
+          {
+            "name": "itemConfig",
+            "line": 190
+          },
+          {
+            "name": "indicatorColor",
+            "line": 191
+          },
+          {
+            "name": "key",
+            "line": 289
+          },
+          {
+            "name": "itemConfig",
+            "line": 290
+          },
+          {
+            "name": "getPayloadConfigFromPayload",
+            "line": 320
+          },
+          {
+            "name": "payloadPayload",
+            "line": 329
+          }
+        ],
+        "components": [
+          {
+            "name": "THEMES",
+            "line": 9
+          },
+          {
+            "name": "ChartContext",
+            "line": 25
+          },
+          {
+            "name": "ChartContainer",
+            "line": 37
+          },
+          {
+            "name": "ChartStyle",
+            "line": 70
+          },
+          {
+            "name": "ChartTooltip",
+            "line": 103
+          },
+          {
+            "name": "ChartTooltipContent",
+            "line": 105
+          },
+          {
+            "name": "ChartLegend",
+            "line": 259
+          },
+          {
+            "name": "ChartLegendContent",
+            "line": 261
+          }
+        ],
+        "hooks": [
+          {
+            "name": "useChart",
+            "line": 27
+          }
+        ],
+        "complexity": 10
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 366 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "THEMES",
+              "line": 9
+            },
+            {
+              "name": "ChartContext",
+              "line": 25
+            },
+            {
+              "name": "ChartContainer",
+              "line": 37
+            },
+            {
+              "name": "ChartStyle",
+              "line": 70
+            },
+            {
+              "name": "ChartTooltip",
+              "line": 103
+            },
+            {
+              "name": "ChartTooltipContent",
+              "line": 105
+            },
+            {
+              "name": "ChartLegend",
+              "line": 259
+            },
+            {
+              "name": "ChartLegendContent",
+              "line": 261
+            }
+          ],
+          "recommendation": "Extract 8 sub-components to separate files"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "context",
+              "line": 28
+            },
+            {
+              "name": "uniqueId",
+              "line": 46
+            },
+            {
+              "name": "chartId",
+              "line": 47
+            },
+            {
+              "name": "colorConfig",
+              "line": 71
+            },
+            {
+              "name": "color",
+              "line": 88
+            },
+            {
+              "name": "tooltipLabel",
+              "line": 136
+            },
+            {
+              "name": "key",
+              "line": 142
+            },
+            {
+              "name": "itemConfig",
+              "line": 143
+            },
+            {
+              "name": "value",
+              "line": 144
+            },
+            {
+              "name": "nestLabel",
+              "line": 176
+            },
+            {
+              "name": "key",
+              "line": 189
+            },
+            {
+              "name": "itemConfig",
+              "line": 190
+            },
+            {
+              "name": "indicatorColor",
+              "line": 191
+            },
+            {
+              "name": "key",
+              "line": 289
+            },
+            {
+              "name": "itemConfig",
+              "line": 290
+            },
+            {
+              "name": "getPayloadConfigFromPayload",
+              "line": 320
+            },
+            {
+              "name": "payloadPayload",
+              "line": 329
+            }
+          ],
+          "recommendation": "Extract 17 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/components/ui/chart.tsx",
+          "description": "Main chart component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/hooks/useChart.ts",
+          "description": "Custom hook: useChart",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/THEMES.tsx",
+          "description": "Sub-component: THEMES",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartContext.tsx",
+          "description": "Sub-component: ChartContext",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartContainer.tsx",
+          "description": "Sub-component: ChartContainer",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartStyle.tsx",
+          "description": "Sub-component: ChartStyle",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartTooltip.tsx",
+          "description": "Sub-component: ChartTooltip",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartTooltipContent.tsx",
+          "description": "Sub-component: ChartTooltipContent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartLegend.tsx",
+          "description": "Sub-component: ChartLegend",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/chart/ChartLegendContent.tsx",
+          "description": "Sub-component: ChartLegendContent",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/components/ui/utils/chart.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "context",
+            "uniqueId",
+            "chartId",
+            "colorConfig",
+            "color",
+            "tooltipLabel",
+            "key",
+            "itemConfig",
+            "value",
+            "nestLabel",
+            "key",
+            "itemConfig",
+            "indicatorColor",
+            "key",
+            "itemConfig",
+            "getPayloadConfigFromPayload",
+            "payloadPayload"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/pages/weekly-summary.tsx",
+    "stats": {
+      "totalLines": 321,
+      "imports": 9,
+      "functions": [
+        {
+          "name": "generateSummaryMutation",
+          "line": 47
+        },
+        {
+          "name": "response",
+          "line": 49
+        },
+        {
+          "name": "getWeekData",
+          "line": 70
+        },
+        {
+          "name": "now",
+          "line": 71
+        },
+        {
+          "name": "currentDay",
+          "line": 72
+        },
+        {
+          "name": "daysToSubtract",
+          "line": 73
+        },
+        {
+          "name": "weekStart",
+          "line": 75
+        },
+        {
+          "name": "weekEnd",
+          "line": 79
+        },
+        {
+          "name": "weekLogs",
+          "line": 89
+        },
+        {
+          "name": "logDate",
+          "line": 90
+        },
+        {
+          "name": "weekTasks",
+          "line": 94
+        },
+        {
+          "name": "taskDate",
+          "line": 95
+        },
+        {
+          "name": "completedTasks",
+          "line": 100
+        },
+        {
+          "name": "totalExp",
+          "line": 101
+        },
+        {
+          "name": "skillExpMap",
+          "line": 106
+        },
+        {
+          "name": "current",
+          "line": 110
+        },
+        {
+          "name": "topSkills",
+          "line": 114
+        },
+        {
+          "name": "skill",
+          "line": 116
+        },
+        {
+          "name": "formatWeekRange",
+          "line": 123
+        },
+        {
+          "name": "getWeekLabel",
+          "line": 127
+        }
+      ],
+      "components": [
+        {
+          "name": "WeeklySummary",
+          "line": 30
+        }
+      ],
+      "hooks": [],
+      "complexity": 2
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 321 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "generateSummaryMutation",
+            "line": 47
+          },
+          {
+            "name": "response",
+            "line": 49
+          },
+          {
+            "name": "getWeekData",
+            "line": 70
+          },
+          {
+            "name": "now",
+            "line": 71
+          },
+          {
+            "name": "currentDay",
+            "line": 72
+          },
+          {
+            "name": "daysToSubtract",
+            "line": 73
+          },
+          {
+            "name": "weekStart",
+            "line": 75
+          },
+          {
+            "name": "weekEnd",
+            "line": 79
+          },
+          {
+            "name": "weekLogs",
+            "line": 89
+          },
+          {
+            "name": "logDate",
+            "line": 90
+          },
+          {
+            "name": "weekTasks",
+            "line": 94
+          },
+          {
+            "name": "taskDate",
+            "line": 95
+          },
+          {
+            "name": "completedTasks",
+            "line": 100
+          },
+          {
+            "name": "totalExp",
+            "line": 101
+          },
+          {
+            "name": "skillExpMap",
+            "line": 106
+          },
+          {
+            "name": "current",
+            "line": 110
+          },
+          {
+            "name": "topSkills",
+            "line": 114
+          },
+          {
+            "name": "skill",
+            "line": 116
+          },
+          {
+            "name": "formatWeekRange",
+            "line": 123
+          },
+          {
+            "name": "getWeekLabel",
+            "line": 127
+          }
+        ],
+        "recommendation": "Extract 20 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/pages/weekly-summary.tsx",
+      "stats": {
+        "totalLines": 321,
+        "imports": 9,
+        "functions": [
+          {
+            "name": "generateSummaryMutation",
+            "line": 47
+          },
+          {
+            "name": "response",
+            "line": 49
+          },
+          {
+            "name": "getWeekData",
+            "line": 70
+          },
+          {
+            "name": "now",
+            "line": 71
+          },
+          {
+            "name": "currentDay",
+            "line": 72
+          },
+          {
+            "name": "daysToSubtract",
+            "line": 73
+          },
+          {
+            "name": "weekStart",
+            "line": 75
+          },
+          {
+            "name": "weekEnd",
+            "line": 79
+          },
+          {
+            "name": "weekLogs",
+            "line": 89
+          },
+          {
+            "name": "logDate",
+            "line": 90
+          },
+          {
+            "name": "weekTasks",
+            "line": 94
+          },
+          {
+            "name": "taskDate",
+            "line": 95
+          },
+          {
+            "name": "completedTasks",
+            "line": 100
+          },
+          {
+            "name": "totalExp",
+            "line": 101
+          },
+          {
+            "name": "skillExpMap",
+            "line": 106
+          },
+          {
+            "name": "current",
+            "line": 110
+          },
+          {
+            "name": "topSkills",
+            "line": 114
+          },
+          {
+            "name": "skill",
+            "line": 116
+          },
+          {
+            "name": "formatWeekRange",
+            "line": 123
+          },
+          {
+            "name": "getWeekLabel",
+            "line": 127
+          }
+        ],
+        "components": [
+          {
+            "name": "WeeklySummary",
+            "line": 30
+          }
+        ],
+        "hooks": [],
+        "complexity": 2
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 321 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "generateSummaryMutation",
+              "line": 47
+            },
+            {
+              "name": "response",
+              "line": 49
+            },
+            {
+              "name": "getWeekData",
+              "line": 70
+            },
+            {
+              "name": "now",
+              "line": 71
+            },
+            {
+              "name": "currentDay",
+              "line": 72
+            },
+            {
+              "name": "daysToSubtract",
+              "line": 73
+            },
+            {
+              "name": "weekStart",
+              "line": 75
+            },
+            {
+              "name": "weekEnd",
+              "line": 79
+            },
+            {
+              "name": "weekLogs",
+              "line": 89
+            },
+            {
+              "name": "logDate",
+              "line": 90
+            },
+            {
+              "name": "weekTasks",
+              "line": 94
+            },
+            {
+              "name": "taskDate",
+              "line": 95
+            },
+            {
+              "name": "completedTasks",
+              "line": 100
+            },
+            {
+              "name": "totalExp",
+              "line": 101
+            },
+            {
+              "name": "skillExpMap",
+              "line": 106
+            },
+            {
+              "name": "current",
+              "line": 110
+            },
+            {
+              "name": "topSkills",
+              "line": 114
+            },
+            {
+              "name": "skill",
+              "line": 116
+            },
+            {
+              "name": "formatWeekRange",
+              "line": 123
+            },
+            {
+              "name": "getWeekLabel",
+              "line": 127
+            }
+          ],
+          "recommendation": "Extract 20 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/pages/weekly-summary.tsx",
+          "description": "Main weekly-summary component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/pages/weekly-summary/WeeklySummary.tsx",
+          "description": "Sub-component: WeeklySummary",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/pages/utils/weekly-summary.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "generateSummaryMutation",
+            "response",
+            "getWeekData",
+            "now",
+            "currentDay",
+            "daysToSubtract",
+            "weekStart",
+            "weekEnd",
+            "weekLogs",
+            "logDate",
+            "weekTasks",
+            "taskDate",
+            "completedTasks",
+            "totalExp",
+            "skillExpMap",
+            "current",
+            "topSkills",
+            "skill",
+            "formatWeekRange",
+            "getWeekLabel"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/pages/skill-tree.tsx",
+    "stats": {
+      "totalLines": 348,
+      "imports": 9,
+      "functions": [
+        {
+          "name": "queryClient",
+          "line": 40
+        },
+        {
+          "name": "response",
+          "line": 49
+        },
+        {
+          "name": "error",
+          "line": 56
+        },
+        {
+          "name": "getSkillIcon",
+          "line": 82
+        },
+        {
+          "name": "iconMap",
+          "line": 83
+        },
+        {
+          "name": "getPrestigeIcon",
+          "line": 96
+        },
+        {
+          "name": "calculateExpForLevel",
+          "line": 103
+        },
+        {
+          "name": "skillsArray",
+          "line": 115
+        },
+        {
+          "name": "totalLevel",
+          "line": 117
+        },
+        {
+          "name": "totalExp",
+          "line": 118
+        },
+        {
+          "name": "totalTalentPoints",
+          "line": 119
+        },
+        {
+          "name": "progress",
+          "line": 183
+        }
+      ],
+      "components": [
+        {
+          "name": "SkillTree",
+          "line": 38
+        }
+      ],
+      "hooks": [
+        {
+          "name": "useTalentMutation",
+          "line": 47
+        },
+        {
+          "name": "useTalentPoint",
+          "line": 78
+        }
+      ],
+      "complexity": 6
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 348 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "queryClient",
+            "line": 40
+          },
+          {
+            "name": "response",
+            "line": 49
+          },
+          {
+            "name": "error",
+            "line": 56
+          },
+          {
+            "name": "getSkillIcon",
+            "line": 82
+          },
+          {
+            "name": "iconMap",
+            "line": 83
+          },
+          {
+            "name": "getPrestigeIcon",
+            "line": 96
+          },
+          {
+            "name": "calculateExpForLevel",
+            "line": 103
+          },
+          {
+            "name": "skillsArray",
+            "line": 115
+          },
+          {
+            "name": "totalLevel",
+            "line": 117
+          },
+          {
+            "name": "totalExp",
+            "line": 118
+          },
+          {
+            "name": "totalTalentPoints",
+            "line": 119
+          },
+          {
+            "name": "progress",
+            "line": 183
+          }
+        ],
+        "recommendation": "Extract 12 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/pages/skill-tree.tsx",
+      "stats": {
+        "totalLines": 348,
+        "imports": 9,
+        "functions": [
+          {
+            "name": "queryClient",
+            "line": 40
+          },
+          {
+            "name": "response",
+            "line": 49
+          },
+          {
+            "name": "error",
+            "line": 56
+          },
+          {
+            "name": "getSkillIcon",
+            "line": 82
+          },
+          {
+            "name": "iconMap",
+            "line": 83
+          },
+          {
+            "name": "getPrestigeIcon",
+            "line": 96
+          },
+          {
+            "name": "calculateExpForLevel",
+            "line": 103
+          },
+          {
+            "name": "skillsArray",
+            "line": 115
+          },
+          {
+            "name": "totalLevel",
+            "line": 117
+          },
+          {
+            "name": "totalExp",
+            "line": 118
+          },
+          {
+            "name": "totalTalentPoints",
+            "line": 119
+          },
+          {
+            "name": "progress",
+            "line": 183
+          }
+        ],
+        "components": [
+          {
+            "name": "SkillTree",
+            "line": 38
+          }
+        ],
+        "hooks": [
+          {
+            "name": "useTalentMutation",
+            "line": 47
+          },
+          {
+            "name": "useTalentPoint",
+            "line": 78
+          }
+        ],
+        "complexity": 6
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 348 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "queryClient",
+              "line": 40
+            },
+            {
+              "name": "response",
+              "line": 49
+            },
+            {
+              "name": "error",
+              "line": 56
+            },
+            {
+              "name": "getSkillIcon",
+              "line": 82
+            },
+            {
+              "name": "iconMap",
+              "line": 83
+            },
+            {
+              "name": "getPrestigeIcon",
+              "line": 96
+            },
+            {
+              "name": "calculateExpForLevel",
+              "line": 103
+            },
+            {
+              "name": "skillsArray",
+              "line": 115
+            },
+            {
+              "name": "totalLevel",
+              "line": 117
+            },
+            {
+              "name": "totalExp",
+              "line": 118
+            },
+            {
+              "name": "totalTalentPoints",
+              "line": 119
+            },
+            {
+              "name": "progress",
+              "line": 183
+            }
+          ],
+          "recommendation": "Extract 12 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/pages/skill-tree.tsx",
+          "description": "Main skill-tree component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/pages/hooks/useTalentMutation.ts",
+          "description": "Custom hook: useTalentMutation",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/pages/hooks/useTalentPoint.ts",
+          "description": "Custom hook: useTalentPoint",
+          "contains": [
+            "Hook logic",
+            "Hook tests"
+          ]
+        },
+        {
+          "path": "client/src/pages/skill-tree/SkillTree.tsx",
+          "description": "Sub-component: SkillTree",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/pages/utils/skill-tree.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "queryClient",
+            "response",
+            "error",
+            "getSkillIcon",
+            "iconMap",
+            "getPrestigeIcon",
+            "calculateExpForLevel",
+            "skillsArray",
+            "totalLevel",
+            "totalExp",
+            "totalTalentPoints",
+            "progress"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/pages/growth-log.tsx",
+    "stats": {
+      "totalLines": 474,
+      "imports": 9,
+      "functions": [
+        {
+          "name": "createTestDataMutation",
+          "line": 17
+        },
+        {
+          "name": "response",
+          "line": 19
+        },
+        {
+          "name": "checkDiagnosticsMutation",
+          "line": 55
+        },
+        {
+          "name": "response",
+          "line": 57
+        },
+        {
+          "name": "getSkillName",
+          "line": 97
+        },
+        {
+          "name": "skill",
+          "line": 99
+        },
+        {
+          "name": "getSkillColor",
+          "line": 103
+        },
+        {
+          "name": "skill",
+          "line": 105
+        },
+        {
+          "name": "getTaskTitle",
+          "line": 109
+        },
+        {
+          "name": "task",
+          "line": 111
+        },
+        {
+          "name": "processedLogs",
+          "line": 116
+        },
+        {
+          "name": "weekAgo",
+          "line": 119
+        },
+        {
+          "name": "monthAgo",
+          "line": 124
+        },
+        {
+          "name": "groupedLogs",
+          "line": 132
+        },
+        {
+          "name": "dateKey",
+          "line": 133
+        },
+        {
+          "name": "sortedDates",
+          "line": 141
+        },
+        {
+          "name": "formatDate",
+          "line": 147
+        },
+        {
+          "name": "date",
+          "line": 148
+        },
+        {
+          "name": "today",
+          "line": 149
+        },
+        {
+          "name": "yesterday",
+          "line": 150
+        },
+        {
+          "name": "formatTime",
+          "line": 162
+        },
+        {
+          "name": "getActionIcon",
+          "line": 169
+        },
+        {
+          "name": "getActionLabel",
+          "line": 189
+        },
+        {
+          "name": "getDailyStats",
+          "line": 211
+        },
+        {
+          "name": "completedTasks",
+          "line": 213
+        },
+        {
+          "name": "totalExp",
+          "line": 218
+        },
+        {
+          "name": "skillsImproved",
+          "line": 223
+        },
+        {
+          "name": "levelUps",
+          "line": 229
+        },
+        {
+          "name": "dateLogs",
+          "line": 364
+        },
+        {
+          "name": "stats",
+          "line": 365
+        },
+        {
+          "name": "isToday",
+          "line": 366
+        }
+      ],
+      "components": [
+        {
+          "name": "GrowthLog",
+          "line": 11
+        }
+      ],
+      "hooks": [],
+      "complexity": 12
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 474 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "createTestDataMutation",
+            "line": 17
+          },
+          {
+            "name": "response",
+            "line": 19
+          },
+          {
+            "name": "checkDiagnosticsMutation",
+            "line": 55
+          },
+          {
+            "name": "response",
+            "line": 57
+          },
+          {
+            "name": "getSkillName",
+            "line": 97
+          },
+          {
+            "name": "skill",
+            "line": 99
+          },
+          {
+            "name": "getSkillColor",
+            "line": 103
+          },
+          {
+            "name": "skill",
+            "line": 105
+          },
+          {
+            "name": "getTaskTitle",
+            "line": 109
+          },
+          {
+            "name": "task",
+            "line": 111
+          },
+          {
+            "name": "processedLogs",
+            "line": 116
+          },
+          {
+            "name": "weekAgo",
+            "line": 119
+          },
+          {
+            "name": "monthAgo",
+            "line": 124
+          },
+          {
+            "name": "groupedLogs",
+            "line": 132
+          },
+          {
+            "name": "dateKey",
+            "line": 133
+          },
+          {
+            "name": "sortedDates",
+            "line": 141
+          },
+          {
+            "name": "formatDate",
+            "line": 147
+          },
+          {
+            "name": "date",
+            "line": 148
+          },
+          {
+            "name": "today",
+            "line": 149
+          },
+          {
+            "name": "yesterday",
+            "line": 150
+          },
+          {
+            "name": "formatTime",
+            "line": 162
+          },
+          {
+            "name": "getActionIcon",
+            "line": 169
+          },
+          {
+            "name": "getActionLabel",
+            "line": 189
+          },
+          {
+            "name": "getDailyStats",
+            "line": 211
+          },
+          {
+            "name": "completedTasks",
+            "line": 213
+          },
+          {
+            "name": "totalExp",
+            "line": 218
+          },
+          {
+            "name": "skillsImproved",
+            "line": 223
+          },
+          {
+            "name": "levelUps",
+            "line": 229
+          },
+          {
+            "name": "dateLogs",
+            "line": 364
+          },
+          {
+            "name": "stats",
+            "line": 365
+          },
+          {
+            "name": "isToday",
+            "line": 366
+          }
+        ],
+        "recommendation": "Extract 31 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/pages/growth-log.tsx",
+      "stats": {
+        "totalLines": 474,
+        "imports": 9,
+        "functions": [
+          {
+            "name": "createTestDataMutation",
+            "line": 17
+          },
+          {
+            "name": "response",
+            "line": 19
+          },
+          {
+            "name": "checkDiagnosticsMutation",
+            "line": 55
+          },
+          {
+            "name": "response",
+            "line": 57
+          },
+          {
+            "name": "getSkillName",
+            "line": 97
+          },
+          {
+            "name": "skill",
+            "line": 99
+          },
+          {
+            "name": "getSkillColor",
+            "line": 103
+          },
+          {
+            "name": "skill",
+            "line": 105
+          },
+          {
+            "name": "getTaskTitle",
+            "line": 109
+          },
+          {
+            "name": "task",
+            "line": 111
+          },
+          {
+            "name": "processedLogs",
+            "line": 116
+          },
+          {
+            "name": "weekAgo",
+            "line": 119
+          },
+          {
+            "name": "monthAgo",
+            "line": 124
+          },
+          {
+            "name": "groupedLogs",
+            "line": 132
+          },
+          {
+            "name": "dateKey",
+            "line": 133
+          },
+          {
+            "name": "sortedDates",
+            "line": 141
+          },
+          {
+            "name": "formatDate",
+            "line": 147
+          },
+          {
+            "name": "date",
+            "line": 148
+          },
+          {
+            "name": "today",
+            "line": 149
+          },
+          {
+            "name": "yesterday",
+            "line": 150
+          },
+          {
+            "name": "formatTime",
+            "line": 162
+          },
+          {
+            "name": "getActionIcon",
+            "line": 169
+          },
+          {
+            "name": "getActionLabel",
+            "line": 189
+          },
+          {
+            "name": "getDailyStats",
+            "line": 211
+          },
+          {
+            "name": "completedTasks",
+            "line": 213
+          },
+          {
+            "name": "totalExp",
+            "line": 218
+          },
+          {
+            "name": "skillsImproved",
+            "line": 223
+          },
+          {
+            "name": "levelUps",
+            "line": 229
+          },
+          {
+            "name": "dateLogs",
+            "line": 364
+          },
+          {
+            "name": "stats",
+            "line": 365
+          },
+          {
+            "name": "isToday",
+            "line": 366
+          }
+        ],
+        "components": [
+          {
+            "name": "GrowthLog",
+            "line": 11
+          }
+        ],
+        "hooks": [],
+        "complexity": 12
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 474 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "createTestDataMutation",
+              "line": 17
+            },
+            {
+              "name": "response",
+              "line": 19
+            },
+            {
+              "name": "checkDiagnosticsMutation",
+              "line": 55
+            },
+            {
+              "name": "response",
+              "line": 57
+            },
+            {
+              "name": "getSkillName",
+              "line": 97
+            },
+            {
+              "name": "skill",
+              "line": 99
+            },
+            {
+              "name": "getSkillColor",
+              "line": 103
+            },
+            {
+              "name": "skill",
+              "line": 105
+            },
+            {
+              "name": "getTaskTitle",
+              "line": 109
+            },
+            {
+              "name": "task",
+              "line": 111
+            },
+            {
+              "name": "processedLogs",
+              "line": 116
+            },
+            {
+              "name": "weekAgo",
+              "line": 119
+            },
+            {
+              "name": "monthAgo",
+              "line": 124
+            },
+            {
+              "name": "groupedLogs",
+              "line": 132
+            },
+            {
+              "name": "dateKey",
+              "line": 133
+            },
+            {
+              "name": "sortedDates",
+              "line": 141
+            },
+            {
+              "name": "formatDate",
+              "line": 147
+            },
+            {
+              "name": "date",
+              "line": 148
+            },
+            {
+              "name": "today",
+              "line": 149
+            },
+            {
+              "name": "yesterday",
+              "line": 150
+            },
+            {
+              "name": "formatTime",
+              "line": 162
+            },
+            {
+              "name": "getActionIcon",
+              "line": 169
+            },
+            {
+              "name": "getActionLabel",
+              "line": 189
+            },
+            {
+              "name": "getDailyStats",
+              "line": 211
+            },
+            {
+              "name": "completedTasks",
+              "line": 213
+            },
+            {
+              "name": "totalExp",
+              "line": 218
+            },
+            {
+              "name": "skillsImproved",
+              "line": 223
+            },
+            {
+              "name": "levelUps",
+              "line": 229
+            },
+            {
+              "name": "dateLogs",
+              "line": 364
+            },
+            {
+              "name": "stats",
+              "line": 365
+            },
+            {
+              "name": "isToday",
+              "line": 366
+            }
+          ],
+          "recommendation": "Extract 31 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/pages/growth-log.tsx",
+          "description": "Main growth-log component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/pages/growth-log/GrowthLog.tsx",
+          "description": "Sub-component: GrowthLog",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/pages/utils/growth-log.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "createTestDataMutation",
+            "response",
+            "checkDiagnosticsMutation",
+            "response",
+            "getSkillName",
+            "skill",
+            "getSkillColor",
+            "skill",
+            "getTaskTitle",
+            "task",
+            "processedLogs",
+            "weekAgo",
+            "monthAgo",
+            "groupedLogs",
+            "dateKey",
+            "sortedDates",
+            "formatDate",
+            "date",
+            "today",
+            "yesterday",
+            "formatTime",
+            "getActionIcon",
+            "getActionLabel",
+            "getDailyStats",
+            "completedTasks",
+            "totalExp",
+            "skillsImproved",
+            "levelUps",
+            "dateLogs",
+            "stats",
+            "isToday"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "file": "client/src/pages/goals.tsx",
+    "stats": {
+      "totalLines": 426,
+      "imports": 12,
+      "functions": [
+        {
+          "name": "queryClient",
+          "line": 38
+        },
+        {
+          "name": "updateGoalMutation",
+          "line": 49
+        },
+        {
+          "name": "deleteGoalMutation",
+          "line": 82
+        },
+        {
+          "name": "updateMilestoneMutation",
+          "line": 103
+        },
+        {
+          "name": "previousGoals",
+          "line": 112
+        },
+        {
+          "name": "handleEditGoal",
+          "line": 155
+        },
+        {
+          "name": "toggleGoalCompletion",
+          "line": 160
+        },
+        {
+          "name": "handleDeleteGoal",
+          "line": 167
+        },
+        {
+          "name": "calculateProgress",
+          "line": 177
+        },
+        {
+          "name": "completedMilestones",
+          "line": 179
+        },
+        {
+          "name": "calculateProgress",
+          "line": 292
+        },
+        {
+          "name": "completedMilestones",
+          "line": 294
+        },
+        {
+          "name": "progress",
+          "line": 298
+        },
+        {
+          "name": "allMilestonesCompleted",
+          "line": 299
+        }
+      ],
+      "components": [
+        {
+          "name": "Goals",
+          "line": 36
+        },
+        {
+          "name": "GoalCard",
+          "line": 279
+        }
+      ],
+      "hooks": [],
+      "complexity": 10
+    },
+    "suggestions": [
+      {
+        "type": "split",
+        "reason": "File has 426 lines (max recommended: 300)",
+        "recommendation": "Consider splitting into smaller components"
+      },
+      {
+        "type": "extract-components",
+        "items": [
+          {
+            "name": "Goals",
+            "line": 36
+          },
+          {
+            "name": "GoalCard",
+            "line": 279
+          }
+        ],
+        "recommendation": "Extract 2 sub-components to separate files"
+      },
+      {
+        "type": "extract-utils",
+        "items": [
+          {
+            "name": "queryClient",
+            "line": 38
+          },
+          {
+            "name": "updateGoalMutation",
+            "line": 49
+          },
+          {
+            "name": "deleteGoalMutation",
+            "line": 82
+          },
+          {
+            "name": "updateMilestoneMutation",
+            "line": 103
+          },
+          {
+            "name": "previousGoals",
+            "line": 112
+          },
+          {
+            "name": "handleEditGoal",
+            "line": 155
+          },
+          {
+            "name": "toggleGoalCompletion",
+            "line": 160
+          },
+          {
+            "name": "handleDeleteGoal",
+            "line": 167
+          },
+          {
+            "name": "calculateProgress",
+            "line": 177
+          },
+          {
+            "name": "completedMilestones",
+            "line": 179
+          },
+          {
+            "name": "calculateProgress",
+            "line": 292
+          },
+          {
+            "name": "completedMilestones",
+            "line": 294
+          },
+          {
+            "name": "progress",
+            "line": 298
+          },
+          {
+            "name": "allMilestonesCompleted",
+            "line": 299
+          }
+        ],
+        "recommendation": "Extract 14 utility functions to a utils file"
+      }
+    ],
+    "plan": {
+      "originalFile": "client/src/pages/goals.tsx",
+      "stats": {
+        "totalLines": 426,
+        "imports": 12,
+        "functions": [
+          {
+            "name": "queryClient",
+            "line": 38
+          },
+          {
+            "name": "updateGoalMutation",
+            "line": 49
+          },
+          {
+            "name": "deleteGoalMutation",
+            "line": 82
+          },
+          {
+            "name": "updateMilestoneMutation",
+            "line": 103
+          },
+          {
+            "name": "previousGoals",
+            "line": 112
+          },
+          {
+            "name": "handleEditGoal",
+            "line": 155
+          },
+          {
+            "name": "toggleGoalCompletion",
+            "line": 160
+          },
+          {
+            "name": "handleDeleteGoal",
+            "line": 167
+          },
+          {
+            "name": "calculateProgress",
+            "line": 177
+          },
+          {
+            "name": "completedMilestones",
+            "line": 179
+          },
+          {
+            "name": "calculateProgress",
+            "line": 292
+          },
+          {
+            "name": "completedMilestones",
+            "line": 294
+          },
+          {
+            "name": "progress",
+            "line": 298
+          },
+          {
+            "name": "allMilestonesCompleted",
+            "line": 299
+          }
+        ],
+        "components": [
+          {
+            "name": "Goals",
+            "line": 36
+          },
+          {
+            "name": "GoalCard",
+            "line": 279
+          }
+        ],
+        "hooks": [],
+        "complexity": 10
+      },
+      "suggestions": [
+        {
+          "type": "split",
+          "reason": "File has 426 lines (max recommended: 300)",
+          "recommendation": "Consider splitting into smaller components"
+        },
+        {
+          "type": "extract-components",
+          "items": [
+            {
+              "name": "Goals",
+              "line": 36
+            },
+            {
+              "name": "GoalCard",
+              "line": 279
+            }
+          ],
+          "recommendation": "Extract 2 sub-components to separate files"
+        },
+        {
+          "type": "extract-utils",
+          "items": [
+            {
+              "name": "queryClient",
+              "line": 38
+            },
+            {
+              "name": "updateGoalMutation",
+              "line": 49
+            },
+            {
+              "name": "deleteGoalMutation",
+              "line": 82
+            },
+            {
+              "name": "updateMilestoneMutation",
+              "line": 103
+            },
+            {
+              "name": "previousGoals",
+              "line": 112
+            },
+            {
+              "name": "handleEditGoal",
+              "line": 155
+            },
+            {
+              "name": "toggleGoalCompletion",
+              "line": 160
+            },
+            {
+              "name": "handleDeleteGoal",
+              "line": 167
+            },
+            {
+              "name": "calculateProgress",
+              "line": 177
+            },
+            {
+              "name": "completedMilestones",
+              "line": 179
+            },
+            {
+              "name": "calculateProgress",
+              "line": 292
+            },
+            {
+              "name": "completedMilestones",
+              "line": 294
+            },
+            {
+              "name": "progress",
+              "line": 298
+            },
+            {
+              "name": "allMilestonesCompleted",
+              "line": 299
+            }
+          ],
+          "recommendation": "Extract 14 utility functions to a utils file"
+        }
+      ],
+      "proposedStructure": [
+        {
+          "path": "client/src/pages/goals.tsx",
+          "description": "Main goals component (< 300 lines)",
+          "contains": [
+            "Main component logic",
+            "Component state",
+            "Main render"
+          ]
+        },
+        {
+          "path": "client/src/pages/goals/Goals.tsx",
+          "description": "Sub-component: Goals",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/pages/goals/GoalCard.tsx",
+          "description": "Sub-component: GoalCard",
+          "contains": [
+            "Component logic",
+            "Component styles"
+          ]
+        },
+        {
+          "path": "client/src/pages/utils/goals.utils.ts",
+          "description": "Utility functions",
+          "contains": [
+            "queryClient",
+            "updateGoalMutation",
+            "deleteGoalMutation",
+            "updateMilestoneMutation",
+            "previousGoals",
+            "handleEditGoal",
+            "toggleGoalCompletion",
+            "handleDeleteGoal",
+            "calculateProgress",
+            "completedMilestones",
+            "calculateProgress",
+            "completedMilestones",
+            "progress",
+            "allMilestonesCompleted"
+          ]
+        }
+      ]
+    }
+  }
+]

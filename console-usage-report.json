@@ -1,0 +1,4303 @@
+{
+  "stats": {
+    "byMethod": {
+      "console.log": 320,
+      "console.info": 3,
+      "console.warn": 22,
+      "console.error": 255,
+      "console.debug": 1,
+      "console.time": 0,
+      "console.timeEnd": 0,
+      "console.group": 2,
+      "console.groupEnd": 1,
+      "console.table": 1,
+      "console.trace": 0
+    },
+    "byCategory": {
+      "general": 327,
+      "error": 271,
+      "debug": 5,
+      "performance": 2
+    },
+    "byFile": {
+      "client/src/pages/growth-log.tsx": 11,
+      "client/src/pages/goals.tsx": 2,
+      "client/src/pages/dashboard.tsx": 1,
+      "client/src/lib/storage.ts": 4,
+      "client/src/lib/persistent-storage.ts": 4,
+      "client/src/lib/logger.ts": 13,
+      "client/src/lib/api.ts": 1,
+      "client/src/hooks/use-storage.ts": 2,
+      "client/src/hooks/use-smart-batch-data.ts": 3,
+      "client/src/hooks/use-batch-data.ts": 2,
+      "client/src/components/user-state-selector.tsx": 1,
+      "client/src/components/unified-rpg-task-manager.tsx": 44,
+      "client/src/components/templates-section.tsx": 3,
+      "client/src/components/task-recommendations.tsx": 4,
+      "client/src/components/smart-recommendations.tsx": 2,
+      "client/src/components/pomodoro-timer.tsx": 1,
+      "client/src/components/performance-monitoring.tsx": 2,
+      "client/src/components/intelligent-goal-creator.tsx": 1,
+      "client/src/components/global-floating-timer.tsx": 5,
+      "client/src/components/error-boundary.tsx": 1,
+      "client/src/components/ai-proactive-suggestions.tsx": 1,
+      "client/src/components/ai-floating-button.tsx": 1,
+      "server/vite.ts": 6,
+      "server/test-db-connection.ts": 10,
+      "server/storage.ts": 49,
+      "server/startup-migrations.ts": 15,
+      "server/startup-check.ts": 18,
+      "server/simpleAuth.ts": 32,
+      "server/routes.ts": 264,
+      "server/recommendationEngine.ts": 2,
+      "server/mock-storage.ts": 1,
+      "server/mobile-routes.ts": 8,
+      "server/index.ts": 30,
+      "server/habit-fix.ts": 7,
+      "server/fix-activity-logs.ts": 18,
+      "server/db.ts": 11,
+      "server/db-pool.ts": 10,
+      "server/ai.ts": 8,
+      "server/utils/logger.ts": 6,
+      "server/middleware/test-endpoint-security.ts": 1
+    },
+    "total": 605
+  },
+  "details": [
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 23,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Test data creation response:', data);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 25,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Diagnostics:', data.diagnostics);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 45,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Failed to create test data:\", error);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 61,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Activity logs diagnostics:\", data);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 68,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Diagnostics failed:\", error);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 301,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Logs data:', logs);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 302,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Logs loading:', logsLoading);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 303,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log('Logs error:', logsError);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 342,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Empty logs state - diagnostics clicked');"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 343,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Current logs:', logs);"
+    },
+    {
+      "file": "client/src/pages/growth-log.tsx",
+      "line": 344,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log('Query state:', { logsLoading, logsError });"
+    },
+    {
+      "file": "client/src/pages/goals.tsx",
+      "line": 62,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Goal update error:\", error);"
+    },
+    {
+      "file": "client/src/pages/goals.tsx",
+      "line": 157,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Edit goal:\", goal);"
+    },
+    {
+      "file": "client/src/pages/dashboard.tsx",
+      "line": 46,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Profile save failed:', error);"
+    },
+    {
+      "file": "client/src/lib/storage.ts",
+      "line": 7,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error getting ${key} from localStorage:`, error);"
+    },
+    {
+      "file": "client/src/lib/storage.ts",
+      "line": 16,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error setting ${key} in localStorage:`, error);"
+    },
+    {
+      "file": "client/src/lib/storage.ts",
+      "line": 24,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error removing ${key} from localStorage:`, error);"
+    },
+    {
+      "file": "client/src/lib/storage.ts",
+      "line": 32,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error clearing localStorage:', error);"
+    },
+    {
+      "file": "client/src/lib/persistent-storage.ts",
+      "line": 25,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Failed to save to localStorage:', error);"
+    },
+    {
+      "file": "client/src/lib/persistent-storage.ts",
+      "line": 50,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Failed to read from localStorage:', error);"
+    },
+    {
+      "file": "client/src/lib/persistent-storage.ts",
+      "line": 59,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Failed to remove from localStorage:', error);"
+    },
+    {
+      "file": "client/src/lib/persistent-storage.ts",
+      "line": 75,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Failed to clear localStorage:', error);"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 68,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log("
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 78,
+      "method": "console.info",
+      "category": "general",
+      "content": "console.info("
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 88,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn("
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 98,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error("
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 104,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error details:', error);"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 112,
+      "method": "console.group",
+      "category": "general",
+      "content": "console.group(label);"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 114,
+      "method": "console.group",
+      "category": "general",
+      "content": "console.groupEnd();"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 114,
+      "method": "console.groupEnd",
+      "category": "general",
+      "content": "console.groupEnd();"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 135,
+      "method": "console.table",
+      "category": "general",
+      "content": "console.table(data, columns);"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 162,
+      "method": "console.log",
+      "category": "general",
+      "content": "// Helper function to replace console.log in components"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 165,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log = () => {};"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 166,
+      "method": "console.info",
+      "category": "general",
+      "content": "console.info = () => {};"
+    },
+    {
+      "file": "client/src/lib/logger.ts",
+      "line": 167,
+      "method": "console.debug",
+      "category": "debug",
+      "content": "console.debug = () => {};"
+    },
+    {
+      "file": "client/src/lib/api.ts",
+      "line": 57,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Token refresh failed:', error);"
+    },
+    {
+      "file": "client/src/hooks/use-storage.ts",
+      "line": 16,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error updating localStorage key \"${key}\":`, error);"
+    },
+    {
+      "file": "client/src/hooks/use-storage.ts",
+      "line": 26,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error parsing localStorage value for key \"${key}\":`, error);"
+    },
+    {
+      "file": "client/src/hooks/use-smart-batch-data.ts",
+      "line": 17,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Batch endpoint is available');"
+    },
+    {
+      "file": "client/src/hooks/use-smart-batch-data.ts",
+      "line": 21,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Batch endpoint not available, using individual queries');"
+    },
+    {
+      "file": "client/src/hooks/use-smart-batch-data.ts",
+      "line": 25,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Batch endpoint error:', error);"
+    },
+    {
+      "file": "client/src/hooks/use-batch-data.ts",
+      "line": 26,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Batch API response:', response);"
+    },
+    {
+      "file": "client/src/hooks/use-batch-data.ts",
+      "line": 29,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Batch API error:', error);"
+    },
+    {
+      "file": "client/src/components/user-state-selector.tsx",
+      "line": 49,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error loading user state:', error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 109,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== TaskCard button clicked ===', {"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 395,
+      "method": "console.log",
+      "category": "debug",
+      "content": "console.log('=== Data Fetching Debug ===');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 396,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Query status:', {"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 404,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Query errors:', { error });"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 407,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Final data counts:', {"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 427,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Silent habit reset failed:\", error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 453,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== Task creation API response ===');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 454,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Created task:', result);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 507,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Task creation error:\", err);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 521,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== Task creation settled ===');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 522,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log('Success:', !!data && !error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 523,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Response data:', data);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 524,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log('Error:', error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 527,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Invalidating tasks query...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 532,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Tasks query invalidation complete');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 534,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to invalidate tasks query:', err);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 639,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Sending AI task creation request with:\", { description: newTask.title });"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 645,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"AI task creation response:\", response);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 681,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating intelligent task:\", error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 700,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== handleToggleComplete called ===', { taskId });"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 704,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Task not found:', taskId);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 708,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Task found:', {"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 720,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Not enough energy:', { required: requiredEnergy, current: userStats.energyBalls });"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 732,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Processing habit completion...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 735,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Calling simple-complete endpoint...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 737,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Simple-complete response:', result);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 741,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Habit completed successfully, refreshing data...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 755,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Data refresh complete');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 762,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Unexpected response format:', result);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 766,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Simple-complete endpoint failed:', error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 770,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Trying smart-complete endpoint as fallback...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 772,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Smart-complete response:', smartResult);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 775,
+      "method": "console.log",
+      "category": "debug",
+      "content": "console.log('Smart complete debug info:', smartResult.debug);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 790,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Data refresh complete (smart mode)');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 797,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('All endpoints failed:', smartError);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 806,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Processing non-habit task or uncompleting...');"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 858,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Energy restored:', data);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 869,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to restore energy:', error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 919,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"🎉 主线任务番茄钟完成！\", reward);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 922,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`💎 获得奖励: +${reward.expGained} EXP`);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 928,
+      "method": "console.error",
+      "category": "error",
+      "content": ".catch(error => console.error(\"发放目标番茄钟奖励失败:\", error));"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 933,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(completionMessage);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 1846,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error generating micro tasks:', error);"
+    },
+    {
+      "file": "client/src/components/unified-rpg-task-manager.tsx",
+      "line": 1871,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error completing micro task:', error);"
+    },
+    {
+      "file": "client/src/components/templates-section.tsx",
+      "line": 161,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Task creation failed:', error);"
+    },
+    {
+      "file": "client/src/components/templates-section.tsx",
+      "line": 183,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Goal creation failed:', error);"
+    },
+    {
+      "file": "client/src/components/templates-section.tsx",
+      "line": 216,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Creating task from template:', taskData);"
+    },
+    {
+      "file": "client/src/components/task-recommendations.tsx",
+      "line": 25,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('UserState changed:', userState);"
+    },
+    {
+      "file": "client/src/components/task-recommendations.tsx",
+      "line": 34,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Fetching recommendations...');"
+    },
+    {
+      "file": "client/src/components/task-recommendations.tsx",
+      "line": 46,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Received recommendations:', data);"
+    },
+    {
+      "file": "client/src/components/task-recommendations.tsx",
+      "line": 49,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error fetching recommendations:', error);"
+    },
+    {
+      "file": "client/src/components/smart-recommendations.tsx",
+      "line": 164,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Smart recommendation clicked:', rec.title);"
+    },
+    {
+      "file": "client/src/components/smart-recommendations.tsx",
+      "line": 170,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Executing recommendation action for:', rec.id);"
+    },
+    {
+      "file": "client/src/components/pomodoro-timer.tsx",
+      "line": 31,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Timer state change:', {"
+    },
+    {
+      "file": "client/src/components/performance-monitoring.tsx",
+      "line": 16,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('LCP:', lastEntry.startTime);"
+    },
+    {
+      "file": "client/src/components/performance-monitoring.tsx",
+      "line": 34,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('FID:', firstInputEntry.processingStart - firstInputEntry.startTime);"
+    },
+    {
+      "file": "client/src/components/intelligent-goal-creator.tsx",
+      "line": 39,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"创建目标失败:\", error);"
+    },
+    {
+      "file": "client/src/components/global-floating-timer.tsx",
+      "line": 16,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('setFloatingTimer called with:', data);"
+    },
+    {
+      "file": "client/src/components/global-floating-timer.tsx",
+      "line": 28,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('GlobalFloatingTimer mounted');"
+    },
+    {
+      "file": "client/src/components/global-floating-timer.tsx",
+      "line": 35,
+      "method": "console.log",
+      "category": "performance",
+      "content": "console.log('GlobalFloatingTimer timerData changed:', timerData);"
+    },
+    {
+      "file": "client/src/components/global-floating-timer.tsx",
+      "line": 45,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('GlobalFloatingTimer: not rendering -',"
+    },
+    {
+      "file": "client/src/components/global-floating-timer.tsx",
+      "line": 61,
+      "method": "console.log",
+      "category": "performance",
+      "content": "console.log('Global floating timer clicked');"
+    },
+    {
+      "file": "client/src/components/error-boundary.tsx",
+      "line": 26,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error caught by boundary:', error, errorInfo);"
+    },
+    {
+      "file": "client/src/components/ai-proactive-suggestions.tsx",
+      "line": 83,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to fetch AI suggestions:', error);"
+    },
+    {
+      "file": "client/src/components/ai-floating-button.tsx",
+      "line": 21,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('AI Assistant button clicked!', {"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 19,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`${formattedTime} [${source}] ${message}`);"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 87,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`❌ Static files directory not found: ${distPath}`);"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 88,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Current working directory:', process.cwd());"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 89,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Available directories:', fs.readdirSync(process.cwd()));"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 94,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Contents of dist/:', fs.readdirSync(distDir));"
+    },
+    {
+      "file": "server/vite.ts",
+      "line": 102,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`✅ Serving static files from: ${distPath}`);"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 7,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Testing database connection...\");"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 11,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n1. Testing simple query...\");"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 13,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"✅ Simple query successful:\", result);"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 16,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n2. Listing tables...\");"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 23,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"✅ Tables found:\", tables.map((t: any) => t.table_name));"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 26,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n3. Querying users table...\");"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 28,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"✅ Users found:\", userList.length);"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 29,
+      "method": "console.log",
+      "category": "general",
+      "content": "userList.forEach(u => console.log(`  - ${u.id}: ${u.email}`));"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 32,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"❌ Database test failed:\", error);"
+    },
+    {
+      "file": "server/test-db-connection.ts",
+      "line": 33,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error details:\", {"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 129,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database not initialized in getUser\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 131,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 140,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database not initialized in getUserByEmail\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 142,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 151,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database not initialized in upsertUser\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 153,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 172,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database not initialized in setUserPassword\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 174,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 188,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database not initialized in getUserPassword\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 190,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 517,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Updating task ${id} with data:`, JSON.stringify(task, null, 2));"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 527,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Detected habit-specific fields, checking column names...`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 535,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Attempting standard Drizzle update...`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 542,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Update result:`, updated ? 'Success' : 'No rows updated');"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 546,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateTask] Drizzle update failed:`, drizzleError.message);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 547,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateTask] Error code:`, drizzleError.code);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 551,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Column not found, attempting raw SQL with snake_case...`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 593,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Raw SQL query:`, query);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 594,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Query values:`, [id, ...values]);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 604,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Raw SQL update successful`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 608,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] No rows updated`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 622,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Final update data:`, JSON.stringify(updateData, null, 2));"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 631,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateTask] Update result:`, updated ? 'Success' : 'No rows updated');"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 635,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateTask] Database error:`, error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 636,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateTask] Error stack:`, error.stack);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 643,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateHabitCompletion] Updating habit ${taskId} for user ${userId}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 660,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateHabitCompletion] Found columns:`, existingColumns);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 681,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(`[storage.updateHabitCompletion] No completion tracking columns found, using completed_..."
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 710,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateHabitCompletion] Executing query:`, query);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 714,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateHabitCompletion] Habit updated successfully`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 747,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.updateHabitCompletion] No habit found with id ${taskId} for user ${userId}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 754,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateHabitCompletion] Database error:`, error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 755,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateHabitCompletion] Error code:`, error.code);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 756,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.updateHabitCompletion] Error detail:`, error.detail);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 773,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error deleting task:', error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 922,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Delete goal error:', error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 971,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('createActivityLog called with:', log);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 981,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('createActivityLog result:', result);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 989,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('createActivityLog error:', error);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1250,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.consumeEnergyBalls] Consuming ${amount} energy balls for user ${userId}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1254,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[storage.consumeEnergyBalls] No stats found for user ${userId}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1258,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.consumeEnergyBalls] Current energy balls: ${stats.energyBalls}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1260,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[storage.consumeEnergyBalls] New energy balls will be: ${newEnergyBalls}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1287,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Resetting energy balls for user ${userId}: ${stats.energyBalls} -> ${stats.maxEnergyBal..."
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1301,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Energy balls reset successful for user ${userId}: ${updated.energyBalls}/${updated.maxE..."
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 1304,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Failed to reset energy balls for user ${userId}`);"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 2092,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Using DatabaseStorage\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 2095,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Database not available, using MockStorage\");"
+    },
+    {
+      "file": "server/storage.ts",
+      "line": 2099,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Failed to initialize DatabaseStorage, falling back to MockStorage:\", error);"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 9,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🔄 Running startup migrations...');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 14,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('⚠️  Database not initialized, skipping migrations');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 21,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ Database connection verified');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 23,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('❌ Database connection failed:', error);"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 29,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table exists:', activityLogsExists);"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 32,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('📋 Creating activity_logs table...');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 65,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('⚠️  Could not add user_id foreign key (may already exist)');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 84,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ activity_logs table created successfully');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 86,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('❌ Failed to create activity_logs table:', error);"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 87,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error details:', {"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 94,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ activity_logs table already exists');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 99,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ Startup migrations completed');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 101,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('❌ Error during startup migrations:', error);"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 110,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Migrations completed');"
+    },
+    {
+      "file": "server/startup-migrations.ts",
+      "line": 114,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Migration failed:', error);"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 2,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"🔍 Running startup diagnostics...\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 5,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n1️⃣ Environment Variables:\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 6,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   NODE_ENV:\", process.env.NODE_ENV || \"not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 7,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   PORT:\", process.env.PORT || \"not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 8,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   DATABASE_URL:\", process.env.DATABASE_URL ? \"✅ Set\" : \"❌ Not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 9,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   SUPABASE_DATABASE_URL:\", process.env.SUPABASE_DATABASE_URL ? \"✅ Set\" : \"❌ Not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 10,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   JWT_SECRET:\", process.env.JWT_SECRET ? \"✅ Set\" : \"❌ Not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 11,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   OPENAI_API_KEY:\", process.env.OPENAI_API_KEY ? \"✅ Set\" : \"❌ Not set\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 14,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n2️⃣ Database Connection:\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 18,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   ✅ Database initialized\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 20,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"   ❌ Database NOT initialized\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 22,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log(\"   Error:\", error.error);"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 23,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log(\"   Details:\", JSON.stringify(error.details, null, 2));"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 26,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log(\"   ❌ Failed to check database:\", (error as any).message);"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 30,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n3️⃣ Module Imports:\");"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 41,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`   ✅ ${mod.name} loaded successfully`);"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 43,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log(`   ❌ ${mod.name} failed:`, (error as any).message);"
+    },
+    {
+      "file": "server/startup-check.ts",
+      "line": 47,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"\\n✅ Startup diagnostics complete\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 94,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Registration error:\", error);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 101,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== LOGIN ATTEMPT START ===\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 102,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Request body:\", JSON.stringify(req.body));"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 103,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Environment:\", process.env.NODE_ENV);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 107,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 1: Validating input...\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 109,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Input validated successfully\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 112,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 2: Testing database connection...\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 116,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Database connection OK\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 118,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database connection FAILED:\", dbError);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 119,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database error details:\", {"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 127,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 3: Getting user by email:\", data.email);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 130,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"User not found for email:\", data.email);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 133,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"User found:\", { id: user.id, email: user.email });"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 136,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 4: Getting user password...\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 139,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"No password found for user:\", user.id);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 142,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Password hash retrieved\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 145,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 5: Verifying password...\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 148,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Invalid password for user:\", user.id);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 151,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Password verified successfully\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 154,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 6: Generating tokens...\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 156,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Tokens generated successfully\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 159,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Step 7: Sending success response\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 170,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== LOGIN ATTEMPT SUCCESS ===\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 172,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"=== LOGIN ATTEMPT FAILED ===\");"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 173,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error type:\", error?.constructor?.name);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 174,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error message:\", (error as any)?.message);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 175,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error code:\", (error as any)?.code);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 176,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error detail:\", (error as any)?.detail);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 177,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Full error object:\", JSON.stringify(error, null, 2));"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 178,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error stack:\", (error as any)?.stack);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 181,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Validation error details:\", error.errors);"
+    },
+    {
+      "file": "server/simpleAuth.ts",
+      "line": 208,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching user:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 110,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Database operation error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 116,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Health check error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 230,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Database check error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 247,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Diagnostics error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 343,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Test Habit Complete] Starting for task ${taskId}, user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 383,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Test Habit Complete] Success! Updated task:`, updatedTask);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 393,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Test Habit Complete] Error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 486,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== CREATE TEST USER START ===');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 489,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Checking if users table exists...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 492,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Users table exists');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 494,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Users table might not exist:', tableError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 512,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Creating user:', testUser.email);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 514,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('User created successfully');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 518,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('User verified:', !!verifyUser);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 527,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('=== CREATE TEST USER SUCCESS ===');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 529,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('=== CREATE TEST USER FAILED ===');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 530,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 573,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching user:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 584,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Initialized core skills for user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 593,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error initializing core skills:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 613,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching skills:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 637,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating skill:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 709,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching tasks:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 733,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating task:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 745,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Starting update...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 746,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] User: ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 747,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Updates:`, JSON.stringify(updates, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 748,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Headers:`, req.headers);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 751,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] User not authenticated properly`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 756,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Fetching current task...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 759,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Task not found`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 763,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Current task:`, JSON.stringify(currentTask, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 767,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Task belongs to different user. Task userId: ${currentTa..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 776,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Processing habit completion...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 781,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Using updateHabitCompletion method...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 785,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Habit completion successful`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 787,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] updateHabitCompletion failed:`, habitError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 788,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error code:`, habitError.code);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 789,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error detail:`, habitError.detail);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 792,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Attempting direct SQL update as fallback...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 815,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Fallback SQL update successful`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 825,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Applying additional updates:`, otherUpdates);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 830,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Regular update for habit task`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 835,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Calling storage.updateTask with updates:`, JSON.stringify(..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 846,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Awarding skill experience. SkillId: ${task.skillId}, isHab..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 851,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] ${isHabitCompletion ? 'Habit' : 'Task'} completed, skill e..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 853,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error awarding skill experience:`, error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 854,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 862,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Handling energy balls. Required: ${task.requiredEnergyBall..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 866,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] User stats:`, stats);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 869,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Creating default user stats...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 880,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Created user stats:`, stats);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 885,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Consuming energy balls for habit completion...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 889,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Consuming energy balls for task completion...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 893,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Restoring energy balls for task uncompletion...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 897,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error handling energy balls:`, error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 898,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 906,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Creating activity log...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 916,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Activity log data:`, JSON.stringify(logData, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 919,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Activity log created for ${isHabitCompletion ? 'habit' : '..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 921,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error creating activity log:`, error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 922,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${taskId}] Error stack:`, error.stack);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 927,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[PATCH /api/tasks/${taskId}] Successfully updated task, returning response...`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 931,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Zod validation error:`, error.errors);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 934,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Fatal error updating task:`, error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 935,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Error type:`, error.constructor.name);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 936,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Error message:`, error.message);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 937,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Error stack:`, error.stack);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 938,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] Request body was:`, req.body);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 939,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[PATCH /api/tasks/${req.params.id}] User ID was:`, (req.user as any)?.claims?.sub);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 986,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error deleting task:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 993,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== AI Task Creation Started ===\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 998,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"User ID:\", userId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 999,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Task description:\", description);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1002,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"No task description provided\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1007,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"User not authenticated properly\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1013,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(\"OpenAI API key not configured, using simple task creation\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1059,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Creating simple task with data:\", JSON.stringify(taskData, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1061,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Simple task created successfully:\", newTask.id);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1092,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error in simple task creation:\", simpleTaskError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1097,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Starting AI-powered task creation\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1145,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Calling OpenAI API...\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1154,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"OpenAI API response received\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1156,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Raw OpenAI response:\", rawContent);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1159,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Parsed AI analysis:\", analysis);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1161,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"OpenAI API Error:\", aiError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1162,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(\"Falling back to simple rule-based task creation\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1179,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Using fallback analysis:\", analysis);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1202,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"AI Analysis completed:\", analysis);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1208,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Initializing core skills for user:\", userId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1211,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Core skills initialized successfully\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1214,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Fetching user skills...\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1216,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"User skills found:\", userSkills.length);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1219,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Exact skill match found:\", !!skill);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1223,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Finding or creating skill:\", skillName);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1225,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Skill found/created:\", skill ? skill.name : \"none\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1230,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Using skill ID:\", skillId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1233,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error handling skills:\", skillError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1235,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(\"Continuing task creation without skill assignment\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1268,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Creating task with data:\", JSON.stringify(taskData, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1270,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Task created successfully:\", newTask.id);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1292,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"=== AI Task Creation Error ===\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1293,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error type:\", error?.constructor?.name);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1294,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error message:\", error?.message);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1295,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error stack:\", error?.stack);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1296,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Full error object:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1395,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error processing task ${task.id}:`, taskError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1405,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error auto-assigning skills:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1419,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Reset Habits] Starting reset for user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1436,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Reset Habits] Reset ${resetCount} habits`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1450,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Reset Habits] Tracking columns reset`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1452,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Reset Habits] Tracking columns don't exist, skipped`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1459,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Reset Habits] Completed: ${resetCount} habits reset, energy restored: ${energyBallsRes..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1467,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"[Reset Habits] Database error:\", dbError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1474,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"[Reset Habits] Unexpected error:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1486,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Analyzing task:\", { title, description });"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1494,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(\"OpenAI API key not configured, returning default analysis\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1505,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"OpenAI API Key length:\", process.env.OPENAI_API_KEY.length);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1536,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error analyzing task:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1537,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error details:\", error.response?.data || error.message);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1541,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"OpenAI API authentication failed. Please check your API key.\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1547,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"OpenAI API rate limit exceeded.\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1553,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Cannot reach OpenAI API. Check network connection.\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1580,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage getGoals failed, trying direct SQL:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1609,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Direct SQL query also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1614,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching goals:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1629,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Manual table creation requested...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1645,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Table created, adding indexes...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1663,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Indexes created successfully');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1670,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to create activity logs table:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1835,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Debug activity logs error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 1901,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error generating milestones:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2047,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error generating warmup tasks:\", warmupError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2070,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error in intelligent goal creation:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2084,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Creating goal with data:\", goalData);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2085,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Milestones received:\", milestones);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2093,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Goal created:\", goal);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2097,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Processing milestones:\", milestones.length);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2101,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Creating milestone:\", milestone.title);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2110,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Milestone created:\", createdMilestone);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2114,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"No milestones provided or milestones array is empty\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2124,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating goal:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2187,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error completing goal pomodoro:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2275,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Auto-completed milestone ${milestone.id} for completed goal ${goalId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2324,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Goal ${goalId} completed. Awarded ${expReward} experience to user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2326,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating activity log for goal completion:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2339,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error updating goal:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2378,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error getting milestones:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2423,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating milestone:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2470,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating activity log for milestone:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2485,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error updating milestone:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2507,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage deleteGoal failed, using SQL fallback:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2530,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"SQL fallback also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2535,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error deleting goal:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2551,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error fetching warmup tasks:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2578,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error creating warmup task:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2613,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error generating warmup tasks:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2632,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error updating warmup task:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2651,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error deleting warmup task:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2672,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error updating user state:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2696,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error generating recommendations:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2725,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error completing micro task:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2734,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Create test logs - userId:', userId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2797,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Table check/create error:', tableError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2841,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Creating test log:', log);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2844,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Created log successfully:', created);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2846,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Failed to create test log:\", err);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2877,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating test logs:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2890,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Activity logs request - userId:\", userId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2891,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Full user object:\", JSON.stringify(req.user, null, 2));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2894,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"No userId found in request:\", req.user);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2901,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Retrieved ${logs.length} activity logs for user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2905,
+      "method": "console.log",
+      "category": "debug",
+      "content": "console.log('Debug: First 3 logs:', logs.slice(0, 3));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2919,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Total logs in table:', totalCount);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2920,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Logs for this user:', userCount);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2922,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Count query error:', countError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2928,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Database error in activity logs:\", dbError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2932,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table missing, attempting direct creation...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2952,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table created, retrying query...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2958,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to create activity logs table:', createError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 2970,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error in activity logs endpoint:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3014,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Energy balls automatically restored for user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3019,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching user stats:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3036,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error updating user stats:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3065,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error recalculating level:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3082,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error restoring energy balls:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3102,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Force reset energy balls for user ${userId}: ${updatedStats.energyBalls}/${updatedStats..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3108,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error force resetting energy balls:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3125,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching user profile:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3146,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error saving user profile:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3173,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error updating user state:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3188,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error getting user state:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3199,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== Checking goals table structure ===\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3209,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Goals table columns:\", goalColumns);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3216,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Goals table debug error:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3227,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== Checking milestones table structure ===\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3247,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Milestones table columns:\", milestoneColumns);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3249,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Milestones table does not exist\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3258,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Milestones table debug error:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3273,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"=== Checking tasks table structure ===\");"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3283,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Tasks table columns:\", taskColumns);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3300,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Attempting to create test task with data:\", testTaskData);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3305,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Test task created successfully:\", newTask);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3308,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Test task creation failed:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3322,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Debug endpoint error:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3393,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`Error fetching ${type}:`, error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3406,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching batch data:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3427,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage getTasks failed, using SQL fallback:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3460,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"SQL fallback also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3480,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage getGoals failed, using SQL fallback:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3507,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"SQL fallback also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3540,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching data:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3558,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('CRUD task creation - request body:', req.body);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3559,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('CRUD task creation - userId:', userId);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3571,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('CRUD task creation - assigned default skill:', defaultSkill.name);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3580,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('CRUD task creation - parsed data:', taskData);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3584,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('CRUD task creation error:', taskError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3586,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Validation errors:', taskError.errors);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3601,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"Creating goal with data:\", { ...goalData, userId });"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3629,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Goal creation error:\", goalError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3640,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating resource:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3674,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error updating resource:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3702,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage deleteTask failed, using SQL fallback:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3723,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"SQL fallback also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3733,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Storage deleteGoal failed, using SQL fallback:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3754,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"SQL fallback also failed:\", sqlError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3763,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error deleting resource:\", error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3781,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Column Check] Tasks table columns:', columns.rows || columns);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3788,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Column Check] Error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3796,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Test] Starting database connection test...');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3800,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Test] Basic connection test passed');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3806,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Test] Tasks table accessible, count:', taskCount.rows[0].count);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3811,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Test] Pool health:', poolHealth);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3823,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[DB Test] Database test failed:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3844,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Starting for task ${taskId}, user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3889,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Tracking columns updated`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3891,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Tracking columns don't exist, skipped`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3900,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Awarding ${expToAward} exp to skill ${skillId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3903,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[Simple Complete] Error awarding skill experience:`, expError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3912,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Consuming ${energyRequired} energy balls`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3915,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[Simple Complete] Error consuming energy balls:`, energyError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3931,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Activity log created`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3933,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(`[Simple Complete] Error creating activity log:`, logError);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3937,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Simple Complete] Success! Habit ${taskId} completed`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3944,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Simple Complete] Failed:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3945,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Simple Complete] Error code:', error.code);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3946,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Simple Complete] Error detail:', error.detail);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3976,
+      "method": "console.log",
+      "category": "debug",
+      "content": "console.log(`[Debug] Restored energy balls for user ${userId}: ${stats.energyBalls} -> ${maxEnergy}`..."
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 3986,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Debug] Failed to restore energy:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4064,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Smart Complete] Starting for task ${taskId}, user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4078,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Smart Complete] Found columns:', columnInfo.rows.map(r => r.column_name));"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4120,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Smart Complete] Detected columns:', {"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4131,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('[Smart Complete] Some columns missing, attempting partial update');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4154,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Smart Complete] Executing partial query:', partialQuery);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4189,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Smart Complete] Executing full query:', fullQuery);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4219,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Smart Complete] Error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4239,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Direct Habit Complete] Starting for task ${taskId}, user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4258,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[Direct Habit Complete] CamelCase failed, trying snake_case');"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4279,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Direct Habit Complete] Success for task ${taskId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4287,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Direct Habit Complete] Error:', error);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4308,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Fix Habits Skills] Starting for user ${userId}`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4322,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Fix Habits Skills] Found ${habitsWithoutSkills.rows.length} habits without skills`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4380,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Fix Habits Skills] Fixed habit \"${habit.title}\" with skill \"${skillName}\"`);"
+    },
+    {
+      "file": "server/routes.ts",
+      "line": 4391,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Fix Habits Skills] Error:', error);"
+    },
+    {
+      "file": "server/recommendationEngine.ts",
+      "line": 130,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Generating recommendations for state:', userState);"
+    },
+    {
+      "file": "server/recommendationEngine.ts",
+      "line": 191,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Generated recommendations:', recommendations);"
+    },
+    {
+      "file": "server/mock-storage.ts",
+      "line": 57,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"MockStorage initialized with demo user\");"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 36,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching skills:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 52,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching tasks:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 73,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error creating task:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 124,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error completing task:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 139,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching goals:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 164,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching stats:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 180,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error fetching profile:\", error);"
+    },
+    {
+      "file": "server/mobile-routes.ts",
+      "line": 215,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error updating profile:\", error);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 8,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Startup check failed:\", e);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 23,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('💥 Uncaught Exception:', error);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 24,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Stack:', error.stack);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 29,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('💥 Unhandled Rejection at:', promise);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 30,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Reason:', reason);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 122,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🚀 Server starting...');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 123,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Environment variables check:');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 124,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('- NODE_ENV:', process.env.NODE_ENV);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 125,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('- PORT:', process.env.PORT);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 126,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('- DATABASE_URL:', process.env.DATABASE_URL ? '✅ Set' : '❌ Not set');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 127,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('- JWT_SECRET:', process.env.JWT_SECRET ? '✅ Set' : '❌ Not set');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 128,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('- OPENAI_API_KEY:', process.env.OPENAI_API_KEY ? '✅ Set' : '❌ Not set');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 133,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🔄 Running startup migrations...');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 138,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('⚠️  Migration error (non-fatal):', migrationError);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 143,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('📝 Registering routes...');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 145,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ Routes registered successfully');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 147,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🔐 Setting up authentication...');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 150,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ Simple authentication setup complete');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 152,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('📱 Registering mobile routes...');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 155,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('✅ Mobile routes registered');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 161,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Express error handler:', {"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 176,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`🔧 Setting up ${process.env.NODE_ENV} environment`);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 179,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"📦 Production mode: Serving static files\");"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 182,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(\"🔧 Development mode: Setting up Vite\");"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 190,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`✅ Server is running on port ${port}`);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 191,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`🌐 Visit http://localhost:${port}`);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 192,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🔍 Health check: /api/health');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 193,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('🔍 Simple test: /api/test/simple');"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 196,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('💥 Server startup failed:', error);"
+    },
+    {
+      "file": "server/index.ts",
+      "line": 197,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error details:', {"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 19,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Habit Complete] Starting for habit ${habitId}, user ${userId}`);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 70,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Habit Complete] Updated tracking columns`);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 73,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Habit Complete] Tracking columns don't exist, skipping`);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 83,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Habit Complete] Failed to create activity log:', logError);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 86,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[Habit Complete] Success! Habit ${habitId} completed`);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 95,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Habit Complete] Error:', error);"
+    },
+    {
+      "file": "server/habit-fix.ts",
+      "line": 166,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[Habit Status] Error:', error);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 12,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`safeGetActivityLogs called for userId: ${userId}`);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 16,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Database not initialized');"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 28,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`Found ${logs.length} activity logs for user ${userId}`);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 31,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error fetching activity logs:', error);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 32,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error details:', {"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 46,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table does not exist, attempting to create...');"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 74,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Could not add user_id foreign key:', fkError.message);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 85,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Could not add task_id foreign key:', fkError.message);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 96,
+      "method": "console.warn",
+      "category": "error",
+      "content": "console.warn('Could not add skill_id foreign key:', fkError.message);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 116,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table created successfully');"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 121,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Failed to create activity logs table:', createError);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 122,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Create error details:', {"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 151,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Database not initialized in checkActivityLogsTable');"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 163,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Table check result:', result);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 177,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs table exists:', exists);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 180,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error checking activity_logs table:', error);"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 201,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Activity logs migration completed successfully');"
+    },
+    {
+      "file": "server/fix-activity-logs.ts",
+      "line": 203,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error running activity logs migration:', error);"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 11,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"🚨 DATABASE_URL is not set!\");"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 12,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Available environment variables:\", Object.keys(process.env).filter(k => k.includes('D..."
+    },
+    {
+      "file": "server/db.ts",
+      "line": 14,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Server will start but database operations will fail\");"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 23,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('⚠️  No DATABASE_URL set in development mode. Using mock storage.');"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 28,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Using connection pool for database');"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 32,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Connecting to database:', databaseUrl.substring(0, 30) + '...');"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 39,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('⚠️  Database URL contains IPv6 address. This may cause connection issues on some platf..."
+    },
+    {
+      "file": "server/db.ts",
+      "line": 40,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('Consider using IPv4 address or hostname instead.');"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 58,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"🚨 Failed to initialize database connection:\", error);"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 59,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"Error details:\", {"
+    },
+    {
+      "file": "server/db.ts",
+      "line": 67,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn('⚠️  Continuing without database in development mode.');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 26,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Pool] Creating new connection pool...');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 31,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[DB Pool] Unexpected error on idle client', err);"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 32,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('[DB Pool] Error details:', {"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 41,
+      "method": "console.log",
+      "category": "error",
+      "content": "console.log('[DB Pool] Connection error detected, will recreate pool on next request');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 48,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Pool] New client connected');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 57,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(`[DB Pool] High load: ${waitingCount} waiting, ${idleCount} idle, ${totalCount} total`)..."
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 62,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('[DB Pool] Client removed from pool');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 97,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Pool health check failed:', error);"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 113,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Database connection pool closed');"
+    },
+    {
+      "file": "server/db-pool.ts",
+      "line": 115,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Error closing connection pool:', error);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 101,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"AI Chat error:\", error);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 177,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"AI Suggestions error:\", error);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 252,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"AI Task Generation error:\", error);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 329,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"AI Goal Analysis error:\", error);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 391,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('Raw AI response content:', content);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 399,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log('AI parsing successful:', { input, parsed });"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 406,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('JSON parsing failed:', parseError, 'Content:', content);"
+    },
+    {
+      "file": "server/ai.ts",
+      "line": 428,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(\"AI Input Parsing error:\", error);"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 3,
+      "method": "console.log",
+      "category": "general",
+      "content": "* Replaces console.log with environment-aware logging"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 62,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(this.formatMessage('DEBUG', message), ...args);"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 68,
+      "method": "console.info",
+      "category": "general",
+      "content": "console.info(this.formatMessage('INFO', message), ...args);"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 74,
+      "method": "console.warn",
+      "category": "general",
+      "content": "console.warn(this.formatMessage('WARN', message), ...args);"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 80,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error(this.formatMessage('ERROR', message), ...args);"
+    },
+    {
+      "file": "server/utils/logger.ts",
+      "line": 82,
+      "method": "console.error",
+      "category": "error",
+      "content": "console.error('Stack trace:', error.stack || error);"
+    },
+    {
+      "file": "server/middleware/test-endpoint-security.ts",
+      "line": 18,
+      "method": "console.log",
+      "category": "general",
+      "content": "console.log(`[TEST ENDPOINT] ${req.method} ${req.path} accessed`);"
+    }
+  ]
+}
