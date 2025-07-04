@@ -346,7 +346,8 @@ export default function UnifiedRPGTaskManager() {
   
   const { data: tasks = [], isLoading, isError, error } = useQuery<Task[]>({
     queryKey: ["/api/data?type=tasks"],
-    staleTime: 1000, // Consider data fresh for 1 second to prevent excessive refetches
+    staleTime: 0, // Always consider data stale to ensure fresh data after mutations
+    gcTime: 5 * 60 * 1000, // Keep cache for 5 minutes
     refetchOnMount: true,
     refetchOnWindowFocus: false, // Disable auto-refetch on window focus to prevent unwanted refreshes
     select: (data) => {
@@ -703,8 +704,17 @@ export default function UnifiedRPGTaskManager() {
         if (result && result.success) {
           console.log('Habit completed successfully, refreshing data...');
           
-          // Force refetch all data immediately
+          // Update the task in the cache immediately
+          queryClient.setQueryData(["/api/data?type=tasks"], (oldData: Task[] | undefined) => {
+            if (!oldData) return oldData;
+            return oldData.map(t => 
+              t.id === taskId ? { ...t, completed: true, completedAt: new Date().toISOString() } : t
+            );
+          });
+          
+          // Then force refetch all data to ensure consistency
           await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
@@ -733,8 +743,17 @@ export default function UnifiedRPGTaskManager() {
             console.log('Smart complete debug info:', smartResult.debug);
           }
           
+          // Update the task in the cache immediately
+          queryClient.setQueryData(["/api/data?type=tasks"], (oldData: Task[] | undefined) => {
+            if (!oldData) return oldData;
+            return oldData.map(t => 
+              t.id === taskId ? { ...t, completed: true, completedAt: new Date().toISOString() } : t
+            );
+          });
+          
           // Force refetch all data immediately
           await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
             queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
@@ -994,10 +1013,11 @@ export default function UnifiedRPGTaskManager() {
   // Special handling for habits - reset completed habits from previous days
   const habits = habitTasks.map(habit => {
     const today = new Date().toDateString();
-    const lastCompleted = habit.lastCompletedDate ? new Date(habit.lastCompletedDate).toDateString() : null;
+    // Use completedAt instead of non-existent lastCompletedDate
+    const completedDate = habit.completedAt ? new Date(habit.completedAt).toDateString() : null;
     
     // If habit was completed on a previous day, it should be available again today
-    if (habit.completed && lastCompleted !== today) {
+    if (habit.completed && completedDate && completedDate !== today) {
       return {
         ...habit,
         completed: false
