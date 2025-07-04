@@ -12,6 +12,7 @@ import { cacheMiddleware, invalidateCacheMiddleware } from "./cache-middleware";
 import { runDatabaseDiagnostics, testDatabaseConnection } from './db-diagnostics';
 import { sql } from "drizzle-orm";
 import { db } from "./db";
+import { testEndpointSecurity } from "./middleware/test-endpoint-security";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -25,6 +26,9 @@ const insertGoalSchema = createInsertSchema(goals);
 const insertMicroTaskSchema = createInsertSchema(microTasks);
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Apply test endpoint security middleware first
+  app.use(testEndpointSecurity);
+  
   // CORS protection for production
   app.use((req, res, next) => {
     const allowedOrigins = [

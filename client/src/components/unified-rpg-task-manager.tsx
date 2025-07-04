@@ -225,11 +225,11 @@ const TaskCard = memo(function TaskCard({
                 </span>
               )}
             </div>
-            {/* 习惯连击显示 */}
-            {task.taskCategory === "habit" && (task.habitStreak || 0) > 0 && (
+            {/* 习惯连击显示 - TODO: implement streak tracking */}
+            {task.taskCategory === "habit" && task.completed && (
               <div className="flex items-center gap-2 text-secondary">
                 <Flame className="h-4 w-4" />
-                <span className="font-medium text-sm">{task.habitStreak}连击</span>
+                <span className="font-medium text-sm">已完成</span>
               </div>
             )}
           </div>
