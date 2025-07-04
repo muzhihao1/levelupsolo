@@ -206,7 +206,7 @@ export default function TemplatesSection() {
         estimatedDuration: estimatedDuration,
         expReward: template.expReward,
         difficulty: template.difficulty,
-        taskCategory: template.isRecurring ? 'habit' : 'todo',
+        taskCategory: 'todo', // Templates are always single tasks, not habits
         taskType: template.category === 'learning' || template.category === 'career' ? 'main' : 'simple',
         requiredEnergyBalls: Math.ceil(estimatedDuration / 15), // 15 minutes per energy ball
         completed: false,

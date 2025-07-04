@@ -3,6 +3,7 @@
  * Demonstrates how to use the testing infrastructure
  */
 
+import '@testing-library/jest-dom';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, userEvent } from '@/test-utils/render';
 import { Button } from './button';

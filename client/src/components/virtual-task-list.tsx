@@ -1,6 +1,8 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { OptimizedTaskCard } from './optimized-task-card';
+import React, { useRef, useEffect, useState, useCallback, memo } from 'react';
 import type { Task, Skill } from '@shared/schema';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, Timer, Trash2 } from 'lucide-react';
 
 interface VirtualTaskListProps {
   tasks: Task[];
@@ -122,14 +124,56 @@ export function VirtualTaskList({
               
               return (
                 <div key={task.id} style={{ height: itemHeight }}>
-                  <OptimizedTaskCard
-                    task={task}
-                    onComplete={onComplete}
-                    onDelete={onDelete}
-                    onStartPomodoro={onStartPomodoro}
-                    hasEnoughEnergy={hasEnoughEnergy}
-                    linkedSkill={linkedSkill}
-                  />
+                  <Card className="h-full">
+                    <CardHeader className="pb-2">
+                      <div className="flex items-start justify-between">
+                        <h3 className="font-medium text-sm">{task.title}</h3>
+                        <div className="flex gap-1">
+                          {onStartPomodoro && hasEnoughEnergy && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => onStartPomodoro(task.id)}
+                            >
+                              <Timer className="h-4 w-4" />
+                            </Button>
+                          )}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onComplete(task.id)}
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => onDelete(task.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="pt-1">
+                      {task.description && (
+                        <p className="text-xs text-muted-foreground mb-2">{task.description}</p>
+                      )}
+                      <div className="flex items-center gap-2 text-xs">
+                        {linkedSkill && (
+                          <span className="text-muted-foreground">
+                            {linkedSkill.name}
+                          </span>
+                        )}
+                        <span className="text-muted-foreground">
+                          {task.expReward} XP
+                        </span>
+                        <span className="text-muted-foreground">
+                          ⚡ {task.requiredEnergyBalls || 1}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               );
             })}

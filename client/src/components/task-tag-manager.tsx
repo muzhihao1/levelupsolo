@@ -18,7 +18,7 @@ const DEFAULT_TAGS = [
   "创作", "设计", "管理", "社交", "技术", "研究"
 ];
 
-const TAG_COLORS = {
+const TAG_COLORS: Record<string, string> = {
   "写作": "bg-blue-100 text-blue-800 hover:bg-blue-200",
   "编程": "bg-green-100 text-green-800 hover:bg-green-200", 
   "学习": "bg-purple-100 text-purple-800 hover:bg-purple-200",

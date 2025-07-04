@@ -1,5 +1,11 @@
 import { useEffect } from 'react';
 
+// Type definition for PerformanceEventTiming
+interface PerformanceEventTiming extends PerformanceEntry {
+  processingStart: number;
+  startTime: number;
+}
+
 // Performance monitoring for Core Web Vitals
 export function usePerformanceMonitoring() {
   useEffect(() => {
@@ -22,7 +28,11 @@ export function usePerformanceMonitoring() {
     const fidObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach((entry) => {
-        console.log('FID:', entry.processingStart - entry.startTime);
+        // Type assertion for first-input entries
+        const firstInputEntry = entry as PerformanceEventTiming;
+        if ('processingStart' in firstInputEntry) {
+          console.log('FID:', firstInputEntry.processingStart - firstInputEntry.startTime);
+        }
       });
     });
 
