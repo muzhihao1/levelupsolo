@@ -712,13 +712,10 @@ export default function UnifiedRPGTaskManager() {
             );
           });
           
-          // Then force refetch all data to ensure consistency
-          await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
-          ]);
+          // Invalidate queries without waiting - let them refresh in background
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
           
           console.log('Data refresh complete');
           
@@ -751,13 +748,10 @@ export default function UnifiedRPGTaskManager() {
             );
           });
           
-          // Force refetch all data immediately
-          await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=tasks"], exact: true }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=stats"], exact: true }),
-            queryClient.refetchQueries({ queryKey: ["/api/data?type=skills"], exact: true })
-          ]);
+          // Invalidate queries without waiting - let them refresh in background
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=tasks"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=stats"] });
+          queryClient.invalidateQueries({ queryKey: ["/api/data?type=skills"] });
           
           console.log('Data refresh complete (smart mode)');
           
