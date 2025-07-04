@@ -19,7 +19,7 @@ import { Bot } from "lucide-react";
 const Dashboard = lazy(() => import("@/pages/dashboard"));
 const Tasks = lazy(() => import("@/pages/tasks"));
 const SkillTree = lazy(() => import("@/pages/skill-tree"));
-const GoalsSimple = lazy(() => import("@/pages/goals-simple"));
+const GoalsSimple = lazy(() => import("@/pages/goals"));
 const GrowthLog = lazy(() => import("@/pages/growth-log"));
 const WeeklySummary = lazy(() => import("@/pages/weekly-summary"));
 const Templates = lazy(() => import("@/pages/templates"));
