@@ -21,11 +21,20 @@ export function useBatchData({ types, enabled = true }: BatchDataOptions) {
   return useQuery<BatchDataResponse>({
     queryKey: [`/api/data/batch?types=${types.join(',')}`],
     queryFn: async () => {
-      return await apiRequest('GET', `/api/data/batch?types=${types.join(',')}`);
+      try {
+        const response = await apiRequest('GET', `/api/data/batch?types=${types.join(',')}`);
+        console.log('Batch API response:', response);
+        return response;
+      } catch (error) {
+        console.error('Batch API error:', error);
+        // If batch endpoint doesn't exist (404), throw to trigger fallback
+        throw error;
+      }
     },
     enabled,
     staleTime: 0, // Always fetch fresh data
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    retry: false, // Don't retry if batch endpoint fails, use fallback immediately
   });
 }
 

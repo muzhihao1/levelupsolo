@@ -13,7 +13,6 @@ import { Plus, CheckCircle, Circle, Zap, Flame, Target, Trash2, Clock, Play, Pau
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useFilteredTasks } from "@/hooks/use-filtered-tasks";
-import { useBatchDataWithSelectors } from "@/hooks/use-batch-data";
 import type { Task, InsertTask, Skill } from "@shared/schema";
 
 interface MicroTask {
@@ -346,17 +345,40 @@ export default function UnifiedRPGTaskManager() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
-  // Use batch data hook to fetch all data in a single request
-  const { 
-    tasks, 
-    skills, 
-    goals, 
-    stats: userStats, 
-    isLoading, 
-    isError, 
-    error,
-    errors 
-  } = useBatchDataWithSelectors(['tasks', 'skills', 'goals', 'stats']);
+  // TEMPORARY: Use individual queries directly until batch endpoint is verified working
+  const tasksQuery = useQuery<Task[]>({
+    queryKey: ["/api/data?type=tasks"],
+    staleTime: 0,
+    gcTime: 5 * 60 * 1000,
+  });
+  
+  const skillsQuery = useQuery<Skill[]>({
+    queryKey: ["/api/data?type=skills"],
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+  
+  const goalsQuery = useQuery<any[]>({
+    queryKey: ["/api/data?type=goals"],
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
+  });
+  
+  const statsQuery = useQuery<any>({
+    queryKey: ["/api/data?type=stats"],
+    staleTime: 10 * 60 * 1000,
+    gcTime: 20 * 60 * 1000,
+  });
+  
+  // Use individual query data
+  const tasks = tasksQuery.data || [];
+  const skills = skillsQuery.data || [];
+  const goals = goalsQuery.data || [];
+  const userStats = statsQuery.data || null;
+  
+  const isLoading = tasksQuery.isLoading || skillsQuery.isLoading || goalsQuery.isLoading || statsQuery.isLoading;
+  const isError = tasksQuery.isError || skillsQuery.isError || goalsQuery.isError || statsQuery.isError;
+  const error = tasksQuery.error || skillsQuery.error || goalsQuery.error || statsQuery.error;
   
   // Helper function to invalidate all data queries
   const invalidateAllData = () => {
@@ -368,15 +390,27 @@ export default function UnifiedRPGTaskManager() {
     queryClient.invalidateQueries({ queryKey: ['/api/data?type=goals'] });
   };
   
-  // Log errors only
+  // Log errors and data for debugging
   useEffect(() => {
+    console.log('=== Data Fetching Debug ===');
+    console.log('Query status:', {
+      tasks: { isLoading: tasksQuery.isLoading, count: tasksQuery.data?.length, error: tasksQuery.error },
+      skills: { isLoading: skillsQuery.isLoading, count: skillsQuery.data?.length },
+      goals: { isLoading: goalsQuery.isLoading, count: goalsQuery.data?.length },
+      stats: { isLoading: statsQuery.isLoading, data: statsQuery.data }
+    });
+    
     if (isError) {
-      console.error('Error fetching data:', error);
+      console.error('Query errors:', { error });
     }
-    if (errors) {
-      console.error('Batch data errors:', errors);
-    }
-  }, [isError, error, errors]);
+    
+    console.log('Final data counts:', {
+      tasks: tasks.length,
+      skills: skills.length,
+      goals: goals.length,
+      hasStats: !!userStats
+    });
+  }, [tasks.length, skills.length, goals.length, userStats, tasksQuery, skillsQuery, goalsQuery, statsQuery, isError, error]);
 
   // Silent reset mutation for automatic daily reset
   const silentResetHabitsMutation = useMutation({
@@ -634,10 +668,13 @@ export default function UnifiedRPGTaskManager() {
           setActiveTab('main');
         }
         
-        // Optimized cache update - just invalidate to trigger background refetch
-        await queryClient.invalidateQueries({ 
+        // Invalidate all data to ensure fresh data
+        invalidateAllData();
+        
+        // Force immediate refetch
+        await queryClient.refetchQueries({ 
           queryKey: ["/api/data?type=tasks"],
-          refetchType: 'active' // Only refetch if the query is actively being used
+          exact: true
         });
       }
     } catch (error: any) {
