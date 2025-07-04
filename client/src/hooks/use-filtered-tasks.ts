@@ -29,7 +29,10 @@ export function useFilteredTasks({ tasks, activeTab, searchQuery }: UseFilteredT
         filtered = filtered.filter(task => task.taskCategory === 'habit');
         break;
       case 'boss':
-        filtered = filtered.filter(task => task.isBoss);
+        // Filter for main quests with high difficulty
+        filtered = filtered.filter(task => 
+          task.taskCategory === 'goal' && task.difficulty === 'hard'
+        );
         break;
       case 'completed':
         filtered = filtered.filter(task => task.completed);
@@ -71,7 +74,7 @@ export function useFilteredTasks({ tasks, activeTab, searchQuery }: UseFilteredT
       main: tasks.filter(t => t.taskCategory === 'goal').length,
       side: tasks.filter(t => t.taskCategory === 'todo').length,
       habit: tasks.filter(t => t.taskCategory === 'habit').length,
-      boss: tasks.filter(t => t.isBoss).length,
+      boss: tasks.filter(t => t.taskCategory === 'goal' && t.difficulty === 'hard').length,
       completed: tasks.filter(t => t.completed).length,
       incomplete: tasks.filter(t => !t.completed).length
     };
@@ -85,10 +88,10 @@ export function useFilteredTasks({ tasks, activeTab, searchQuery }: UseFilteredT
         return a.completed ? 1 : -1;
       }
       
-      // 按优先级排序（假设有priority字段）
-      if (a.priority && b.priority && a.priority !== b.priority) {
-        const priorityOrder = { high: 1, medium: 2, low: 3 };
-        return (priorityOrder[a.priority] || 999) - (priorityOrder[b.priority] || 999);
+      // 按难度排序 (difficulty field exists)
+      if (a.difficulty && b.difficulty && a.difficulty !== b.difficulty) {
+        const difficultyOrder: Record<string, number> = { hard: 1, medium: 2, easy: 3 };
+        return (difficultyOrder[a.difficulty] || 999) - (difficultyOrder[b.difficulty] || 999);
       }
       
       // 按创建时间倒序（新任务在前）

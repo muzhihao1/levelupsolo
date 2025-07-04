@@ -77,7 +77,7 @@ export default function GrowthLog() {
   const { data: logs = [], isLoading: logsLoading, error: logsError, refetch: refetchLogs } = useQuery<ActivityLog[]>({
     queryKey: ['/api/activity-logs'],
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
     retry: 2,
     retryDelay: 1000
   });
@@ -85,13 +85,13 @@ export default function GrowthLog() {
   const { data: skills = [] } = useQuery<Skill[]>({
     queryKey: ['/api/data?type=skills'],
     staleTime: 10 * 60 * 1000, // 10 minutes
-    cacheTime: 15 * 60 * 1000 // 15 minutes
+    gcTime: 15 * 60 * 1000 // 15 minutes
   });
 
   const { data: tasks = [] } = useQuery<Task[]>({
     queryKey: ['/api/data?type=tasks'],
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000 // 10 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
   const getSkillName = (skillId?: number) => {
@@ -118,19 +118,19 @@ export default function GrowthLog() {
     if (filter === "weekly") {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      return new Date(log.createdAt || log.date) >= weekAgo;
+      return new Date(log.createdAt || '') >= weekAgo;
     }
     if (filter === "monthly") {
       const monthAgo = new Date();
       monthAgo.setMonth(monthAgo.getMonth() - 1);
-      return new Date(log.createdAt || log.date) >= monthAgo;
+      return new Date(log.createdAt || '') >= monthAgo;
     }
     return true;
   });
 
   // Group logs by date
   const groupedLogs = processedLogs.reduce((groups: { [key: string]: ActivityLog[] }, log) => {
-    const dateKey = new Date(log.createdAt || log.date).toDateString();
+    const dateKey = new Date(log.createdAt || '').toDateString();
     if (!groups[dateKey]) {
       groups[dateKey] = [];
     }
@@ -446,10 +446,10 @@ export default function GrowthLog() {
                             )}
                           </div>
                           <p className="text-foreground font-medium truncate mt-1">
-                            {(log.details as any)?.description || log.description || (log.taskId ? getTaskTitle(log.taskId) : '活动记录')}
+                            {(log.details as any)?.description || (log.taskId ? getTaskTitle(log.taskId) : '活动记录')}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {new Date(log.createdAt || log.date).toLocaleTimeString('zh-CN', {
+                            {new Date(log.createdAt || '').toLocaleTimeString('zh-CN', {
                               hour: '2-digit',
                               minute: '2-digit'
                             })}

@@ -87,7 +87,7 @@ export default function WeeklySummary() {
 
   // 过滤本周的数据
   const weekLogs = logs.filter(log => {
-    const logDate = new Date(log.date);
+    const logDate = new Date(log.createdAt || '');
     return logDate >= weekStart && logDate <= weekEnd;
   });
 

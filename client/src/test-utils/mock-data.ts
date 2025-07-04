@@ -28,11 +28,12 @@ export const userFactory = {
   create: (overrides?: Partial<User>): User => ({
     id: faker.string.uuid(),
     email: faker.internet.email(),
-    username: faker.internet.username(),
-    passwordHash: faker.string.alphanumeric(60),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    hashedPassword: faker.string.alphanumeric(60),
+    profileImageUrl: faker.image.avatar(),
     createdAt: faker.date.past(),
-    replitId: faker.string.numeric(8),
-    replitUsername: faker.internet.username(),
+    updatedAt: faker.date.recent(),
     ...overrides,
   }),
   
@@ -47,7 +48,7 @@ export const userFactory = {
  */
 export const userStatsFactory = {
   create: (overrides?: Partial<UserStats>): UserStats => ({
-    id: faker.string.uuid(),
+    id: faker.number.int({ min: 1, max: 10000 }),
     userId: faker.string.uuid(),
     level: faker.number.int({ min: 1, max: 100 }),
     totalXp: faker.number.int({ min: 0, max: 100000 }),
@@ -80,7 +81,7 @@ export const SKILL_TYPES = [
  */
 export const skillFactory = {
   create: (overrides?: Partial<Skill>): Skill => ({
-    id: faker.string.uuid(),
+    id: faker.number.int({ min: 1, max: 10000 }),
     userId: faker.string.uuid(),
     name: faker.helpers.arrayElement(SKILL_TYPES),
     currentXp: faker.number.int({ min: 0, max: 10000 }),

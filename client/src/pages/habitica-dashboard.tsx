@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HabiticaStats } from "@/components/habitica-stats";
-import { HabiticaTaskManager } from "@/components/habitica-task-manager";
+import UnifiedRPGTaskManager from "@/components/unified-rpg-task-manager";
 import type { UserStats } from "@shared/schema";
 
 export default function HabiticaDashboard() {
@@ -51,7 +51,7 @@ export default function HabiticaDashboard() {
             </p>
           </CardHeader>
           <CardContent>
-            <HabiticaTaskManager />
+            <UnifiedRPGTaskManager />
           </CardContent>
         </Card>
 

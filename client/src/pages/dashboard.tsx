@@ -92,7 +92,7 @@ export default function Dashboard() {
   const completedTodayTasks = todayTasks.filter(task => task.completed);
   const todayExp = completedTodayTasks.reduce((sum, task) => sum + (task.expReward || 0), 0);
   
-  const inProgressGoals = goals.filter(goal => !goal.completed);
+  const inProgressGoals = goals.filter(goal => !goal.completedAt);
 
   return (
     <div className="min-h-screen bg-background">
