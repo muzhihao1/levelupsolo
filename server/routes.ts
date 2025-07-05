@@ -988,6 +988,179 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Pomodoro timer routes
+  app.post("/api/tasks/:id/start-pomodoro", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const taskId = parseInt(req.params.id);
+      const { duration } = req.body;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (isNaN(taskId)) {
+        return res.status(400).json({ message: "Invalid task ID" });
+      }
+
+      // Create pomodoro session
+      const session = await storage.createPomodoroSession({
+        userId,
+        taskId,
+        startTime: new Date(),
+        workDuration: duration || 25,
+      });
+
+      res.json({ sessionId: session.id, startTime: session.startTime });
+    } catch (error) {
+      console.error("Error starting pomodoro:", error);
+      res.status(500).json({ message: "Failed to start pomodoro session" });
+    }
+  });
+
+  app.post("/api/tasks/:id/complete-pomodoro", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const taskId = parseInt(req.params.id);
+      const { sessionDuration, completed, actualEnergyBalls, cycles } = req.body;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      if (isNaN(taskId)) {
+        return res.status(400).json({ message: "Invalid task ID" });
+      }
+
+      // Get task details
+      const task = await storage.getTask(taskId);
+      if (!task || task.userId !== userId) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+
+      // Update task accumulated time
+      const updatedTask = await storage.updateTask(taskId, {
+        accumulatedTime: (task.accumulatedTime || 0) + sessionDuration,
+        actualEnergyBalls: actualEnergyBalls,
+        pomodoroCycles: (task.pomodoroCycles || 0) + (cycles || 0),
+        completed: completed || task.completed
+      });
+
+      // Calculate and consume actual energy balls
+      const energyBallsToConsume = actualEnergyBalls || Math.ceil(sessionDuration / 15);
+      await storage.consumeEnergyBalls(userId, energyBallsToConsume);
+
+      // Award experience
+      const expGained = task.expReward || 20;
+      await storage.addExperience(userId, expGained);
+      
+      if (task.skillId) {
+        await storage.updateSkillExp(task.skillId, expGained);
+      }
+
+      // Create activity log
+      await storage.createActivityLog({
+        userId,
+        taskId,
+        skillId: task.skillId,
+        expGained,
+        action: 'pomodoro_complete',
+        details: { 
+          description: `完成番茄钟: ${task.title}`,
+          duration: sessionDuration,
+          energyBalls: energyBallsToConsume,
+          cycles: cycles || 1
+        }
+      });
+
+      // Update daily battle report
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      await storage.updateDailyBattleReport({
+        userId,
+        date: today,
+        battleTime: sessionDuration,
+        energyBalls: energyBallsToConsume,
+        taskCompleted: completed || false,
+        cycles: cycles || 1,
+        taskId: taskId,
+        taskTitle: task.title
+      });
+
+      res.json({ 
+        success: true,
+        expGained,
+        actualEnergyBalls: energyBallsToConsume,
+        totalAccumulatedTime: updatedTask.accumulatedTime
+      });
+    } catch (error) {
+      console.error("Error completing pomodoro:", error);
+      res.status(500).json({ message: "Failed to complete pomodoro session" });
+    }
+  });
+
+  // Get daily battle report
+  app.get("/api/battle-reports/daily", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const dateParam = req.query.date;
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const date = dateParam ? new Date(dateParam) : new Date();
+      date.setHours(0, 0, 0, 0);
+
+      const report = await storage.getDailyBattleReport(userId, date);
+      
+      if (!report) {
+        // Return empty report if none exists
+        return res.json({
+          date,
+          totalBattleTime: 0,
+          energyBallsConsumed: 0,
+          tasksCompleted: 0,
+          pomodoroCycles: 0,
+          taskDetails: []
+        });
+      }
+
+      res.json(report);
+    } catch (error) {
+      console.error("Error fetching daily battle report:", error);
+      res.status(500).json({ message: "Failed to fetch battle report" });
+    }
+  });
+
+  // Get battle report summary (weekly/monthly)
+  app.get("/api/battle-reports/summary", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const period = req.query.period || 'week'; // 'week' or 'month'
+
+      if (!userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const endDate = new Date();
+      const startDate = new Date();
+      
+      if (period === 'week') {
+        startDate.setDate(endDate.getDate() - 7);
+      } else if (period === 'month') {
+        startDate.setDate(endDate.getDate() - 30);
+      }
+
+      const summary = await storage.getBattleReportSummary(userId, startDate, endDate);
+      res.json(summary);
+    } catch (error) {
+      console.error("Error fetching battle report summary:", error);
+      res.status(500).json({ message: "Failed to fetch battle report summary" });
+    }
+  });
+
   // AI-powered task creation with automatic type classification
   app.post("/api/tasks/intelligent-create", isAuthenticated, invalidateCacheMiddleware(['tasks', 'stats', 'data']), async (req: any, res) => {
     console.log("=== AI Task Creation Started ===");

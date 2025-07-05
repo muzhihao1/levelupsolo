@@ -5,6 +5,7 @@ import { CheckCircle, Target } from "lucide-react";
 import ProfileQuestionnaire from "@/components/profile-questionnaire";
 import ProfileSummary from "@/components/profile-summary";
 import OnboardingGuide from "@/components/onboarding-guide";
+import DailyBattleReportCard from "@/components/daily-battle-report";
 
 import { apiRequest } from "@/lib/queryClient";
 import type { Skill, Goal, Task, UserStats, UserProfile, InsertUserProfile } from "@shared/schema";
@@ -125,7 +126,7 @@ export default function Dashboard() {
 
       {/* Simplified Progress Overview */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 grid-responsive-tablet">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-responsive-tablet">
           {/* Today's Completed Tasks */}
           <Card className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-8">
@@ -176,6 +177,11 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Daily Battle Report */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <DailyBattleReportCard />
+          </div>
         </div>
       </div>
 

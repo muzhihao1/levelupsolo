@@ -91,6 +91,10 @@ export const tasks = pgTable("tasks", {
   accumulatedTime: integer("accumulated_time").default(0), // 累积时间（分钟）
   pomodoroSessionId: text("pomodoro_session_id"), // 番茄钟会话ID
   startedAt: timestamp("started_at"), // 开始时间
+  actualEnergyBalls: integer("actual_energy_balls"), // 实际消耗的能量球
+  pomodoroCycles: integer("pomodoro_cycles").default(0), // 完成的番茄钟周期数
+  battleStartTime: timestamp("battle_start_time"), // 战斗开始时间
+  battleEndTime: timestamp("battle_end_time"), // 战斗结束时间
   createdAt: timestamp("created_at").notNull().defaultNow(),
   completedAt: timestamp("completed_at"),
   // Habitica-inspired task categorization
@@ -176,6 +180,35 @@ export const activityLogs = pgTable("activity_logs", {
   details: jsonb("details"), // Changed from 'description' text to match production
 });
 
+// Daily Battle Reports table
+export const dailyBattleReports = pgTable("daily_battle_reports", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  date: timestamp("date").notNull(),
+  totalBattleTime: integer("total_battle_time").default(0), // 总战斗时间（分钟）
+  energyBallsConsumed: integer("energy_balls_consumed").default(0), // 消耗的能量球数
+  tasksCompleted: integer("tasks_completed").default(0), // 完成的任务数
+  pomodoroCycles: integer("pomodoro_cycles").default(0), // 完成的番茄钟周期数
+  taskDetails: jsonb("task_details").default([]), // 详细任务信息
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Pomodoro Sessions table
+export const pomodoroSessions = pgTable("pomodoro_sessions", {
+  id: serial("id").primaryKey(),
+  userId: varchar("user_id").notNull().references(() => users.id),
+  taskId: integer("task_id").notNull().references(() => tasks.id),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time"),
+  workDuration: integer("work_duration").default(0), // 工作时间（分钟）
+  restDuration: integer("rest_duration").default(0), // 休息时间（分钟）
+  cyclesCompleted: integer("cycles_completed").default(0),
+  actualEnergyBalls: integer("actual_energy_balls").default(0),
+  completed: boolean("completed").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertSkillSchema = createInsertSchema(skills).omit({
   id: true,
 });
@@ -240,6 +273,23 @@ export type InsertMicroTask = z.infer<typeof insertMicroTaskSchema>;
 
 export type ActivityLog = typeof activityLogs.$inferSelect;
 export type InsertActivityLog = z.infer<typeof insertActivityLogSchema>;
+
+export const insertDailyBattleReportSchema = createInsertSchema(dailyBattleReports).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPomodoroSessionSchema = createInsertSchema(pomodoroSessions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type DailyBattleReport = typeof dailyBattleReports.$inferSelect;
+export type InsertDailyBattleReport = z.infer<typeof insertDailyBattleReportSchema>;
+
+export type PomodoroSession = typeof pomodoroSessions.$inferSelect;
+export type InsertPomodoroSession = z.infer<typeof insertPomodoroSessionSchema>;
 
 export const insertUserStatsSchema = createInsertSchema(userStats).omit({
   id: true,

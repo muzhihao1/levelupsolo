@@ -16,6 +16,8 @@ interface PomodoroTimerProps {
   onComplete: () => void;
 }
 
+type PomodoroState = 'idle' | 'working' | 'resting' | 'waiting';
+
 export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
@@ -25,6 +27,11 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
   const [taskCompleted, setTaskCompleted] = useState(false);
   const [sessionElapsed, setSessionElapsed] = useState(0); // 当前会话已花费的时间（秒）
   const [sessionCount, setSessionCount] = useState(0); // 已完成的番茄钟轮数
+  const [pomodoroState, setPomodoroState] = useState<PomodoroState>('idle');
+  const [totalWorkTime, setTotalWorkTime] = useState(0); // 总工作时间（分钟）
+  const [cycleStartTime, setCycleStartTime] = useState<Date | null>(null); // 当前周期开始时间
+  const WORK_DURATION = 25; // 工作时长（分钟）
+  const REST_DURATION = 5; // 休息时长（分钟）
   
   // Debug timer state
   useEffect(() => {
@@ -97,68 +104,95 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
       onComplete();
       setIsOpen(false);
       setIsRunning(false);
+      setPomodoroState('idle');
+      setTotalWorkTime(0);
+      setSessionCount(0);
       toast({
-        title: "番茄钟会话完成",
-        description: taskCompleted ? "任务已完成！" : "专注时间已记录",
+        title: "击败Boss成功！",
+        description: `消耗${data.actualEnergyBalls || 0}个能量球，获得${data.expGained || 0}经验值`,
       });
     }
   });
 
   const handleTimerComplete = useCallback(() => {
-    setIsRunning(false);
-    
-    // Enhanced notification with sound and visual alert
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const notification = new Notification('🍅 番茄钟完成！', {
-        body: `${task.title} 的专注时间已完成，点击查看选项`,
-        icon: '/favicon.ico',
-        tag: 'pomodoro-complete',
-        requireInteraction: true
+    if (pomodoroState === 'working') {
+      // 工作时间结束，记录工作时间并进入休息
+      if (cycleStartTime) {
+        const workMinutes = Math.floor((Date.now() - cycleStartTime.getTime()) / 1000 / 60);
+        setTotalWorkTime(prev => prev + workMinutes);
+      }
+      
+      // 播放完成音效
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaZXiF7N5/Bg8kf8zx0n8pBSJ6v+zddCII');
+        audio.volume = 0.1;
+        audio.play().catch(() => {});
+      } catch (e) {}
+      
+      // 发送通知
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('⚔️ 战斗完成！', {
+          body: '开始5分钟休息时间',
+          icon: '/favicon.ico',
+          tag: 'pomodoro-work-complete'
+        });
+      }
+      
+      toast({
+        title: "⚔️ 战斗完成！",
+        description: "开始5分钟休息时间",
+        duration: 5000
       });
       
-      notification.onclick = () => {
-        setIsOpen(true);
-        notification.close();
-      };
-    }
-
-    // Play completion sound
-    try {
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaZXiF7N5/Bg8kf8zx0n8pBSJ6v+zddCII');
-      audio.volume = 0.1;
-      audio.play().catch(() => {}); // Silent fail if audio doesn't work
-    } catch (e) {
-      // Silent fail
-    }
-
-    // 自动记录这一轮番茄钟的时间
-    if (sessionStartTime) {
-      const sessionSeconds = Math.floor((Date.now() - sessionStartTime.getTime()) / 1000);
-      const sessionMinutes = Math.max(1, Math.floor(sessionSeconds / 60));
+      // 自动进入休息状态
+      setPomodoroState('resting');
+      setTimeLeft(REST_DURATION * 60);
+      setCycleStartTime(new Date());
+      // 继续运行计时器
       
+    } else if (pomodoroState === 'resting') {
+      // 休息时间结束
       setSessionCount(prev => prev + 1);
       
-      completePomodoroMutation.mutate({
-        sessionDuration: sessionMinutes,
-        completed: false // 不自动完成任务，只记录时间
+      // 播放完成音效
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmAaZXiF7N5/Bg8kf8zx0n8pBSJ6v+zddCII');
+        audio.volume = 0.1;
+        audio.play().catch(() => {});
+      } catch (e) {}
+      
+      // 发送通知
+      if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification('🛡️ 休息结束！', {
+          body: '准备开始下一轮战斗',
+          icon: '/favicon.ico',
+          tag: 'pomodoro-rest-complete',
+          requireInteraction: true
+        });
+        
+        notification.onclick = () => {
+          setIsOpen(true);
+          notification.close();
+        };
+      }
+      
+      toast({
+        title: "🛡️ 休息结束！",
+        description: "可以开始下一轮战斗了",
+        duration: 10000
       });
+      
+      // 进入等待状态
+      setPomodoroState('waiting');
+      setIsRunning(false);
+      setTimeLeft(0);
+      
+      // 显示对话框让用户选择
+      if (!isOpen) {
+        setIsOpen(true);
+      }
     }
-
-    // 重置计时器，但保持对话框打开让用户选择下一步
-    setTimeLeft(0);
-    setSessionStartTime(null);
-    
-    // Show dialog if not visible
-    if (!isOpen) {
-      setIsOpen(true);
-    }
-    
-    toast({
-      title: "🍅 番茄钟完成！",
-      description: "已记录专注时间，可选择完成任务或开始新一轮",
-      duration: 10000
-    });
-  }, [task.title, toast, sessionStartTime, completePomodoroMutation, isOpen]);
+  }, [pomodoroState, cycleStartTime, toast, isOpen]);
 
   // Timer countdown effect - 基于时间戳的精确计时
   useEffect(() => {
@@ -204,11 +238,26 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
       });
     }
     
-    // Reset timer state for new session
-    setTimeLeft(duration * 60);
+    // 设置为工作状态
+    setPomodoroState('working');
+    setTimeLeft(WORK_DURATION * 60);
+    setCycleStartTime(new Date());
     setTaskCompleted(false);
     
-    startPomodoroMutation.mutate(duration);
+    // 如果是第一次开始，记录会话开始时间
+    if (!sessionStartTime) {
+      setSessionStartTime(new Date());
+    }
+    
+    startPomodoroMutation.mutate(WORK_DURATION);
+  };
+  
+  const handleContinueBattle = () => {
+    // 继续新一轮战斗
+    setPomodoroState('working');
+    setTimeLeft(WORK_DURATION * 60);
+    setCycleStartTime(new Date());
+    setIsRunning(true);
   };
 
   const handlePauseTimer = () => {
@@ -224,16 +273,24 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
     });
   };
 
-  const handleCompleteTask = () => {
-    if (!sessionStartTime) return;
+  const handleDefeatBoss = () => {
+    // 击败Boss，结束整个番茄钟会话
+    const currentWorkTime = pomodoroState === 'working' && cycleStartTime 
+      ? Math.floor((Date.now() - cycleStartTime.getTime()) / 1000 / 60)
+      : 0;
     
-    // 计算当前会话的实际秒数
-    const sessionSeconds = Math.floor((Date.now() - sessionStartTime.getTime()) / 1000);
-    const sessionMinutes = Math.max(1, Math.floor(sessionSeconds / 60)); // 至少记录1分钟
+    const finalTotalTime = totalWorkTime + currentWorkTime;
+    const actualEnergyBalls = Math.ceil(finalTotalTime / 15); // 每15分钟1个能量球
     
+    setIsRunning(false);
+    setPomodoroState('idle');
+    
+    // 提交完成数据
     completePomodoroMutation.mutate({
-      sessionDuration: sessionMinutes,
-      completed: true
+      sessionDuration: finalTotalTime,
+      completed: taskCompleted,
+      actualEnergyBalls: actualEnergyBalls,
+      cycles: sessionCount + (pomodoroState === 'working' ? 1 : 0)
     });
   };
 
@@ -241,6 +298,15 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+  
+  const getProgressValue = () => {
+    if (pomodoroState === 'working') {
+      return ((WORK_DURATION * 60 - timeLeft) / (WORK_DURATION * 60)) * 100;
+    } else if (pomodoroState === 'resting') {
+      return ((REST_DURATION * 60 - timeLeft) / (REST_DURATION * 60)) * 100;
+    }
+    return 0;
   };
 
   const progress = duration > 0 ? ((duration * 60 - timeLeft) / (duration * 60)) * 100 : 0;
@@ -254,13 +320,13 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
         disabled={task.completed}
       >
         <i className="fas fa-clock mr-1"></i>
-        番茄钟
+        挑战Boss
       </Button>
 
-      {/* Debug state display */}
-      <div className="fixed top-4 left-4 bg-black text-white p-2 text-xs z-[999999]">
-        Timer Debug: running={isRunning.toString()}, open={isOpen.toString()}, time={timeLeft}
-      </div>
+      {/* Debug state display - Remove in production */}
+      {/* <div className="fixed top-4 left-4 bg-black text-white p-2 text-xs z-[999999]">
+        State: {pomodoroState}, running={isRunning.toString()}, time={timeLeft}
+      </div> */}
 
       {/* Test floating widget */}
       {isRunning && !isOpen && (
@@ -327,99 +393,87 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
               )}
             </div>
 
-            {/* Timer Settings (only when not running and not completed) */}
-            {!isRunning && !(timeLeft === 0 && sessionStartTime === null) && (
+            {/* Timer Settings (only when idle) */}
+            {pomodoroState === 'idle' && (
               <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    专注时长（分钟）
-                  </label>
-                  <Input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(parseInt(e.target.value) || 25)}
-                    min={5}
-                    max={90}
-                    className="bg-slate-700 border-slate-600 text-white"
-                  />
-                </div>
                 <div className="text-xs text-gray-400 bg-slate-600/50 rounded p-3">
                   <i className="fas fa-lightbulb mr-1 text-yellow-400"></i>
-                  <strong className="text-white">优化后的番茄钟：</strong><br/>
-                  • 到时间后自动暂停，不会无限累积时间<br/>
-                  • 自动记录专注时间到任务历史<br/>
-                  • 可选择完成任务或开始新一轮专注<br/>
-                  • 建议25分钟为一个专注周期
+                  <strong className="text-white">新版番茄钟战斗系统：</strong><br/>
+                  • 25分钟战斗 → 5分钟休息（自动切换）<br/>
+                  • 根据实际战斗时间计算能量球消耗<br/>
+                  • 支持多轮战斗，灵活击败Boss<br/>
+                  • 每日战报统计你的战斗成果
                 </div>
               </div>
             )}
 
-            {/* Timer Display */}
-            {isRunning && (
+            {/* Timer Display based on state */}
+            {pomodoroState === 'working' && (
               <div className="text-center space-y-4 py-4 sm:py-6">
+                <div className="flex items-center justify-center mb-2">
+                  <i className="fas fa-swords text-red-500 text-2xl mr-2"></i>
+                  <h3 className="text-xl font-bold text-white">战斗中...</h3>
+                </div>
                 <div className="text-4xl sm:text-6xl font-mono font-bold text-white">
                   {formatTime(timeLeft)}
                 </div>
-                <Progress value={progress} className="h-2 sm:h-4" />
+                <Progress value={getProgressValue()} className="h-3 sm:h-4" />
                 <div className="text-xs sm:text-sm text-gray-400">
-                  {Math.floor(progress)}% 完成
+                  第 {sessionCount + 1} 轮战斗 • {Math.floor(getProgressValue())}% 完成
                 </div>
               </div>
             )}
-
-            {/* Timer finished options */}
-            {!isRunning && timeLeft === 0 && sessionStartTime === null && (
+            
+            {pomodoroState === 'resting' && (
+              <div className="text-center space-y-4 py-4 sm:py-6">
+                <div className="flex items-center justify-center mb-2">
+                  <i className="fas fa-shield text-blue-500 text-2xl mr-2"></i>
+                  <h3 className="text-xl font-bold text-white">休息中...</h3>
+                </div>
+                <div className="text-4xl sm:text-6xl font-mono font-bold text-blue-400">
+                  {formatTime(timeLeft)}
+                </div>
+                <Progress value={getProgressValue()} className="h-3 sm:h-4 bg-blue-900" />
+                <div className="text-xs sm:text-sm text-gray-400">
+                  休息结束后将继续下一轮战斗
+                </div>
+              </div>
+            )}
+            
+            {pomodoroState === 'waiting' && (
               <div className="bg-green-500/20 rounded-lg p-4 border border-green-500/30">
                 <div className="flex items-center space-x-3 mb-4">
                   <i className="fas fa-check-circle text-green-400 text-xl"></i>
-                  <span className="text-white font-medium">番茄钟完成！时间已记录</span>
+                  <span className="text-white font-medium">第 {sessionCount} 轮战斗完成！</span>
                 </div>
                 <div className="text-sm text-gray-300 mb-4">
-                  您可以选择完成任务，或者开始新一轮专注时间
+                  已累计战斗 {totalWorkTime} 分钟，消耗 {Math.ceil(totalWorkTime / 15)} 个能量球
                 </div>
-                
-                {/* Multiple session support */}
-                <div className="space-y-3 mb-4">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      checked={taskCompleted}
-                      onCheckedChange={(checked) => setTaskCompleted(checked === true)}
-                      id="task-completed"
-                    />
-                    <label htmlFor="task-completed" className="text-sm text-gray-300">
-                      任务已完成
-                    </label>
-                  </div>
-                  
-                  {!taskCompleted && (
-                    <div className="bg-blue-500/20 rounded p-3 border border-blue-500/30">
-                      <div className="text-sm text-blue-300 mb-2">
-                        <i className="fas fa-info-circle mr-1"></i>
-                        需要继续专注？
-                      </div>
-                      <div className="text-xs text-gray-400 mb-2">
-                        已完成 {sessionCount} 轮番茄钟，大任务通常需要多个番茄钟。
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        建议：每4轮休息15-30分钟，保持良好的专注节奏。
-                      </div>
-                    </div>
-                  )}
+                <div className="flex items-center space-x-2 mb-3">
+                  <Checkbox 
+                    checked={taskCompleted}
+                    onCheckedChange={(checked) => setTaskCompleted(checked === true)}
+                    id="task-completed"
+                  />
+                  <label htmlFor="task-completed" className="text-sm text-gray-300">
+                    任务已完成
+                  </label>
                 </div>
               </div>
             )}
 
+
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              {!isRunning ? (
+              {pomodoroState === 'idle' && (
                 <>
                   <Button
                     onClick={handleStartTimer}
                     disabled={startPomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-cyan-500 h-12 text-base font-medium"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 h-12 text-base font-medium"
                   >
-                    <i className="fas fa-play mr-2"></i>
-                    开始专注
+                    <i className="fas fa-swords mr-2"></i>
+                    开始战斗
                   </Button>
                   <Button
                     variant="outline"
@@ -429,29 +483,18 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                     取消
                   </Button>
                 </>
-              ) : timeLeft === 0 && sessionStartTime === null ? (
-                // Timer completed, show final options
+              )}
+              
+              {(pomodoroState === 'working' || pomodoroState === 'resting') && (
                 <>
                   <Button
-                    onClick={handleCompleteTask}
+                    onClick={handleDefeatBoss}
                     disabled={completePomodoroMutation.isPending}
                     className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-cyan-500 h-12 text-base font-medium"
                   >
-                    <i className="fas fa-check mr-2"></i>
-                    {taskCompleted ? '完成任务' : '结束工作'}
+                    <i className="fas fa-trophy mr-2"></i>
+                    击败Boss
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={handleStartTimer}
-                    disabled={startPomodoroMutation.isPending}
-                    className="w-full sm:flex-1 h-12 border-blue-500 text-blue-400 hover:bg-blue-500/10"
-                  >
-                    <i className="fas fa-plus mr-2"></i>
-                    开始第 {sessionCount + 1} 轮
-                  </Button>
-                </>
-              ) : (
-                <>
                   <Button
                     onClick={handlePauseTimer}
                     disabled={completePomodoroMutation.isPending}
@@ -461,13 +504,26 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                     <i className="fas fa-pause mr-2"></i>
                     暂停任务
                   </Button>
+                </>
+              )}
+              
+              {pomodoroState === 'waiting' && (
+                <>
                   <Button
-                    onClick={handleCompleteTask}
-                    disabled={completePomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-cyan-500 h-12 text-base font-medium"
+                    onClick={handleContinueBattle}
+                    className="w-full sm:flex-1 bg-gradient-to-r from-blue-500 to-purple-500 h-12 text-base font-medium"
                   >
-                    <i className="fas fa-check mr-2"></i>
-                    提前完成
+                    <i className="fas fa-swords mr-2"></i>
+                    继续战斗 (第{sessionCount + 1}轮)
+                  </Button>
+                  <Button
+                    onClick={handleDefeatBoss}
+                    disabled={completePomodoroMutation.isPending}
+                    variant="success"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 h-12 text-base font-medium"
+                  >
+                    <i className="fas fa-check-circle mr-2"></i>
+                    击败Boss
                   </Button>
                 </>
               )}

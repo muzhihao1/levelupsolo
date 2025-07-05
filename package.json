@@ -28,6 +28,7 @@
     "db:verify-activity-logs": "tsx scripts/verify-activity-logs.ts",
     "db:migrate-activity-logs": "tsx scripts/migrate-historical-activity-logs.ts",
     "db:migrate": "tsx server/startup-migrations.ts",
+    "db:run-migrations": "node scripts/run-migrations.js",
     "db:test-task-creation": "tsx scripts/test-task-creation.ts",
     "seed:test": "tsx scripts/seed-test-data.ts",
     "seed:test:clean": "tsx scripts/seed-test-data.ts --clean",

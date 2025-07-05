@@ -1,5 +1,6 @@
 import { 
   skills, tasks, goals, goalTasks, activityLogs, milestones, microTasks, users, userProfiles, userStats,
+  pomodoroSessions, dailyBattleReports,
   type Skill, type InsertSkill,
   type Task, type InsertTask,
   type Goal, type InsertGoal,
@@ -9,13 +10,30 @@ import {
   type MicroTask, type InsertMicroTask,
   type User, type UpsertUser,
   type UserProfile, type InsertUserProfile,
-  type UserStats, type InsertUserStats
+  type UserStats, type InsertUserStats,
+  type PomodoroSession, type InsertPomodoroSession,
+  type DailyBattleReport, type InsertDailyBattleReport
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, asc } from "drizzle-orm";
+import { eq, desc, and, asc, sql, gte, lt } from "drizzle-orm";
 import { inArray } from "drizzle-orm";
 import { isDatabaseInitialized, getDatabaseError } from "./db-check";
 import { getPool } from "./db-pool";
+
+// Achievement interface for mock storage
+interface Achievement {
+  id: number;
+  userId?: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+  unlockedAt?: Date;
+  progress?: number;
+  requirement?: number;
+}
+
+interface InsertAchievement extends Omit<Achievement, 'id'> {}
 
 export interface IStorage {
   // User operations (required for authentication)
@@ -91,6 +109,28 @@ export interface IStorage {
   consumeEnergyBalls(userId: string, amount: number): Promise<UserStats | undefined>;
   restoreEnergyBalls(userId: string, amount: number): Promise<UserStats | undefined>;
   checkAndResetEnergyBalls(userId: string): Promise<boolean>;
+  
+  // Experience and levels
+  addExperience(userId: string, exp: number): Promise<UserStats | undefined>;
+  
+  // Pomodoro Sessions
+  createPomodoroSession(session: InsertPomodoroSession): Promise<PomodoroSession>;
+  updatePomodoroSession(id: number, session: Partial<InsertPomodoroSession>): Promise<PomodoroSession | undefined>;
+  getPomodoroSession(id: number): Promise<PomodoroSession | undefined>;
+  
+  // Daily Battle Reports
+  getDailyBattleReport(userId: string, date: Date): Promise<DailyBattleReport | undefined>;
+  updateDailyBattleReport(data: {
+    userId: string;
+    date: Date;
+    battleTime: number;
+    energyBalls: number;
+    taskCompleted: boolean;
+    cycles: number;
+    taskId: number;
+    taskTitle: string;
+  }): Promise<DailyBattleReport>;
+  getBattleReportSummary(userId: string, startDate: Date, endDate: Date): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1309,7 +1349,7 @@ export class DatabaseStorage implements IStorage {
     return false;
   }
 
-  async addExperience(userId: string, expGained: number): Promise<void> {
+  async addExperience(userId: string, expGained: number): Promise<UserStats | undefined> {
     const stats = await this.getUserStats(userId);
 
     if (stats) {
@@ -1323,12 +1363,13 @@ export class DatabaseStorage implements IStorage {
         experience,
         experienceToNext
       });
+      return stats;
     } else {
       // Create initial stats if they don't exist
-      await this.createUserStats({
+      return await this.createUserStats({
         userId,
         level: 1,
-        experience: expained,
+        experience: expGained,
         energyBalls: 18,
         maxEnergyBalls: 18,
         streak: 0
@@ -1391,6 +1432,151 @@ export class DatabaseStorage implements IStorage {
     return level * 100 + Math.max(0, level - 1) * 50;
   }
 
+  // Pomodoro Sessions
+  async createPomodoroSession(session: InsertPomodoroSession): Promise<PomodoroSession> {
+    const [result] = await db.insert(pomodoroSessions).values(session).returning();
+    return result;
+  }
+
+  async updatePomodoroSession(id: number, session: Partial<InsertPomodoroSession>): Promise<PomodoroSession | undefined> {
+    const [updated] = await db
+      .update(pomodoroSessions)
+      .set(session)
+      .where(eq(pomodoroSessions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getPomodoroSession(id: number): Promise<PomodoroSession | undefined> {
+    const [session] = await db
+      .select()
+      .from(pomodoroSessions)
+      .where(eq(pomodoroSessions.id, id));
+    return session;
+  }
+
+  // Daily Battle Reports
+  async getDailyBattleReport(userId: string, date: Date): Promise<DailyBattleReport | undefined> {
+    // Set date to start of day
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    
+    const [report] = await db
+      .select()
+      .from(dailyBattleReports)
+      .where(
+        and(
+          eq(dailyBattleReports.userId, userId),
+          eq(dailyBattleReports.date, startOfDay)
+        )
+      );
+    return report;
+  }
+
+  async updateDailyBattleReport(data: {
+    userId: string;
+    date: Date;
+    battleTime: number;
+    energyBalls: number;
+    taskCompleted: boolean;
+    cycles: number;
+    taskId: number;
+    taskTitle: string;
+  }): Promise<DailyBattleReport> {
+    // Set date to start of day
+    const startOfDay = new Date(data.date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    // Try to get existing report
+    const existingReport = await this.getDailyBattleReport(data.userId, startOfDay);
+
+    if (existingReport) {
+      // Update existing report
+      const updatedTaskDetails = existingReport.taskDetails || [];
+      updatedTaskDetails.push({
+        taskId: data.taskId,
+        taskTitle: data.taskTitle,
+        battleTime: data.battleTime,
+        energyBalls: data.energyBalls,
+        cycles: data.cycles
+      });
+
+      const [updated] = await db
+        .update(dailyBattleReports)
+        .set({
+          totalBattleTime: (existingReport.totalBattleTime || 0) + data.battleTime,
+          energyBallsConsumed: (existingReport.energyBallsConsumed || 0) + data.energyBalls,
+          tasksCompleted: (existingReport.tasksCompleted || 0) + (data.taskCompleted ? 1 : 0),
+          pomodoroCycles: (existingReport.pomodoroCycles || 0) + data.cycles,
+          taskDetails: updatedTaskDetails,
+          updatedAt: new Date()
+        })
+        .where(
+          and(
+            eq(dailyBattleReports.userId, data.userId),
+            eq(dailyBattleReports.date, startOfDay)
+          )
+        )
+        .returning();
+      
+      return updated;
+    } else {
+      // Create new report
+      const [created] = await db
+        .insert(dailyBattleReports)
+        .values({
+          userId: data.userId,
+          date: startOfDay,
+          totalBattleTime: data.battleTime,
+          energyBallsConsumed: data.energyBalls,
+          tasksCompleted: data.taskCompleted ? 1 : 0,
+          pomodoroCycles: data.cycles,
+          taskDetails: [{
+            taskId: data.taskId,
+            taskTitle: data.taskTitle,
+            battleTime: data.battleTime,
+            energyBalls: data.energyBalls,
+            cycles: data.cycles
+          }]
+        })
+        .returning();
+      
+      return created;
+    }
+  }
+
+  async getBattleReportSummary(userId: string, startDate: Date, endDate: Date): Promise<any> {
+    const reports = await db
+      .select()
+      .from(dailyBattleReports)
+      .where(
+        and(
+          eq(dailyBattleReports.userId, userId),
+          gte(dailyBattleReports.date, startDate),
+          lt(dailyBattleReports.date, endDate)
+        )
+      )
+      .orderBy(desc(dailyBattleReports.date));
+
+    // Calculate summary statistics
+    const summary = {
+      totalDays: reports.length,
+      totalBattleTime: reports.reduce((sum, r) => sum + (r.totalBattleTime || 0), 0),
+      totalEnergyBalls: reports.reduce((sum, r) => sum + (r.energyBallsConsumed || 0), 0),
+      totalTasksCompleted: reports.reduce((sum, r) => sum + (r.tasksCompleted || 0), 0),
+      totalPomodoroCycles: reports.reduce((sum, r) => sum + (r.pomodoroCycles || 0), 0),
+      dailyReports: reports,
+      averageBattleTime: 0,
+      averageEnergyBalls: 0
+    };
+
+    if (reports.length > 0) {
+      summary.averageBattleTime = Math.round(summary.totalBattleTime / reports.length);
+      summary.averageEnergyBalls = Math.round(summary.totalEnergyBalls / reports.length);
+    }
+
+    return summary;
+  }
 
 }
 
@@ -2078,6 +2264,168 @@ export class MemStorage implements IStorage {
 
   async updateUserState(userId: string, state: any): Promise<void> {
     this.userStates.set(userId, state);
+  }
+
+  async addExperience(userId: string, expGained: number): Promise<UserStats | undefined> {
+    const stats = this.userStats.get(userId);
+    if (stats) {
+      stats.experience += expGained;
+      
+      // Simple level calculation
+      let level = 1;
+      let remainingExp = stats.experience;
+      while (remainingExp >= level * 100) {
+        remainingExp -= level * 100;
+        level++;
+      }
+      
+      stats.level = level;
+      stats.experienceToNext = level * 100;
+      stats.experience = remainingExp;
+      
+      this.userStats.set(userId, stats);
+      return stats;
+    }
+    return undefined;
+  }
+
+  // Pomodoro Sessions (Mock implementation)
+  private pomodoroSessions: Map<number, PomodoroSession> = new Map();
+  private currentPomodoroSessionId = 1;
+  private dailyBattleReports: Map<string, DailyBattleReport> = new Map();
+  private currentBattleReportId = 1;
+
+  async createPomodoroSession(session: InsertPomodoroSession): Promise<PomodoroSession> {
+    const newSession: PomodoroSession = {
+      ...session,
+      id: this.currentPomodoroSessionId,
+      startTime: new Date(),
+      endTime: null,
+      workDuration: session.workDuration || 0,
+      restDuration: session.restDuration || 0,
+      cyclesCompleted: session.cyclesCompleted || 0,
+      actualEnergyBalls: session.actualEnergyBalls || 0,
+      completed: session.completed || false,
+      createdAt: new Date()
+    };
+    this.pomodoroSessions.set(this.currentPomodoroSessionId, newSession);
+    this.currentPomodoroSessionId++;
+    return newSession;
+  }
+
+  async updatePomodoroSession(id: number, session: Partial<InsertPomodoroSession>): Promise<PomodoroSession | undefined> {
+    const existing = this.pomodoroSessions.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...session };
+    this.pomodoroSessions.set(id, updated);
+    return updated;
+  }
+
+  async getPomodoroSession(id: number): Promise<PomodoroSession | undefined> {
+    return this.pomodoroSessions.get(id);
+  }
+
+  async getDailyBattleReport(userId: string, date: Date): Promise<DailyBattleReport | undefined> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const key = `${userId}-${startOfDay.toISOString().split('T')[0]}`;
+    return this.dailyBattleReports.get(key);
+  }
+
+  async updateDailyBattleReport(data: {
+    userId: string;
+    date: Date;
+    battleTime: number;
+    energyBalls: number;
+    taskCompleted: boolean;
+    cycles: number;
+    taskId: number;
+    taskTitle: string;
+  }): Promise<DailyBattleReport> {
+    const startOfDay = new Date(data.date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const key = `${data.userId}-${startOfDay.toISOString().split('T')[0]}`;
+    
+    const existing = this.dailyBattleReports.get(key);
+    
+    if (existing) {
+      const updatedTaskDetails = existing.taskDetails || [];
+      updatedTaskDetails.push({
+        taskId: data.taskId,
+        taskTitle: data.taskTitle,
+        battleTime: data.battleTime,
+        energyBalls: data.energyBalls,
+        cycles: data.cycles
+      });
+      
+      const updated: DailyBattleReport = {
+        ...existing,
+        totalBattleTime: (existing.totalBattleTime || 0) + data.battleTime,
+        energyBallsConsumed: (existing.energyBallsConsumed || 0) + data.energyBalls,
+        tasksCompleted: (existing.tasksCompleted || 0) + (data.taskCompleted ? 1 : 0),
+        pomodoroCycles: (existing.pomodoroCycles || 0) + data.cycles,
+        taskDetails: updatedTaskDetails,
+        updatedAt: new Date()
+      };
+      
+      this.dailyBattleReports.set(key, updated);
+      return updated;
+    } else {
+      const newReport: DailyBattleReport = {
+        id: this.currentBattleReportId++,
+        userId: data.userId,
+        date: startOfDay,
+        totalBattleTime: data.battleTime,
+        energyBallsConsumed: data.energyBalls,
+        tasksCompleted: data.taskCompleted ? 1 : 0,
+        pomodoroCycles: data.cycles,
+        taskDetails: [{
+          taskId: data.taskId,
+          taskTitle: data.taskTitle,
+          battleTime: data.battleTime,
+          energyBalls: data.energyBalls,
+          cycles: data.cycles
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      this.dailyBattleReports.set(key, newReport);
+      return newReport;
+    }
+  }
+
+  async getBattleReportSummary(userId: string, startDate: Date, endDate: Date): Promise<any> {
+    const reports: DailyBattleReport[] = [];
+    
+    for (const [key, report] of this.dailyBattleReports) {
+      if (report.userId === userId && 
+          report.date >= startDate && 
+          report.date < endDate) {
+        reports.push(report);
+      }
+    }
+    
+    reports.sort((a, b) => b.date.getTime() - a.date.getTime());
+    
+    const summary = {
+      totalDays: reports.length,
+      totalBattleTime: reports.reduce((sum, r) => sum + (r.totalBattleTime || 0), 0),
+      totalEnergyBalls: reports.reduce((sum, r) => sum + (r.energyBallsConsumed || 0), 0),
+      totalTasksCompleted: reports.reduce((sum, r) => sum + (r.tasksCompleted || 0), 0),
+      totalPomodoroCycles: reports.reduce((sum, r) => sum + (r.pomodoroCycles || 0), 0),
+      dailyReports: reports,
+      averageBattleTime: 0,
+      averageEnergyBalls: 0
+    };
+    
+    if (reports.length > 0) {
+      summary.averageBattleTime = Math.round(summary.totalBattleTime / reports.length);
+      summary.averageEnergyBalls = Math.round(summary.totalEnergyBalls / reports.length);
+    }
+    
+    return summary;
   }
 }
 
