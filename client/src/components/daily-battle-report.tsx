@@ -27,8 +27,11 @@ export default function DailyBattleReportCard() {
   const { data: report, isLoading, error } = useQuery({
     queryKey: ['battle-report', 'daily', today],
     queryFn: async () => {
-      const response = await apiRequest('GET', `/api/battle-reports/daily?date=${today}`);
-      if (!response.ok) {
+      try {
+        const data = await apiRequest('GET', `/api/battle-reports/daily?date=${today}`);
+        return data as DailyBattleReport;
+      } catch (error) {
+        console.error('Failed to fetch battle report:', error);
         // Return empty report on error instead of throwing
         return {
           date: today,
@@ -39,7 +42,6 @@ export default function DailyBattleReportCard() {
           taskDetails: []
         };
       }
-      return response.json() as Promise<DailyBattleReport>;
     },
     retry: 1, // Only retry once
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes

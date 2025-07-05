@@ -15,16 +15,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useFilteredTasks } from "@/hooks/use-filtered-tasks";
 import type { Task, InsertTask, Skill } from "@shared/schema";
 
-interface MicroTask {
-  id: number;
-  taskId: number;
-  title: string;
-  description?: string;
-  completed: boolean;
-  duration: number;
-  expReward: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-}
 
 // 任务分类和类型定义
 const TASK_CATEGORIES = {
@@ -138,10 +128,6 @@ const TaskCard = memo(function TaskCard({
                 <Badge variant="outline" className="text-primary border-primary/30 text-xs px-2 py-1">
                   {category.icon} {category.name}
                 </Badge>
-                {/* Micro Tasks Button - only for main tasks (goal-related) */}
-                {!task.completed && task.taskCategory === "goal" && (
-                  <MicroTasksButton taskId={task.id} />
-                )}
                 <Button
                   size="sm"
                   variant="ghost"
@@ -1310,7 +1296,6 @@ export default function UnifiedRPGTaskManager() {
                         <Flame className="h-4 w-4 text-orange-500" />
                         <span className="text-sm font-medium text-foreground">热身准备</span>
                       </div>
-                      <MicroTasksButton taskId={goal.id} />
                     </div>
 
                     {/* 主线任务专用番茄钟 */}
@@ -1318,7 +1303,6 @@ export default function UnifiedRPGTaskManager() {
                       <div className="flex items-center gap-2 mb-3">
                         <Crown className="h-4 w-4 text-accent" />
                         <span className="text-accent font-medium text-sm">主线任务专注</span>
-                        <Badge className="bg-accent/20 text-accent text-xs">增强奖励</Badge>
                       </div>
                       
                       {pomodoro.taskId === goal.id ? (
@@ -1783,158 +1767,3 @@ export default function UnifiedRPGTaskManager() {
   );
 }
 
-function MicroTasksButton({ taskId }: { taskId: number }) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [microTasks, setMicroTasks] = useState<MicroTask[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const generateMicroTasks = async () => {
-    try {
-      setIsGenerating(true);
-      
-      // First check if micro tasks already exist
-      const existingResponse = await apiRequest('GET', `/api/tasks/${taskId}/micro-tasks`);
-      const existingTasks = await existingResponse.json();
-      
-      if (existingTasks.length > 0) {
-        setMicroTasks(existingTasks);
-        setIsDialogOpen(true);
-        return;
-      }
-
-      // Generate new micro tasks if none exist
-      const newResponse = await apiRequest('POST', `/api/tasks/${taskId}/generate-micro-tasks`, {});
-      const newMicroTasks = await newResponse.json();
-      setMicroTasks(newMicroTasks);
-      setIsDialogOpen(true);
-    } catch (error) {
-      console.error('Error generating micro tasks:', error);
-      toast({
-        title: "生成失败",
-        description: "无法生成微任务，请重试",
-        variant: "destructive",
-      });
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  const completeMicroTask = async (microTaskId: number) => {
-    try {
-      await apiRequest('PATCH', `/api/micro-tasks/${microTaskId}`, { completed: true });
-      setMicroTasks(prev => 
-        prev.map(task => 
-          task.id === microTaskId ? { ...task, completed: true } : task
-        )
-      );
-      queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
-      toast({
-        title: "微任务完成",
-        description: "获得经验奖励！",
-      });
-    } catch (error) {
-      console.error('Error completing micro task:', error);
-      toast({
-        title: "更新失败",
-        description: "无法更新任务状态",
-        variant: "destructive",
-      });
-    }
-  };
-
-  return (
-    <>
-      <Button
-        size="sm"
-        variant="outline"
-        onClick={generateMicroTasks}
-        disabled={isGenerating}
-        className="text-xs px-2 py-1 h-7 bg-blue-500/10 border-blue-500/30 text-blue-600 hover:bg-blue-500/20"
-      >
-        {isGenerating ? (
-          <div className="animate-spin w-3 h-3 border border-blue-500 border-t-transparent rounded-full"></div>
-        ) : (
-          "微任务"
-        )}
-      </Button>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-blue-500" />
-              分解微任务
-            </DialogTitle>
-            <DialogDescription>
-              将主线任务分解为小步骤，逐步完成获得经验奖励
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="grid gap-3 mt-4">
-            {microTasks.map((microTask) => (
-              <Card 
-                key={microTask.id} 
-                className={`cursor-pointer transition-all ${
-                  microTask.completed 
-                    ? 'bg-green-500/10 border-green-500/30' 
-                    : 'hover:border-blue-400/50 hover:bg-blue-500/5'
-                }`}
-                onClick={() => !microTask.completed && completeMicroTask(microTask.id)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className={`font-medium text-sm ${
-                        microTask.completed ? 'text-muted-foreground line-through' : 'text-foreground'
-                      }`}>
-                        {microTask.title}
-                      </h4>
-                      {microTask.description && (
-                        <p className="text-xs text-muted-foreground mt-1">{microTask.description}</p>
-                      )}
-                      <div className="flex items-center gap-3 mt-2 text-xs">
-                        <span className="text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {microTask.duration}分钟
-                        </span>
-                        <span className="text-blue-600 flex items-center gap-1">
-                          <Zap className="h-3 w-3" />
-                          +{microTask.expReward} EXP
-                        </span>
-                        <Badge 
-                          variant="outline" 
-                          className={`text-xs ${
-                            microTask.difficulty === 'easy' ? 'border-green-500/30 text-green-600' :
-                            microTask.difficulty === 'medium' ? 'border-yellow-500/30 text-yellow-600' :
-                            'border-red-500/30 text-red-600'
-                          }`}
-                        >
-                          {microTask.difficulty === 'easy' ? '简单' : 
-                           microTask.difficulty === 'medium' ? '中等' : '困难'}
-                        </Badge>
-                      </div>
-                    </div>
-                    {microTask.completed && (
-                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0" />
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          <div className="flex justify-end gap-2 mt-4">
-            <Button 
-              variant="outline" 
-              onClick={() => setIsDialogOpen(false)}
-            >
-              关闭
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-}

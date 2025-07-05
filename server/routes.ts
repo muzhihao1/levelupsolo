@@ -926,7 +926,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             skillId: task.skillId || null,
             expGained,
             action: isHabitCompletion ? 'task_completed' : 'task_completed',
-            details: { description: `完成任务: ${task.title}` } // Use details as JSONB
+            details: { 
+              description: `完成任务: ${task.title}`,
+              duration: task.actualDuration || task.estimatedDuration || 0,
+              energyBalls: task.actualEnergyBalls || task.requiredEnergyBalls || 0
+            } // Use details as JSONB
           };
           console.log(`[PATCH /api/tasks/${taskId}] Activity log data:`, JSON.stringify(logData, null, 2));
           
@@ -1279,18 +1283,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       // Update daily battle report
-      await storage.updateDailyBattleReport(userId, {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      await storage.updateDailyBattleReport({
+        userId,
+        date: today,
         battleTime: workDuration,
         energyBalls: actualEnergyBalls,
         taskCompleted: false, // Habits are not "completed" in the same way
         cycles: cyclesCompleted,
-        taskDetails: {
-          taskId: habitId,
-          taskTitle: habit.title,
-          battleTime: workDuration,
-          energyBalls: actualEnergyBalls,
-          cycles: cyclesCompleted
-        }
+        taskId: habitId,
+        taskTitle: habit.title
       });
 
       res.json({ 
@@ -4303,7 +4307,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           skillId: updatedTask.skill_id || updatedTask.skillId || null,
           expGained,
           action: 'task_completed',
-          details: { description: `完成习惯: ${updatedTask.title}` }
+          details: { 
+            description: `完成习惯: ${updatedTask.title}`,
+            duration: updatedTask.actualDuration || updatedTask.estimatedDuration || updatedTask.actual_duration || updatedTask.estimated_duration || 0,
+            energyBalls: updatedTask.actualEnergyBalls || updatedTask.requiredEnergyBalls || updatedTask.actual_energy_balls || updatedTask.required_energy_balls || 0
+          }
         });
         console.log(`[Simple Complete] Activity log created`);
       } catch (logError) {

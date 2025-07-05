@@ -41,13 +41,13 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   const { data: availableTasks, isLoading, error } = useQuery({
     queryKey: ['pomodoro-available-tasks'],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/pomodoro/available-tasks');
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Failed to fetch tasks:', errorData);
-        throw new Error(errorData.message || 'Failed to fetch available tasks');
+      try {
+        const data = await apiRequest('GET', '/api/pomodoro/available-tasks');
+        return data;
+      } catch (error) {
+        console.error('Failed to fetch tasks:', error);
+        throw new Error(error.message || 'Failed to fetch available tasks');
       }
-      return response.json();
     },
     enabled: isOpen,
   });
@@ -74,7 +74,7 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
         : `/api/tasks/${task.id}/start-pomodoro`;
       
       const response = await apiRequest('POST', endpoint);
-      if (response.ok) {
+      if (response) {
         // Navigate to the pomodoro timer
         setLocation(`/pomodoro?type=${task.type}&id=${task.id}`);
         onClose();

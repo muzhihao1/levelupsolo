@@ -200,6 +200,8 @@ export default function GrowthLog() {
         return '等级提升';
       case 'goal_pomodoro_complete':
         return '番茄钟完成';
+      case 'pomodoro_complete':
+        return '番茄钟完成';
       case 'task_completed_with_pomodoro':
         return '番茄钟任务完成';
       default:
@@ -211,18 +213,22 @@ export default function GrowthLog() {
   const getDailyStats = (dateLogs: ActivityLog[]) => {
     // Count both regular and pomodoro task completions
     const completedTasks = dateLogs.filter(log => 
-      log.action === 'task_completed' || log.action === 'task_completed_with_pomodoro'
+      log.action === 'task_completed' || 
+      log.action === 'task_completed_with_pomodoro' || 
+      log.action === 'pomodoro_complete'
     ).length;
     
-    // Total experience gained from completed tasks
-    const totalExp = dateLogs
-      .filter(log => log.action === 'task_completed' || log.action === 'task_completed_with_pomodoro')
-      .reduce((sum, log) => sum + log.expGained, 0);
+    // Total experience gained from all activities
+    const totalExp = dateLogs.reduce((sum, log) => sum + log.expGained, 0);
     
     // Count unique skills that gained experience from task completions
     const skillsImproved = new Set(
       dateLogs
-        .filter(log => (log.action === 'task_completed' || log.action === 'task_completed_with_pomodoro') && log.skillId)
+        .filter(log => (
+          log.action === 'task_completed' || 
+          log.action === 'task_completed_with_pomodoro' || 
+          log.action === 'pomodoro_complete'
+        ) && log.skillId)
         .map(log => log.skillId)
     ).size;
     
@@ -448,12 +454,32 @@ export default function GrowthLog() {
                           <p className="text-foreground font-medium truncate mt-1">
                             {(log.details as any)?.description || (log.taskId ? getTaskTitle(log.taskId) : '活动记录')}
                           </p>
-                          <p className="text-xs text-muted-foreground">
-                            {new Date(log.createdAt || '').toLocaleTimeString('zh-CN', {
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
+                          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                            <span>
+                              {new Date(log.createdAt || '').toLocaleTimeString('zh-CN', {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                            {(log.details as any)?.duration > 0 && (
+                              <>
+                                <span>•</span>
+                                <span className="flex items-center gap-1">
+                                  <i className="fas fa-clock"></i>
+                                  {(log.details as any).duration}分钟
+                                </span>
+                              </>
+                            )}
+                            {(log.details as any)?.energyBalls > 0 && (
+                              <>
+                                <span>•</span>
+                                <span className="flex items-center gap-1">
+                                  <i className="fas fa-bolt"></i>
+                                  {(log.details as any).energyBalls}能量球
+                                </span>
+                              </>
+                            )}
+                          </div>
                         </div>
                         <div className="text-right">
                           <div className="text-green-600 dark:text-green-400 font-bold">
