@@ -4,8 +4,8 @@ import * as schema from "@shared/schema";
 import { pgTable, serial, text, json, integer, boolean } from 'drizzle-orm/pg-core';
 import { getDb } from "./db-pool";
 
-// 优先使用 Supabase 数据库，如果没有则使用原 DATABASE_URL
-const databaseUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
+// Use DATABASE_URL provided by the hosting environment
+const databaseUrl = process.env.DATABASE_URL;
 
 if (!databaseUrl) {
   console.error("🚨 DATABASE_URL is not set!");
