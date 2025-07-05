@@ -1159,9 +1159,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeGoals = Array.isArray(goals) ? goals.filter(g => g && !g.completedAt) : [];
       console.log(`Found ${activeGoals.length} active goals`);
 
-      // Filter active tasks (not completed)
-      const activeTasks = Array.isArray(tasks) ? tasks.filter(t => t && !t.completed) : [];
-      console.log(`Found ${activeTasks.length} active tasks`);
+      // Filter active tasks (not completed) - but handle habits specially
+      const today = new Date().toDateString();
+      const activeTasks = Array.isArray(tasks) ? tasks.filter(t => {
+        if (!t) return false;
+        
+        // For habits, check if completed today
+        if (normalizeTaskCategory(t.taskCategory) === 'habit') {
+          // If not completed at all, it's active
+          if (!t.completed) return true;
+          
+          // If completed, check if it was today
+          const completedDate = t.completedAt ? new Date(t.completedAt).toDateString() : null;
+          // If completed on a previous day, it's available again
+          return completedDate !== today;
+        }
+        
+        // For non-habits, simply check if not completed
+        return !t.completed;
+      }) : [];
+      console.log(`Found ${activeTasks.length} active tasks (including habits reset for today)`);
 
       // Separate tasks by category with normalization
       // Note: Normalize categories to handle various values in database
@@ -1179,8 +1196,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         category: t.taskCategory,
         normalizedCategory: normalizeTaskCategory(t.taskCategory),
         type: t.taskType,
-        completed: t.completed 
+        completed: t.completed,
+        completedAt: t.completedAt 
       })));
+      
+      // Debug habits specifically
+      const allHabits = tasks.filter(t => t && normalizeTaskCategory(t.taskCategory) === 'habit');
+      console.log(`Habit analysis: Total habits: ${allHabits.length}, Active habits: ${habits.length}`);
+      if (allHabits.length > 0) {
+        console.log('All habits status:', allHabits.map(h => ({
+          id: h.id,
+          title: h.title,
+          completed: h.completed,
+          completedAt: h.completedAt,
+          completedToday: h.completedAt ? new Date(h.completedAt).toDateString() === today : false
+        })));
+      }
       
       // Also log the breakdown
       console.log('Task category analysis:', {

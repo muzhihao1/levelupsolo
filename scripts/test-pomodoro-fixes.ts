@@ -78,21 +78,64 @@ fetch('/api/pomodoro/available-tasks', {
         task_category,
         title,
         task_type,
-        completed
+        completed,
+        completed_at
       FROM tasks
-      WHERE completed = false
       ORDER BY task_category, created_at DESC
-      LIMIT 10
+      LIMIT 15
     `);
     
-    console.log('Sample active tasks:');
+    console.log('Sample tasks:');
     const sampleRows = sampleTasks.rows || sampleTasks;
     if (Array.isArray(sampleRows) && sampleRows.length > 0) {
       sampleRows.forEach((task: any) => {
-        console.log(`  [${task.task_category || 'NULL'}] "${task.title}" (type: ${task.task_type})`);
+        const status = task.completed ? '✓' : '○';
+        const completedInfo = task.completed_at ? ` (completed: ${new Date(task.completed_at).toLocaleDateString()})` : '';
+        console.log(`  ${status} [${task.task_category || 'NULL'}] "${task.title}"${completedInfo}`);
       });
     } else {
-      console.log('  No active tasks found');
+      console.log('  No tasks found');
+    }
+    
+    // Test 6: Check habit completion dates
+    console.log('\n🔄 Test 6: Habit Completion Analysis');
+    const habitAnalysis = await db.execute(sql`
+      SELECT 
+        id,
+        title,
+        completed,
+        completed_at,
+        task_category
+      FROM tasks
+      WHERE task_category = 'habit'
+      ORDER BY completed DESC, title
+    `);
+    
+    const habitRows = habitAnalysis.rows || habitAnalysis;
+    const today = new Date().toDateString();
+    let completedToday = 0;
+    let completedPreviously = 0;
+    let notCompleted = 0;
+    
+    if (Array.isArray(habitRows)) {
+      habitRows.forEach((habit: any) => {
+        if (!habit.completed) {
+          notCompleted++;
+        } else if (habit.completed_at) {
+          const completedDate = new Date(habit.completed_at).toDateString();
+          if (completedDate === today) {
+            completedToday++;
+          } else {
+            completedPreviously++;
+          }
+        }
+      });
+      
+      console.log(`Total habits: ${habitRows.length}`);
+      console.log(`  - Not completed: ${notCompleted}`);
+      console.log(`  - Completed today: ${completedToday}`);
+      console.log(`  - Completed previously: ${completedPreviously} (should be available again)`);
+      console.log(`\nExpected available habits in Pomodoro: ${notCompleted + completedPreviously}`);
     }
     
   } catch (error) {

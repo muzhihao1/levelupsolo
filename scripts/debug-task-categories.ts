@@ -1,74 +1,94 @@
-// Debug script to check actual task categories in database
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
+import { tasks, type Task } from '../shared/schema.js';
+import { eq, sql } from 'drizzle-orm';
+import dotenv from 'dotenv';
 
-import 'dotenv/config';
-import { db } from '../server/db';
-import { sql } from 'drizzle-orm';
+// Load environment variables
+dotenv.config();
 
 async function debugTaskCategories() {
-  console.log('🔍 Debugging Task Categories...\n');
+  const connectionString = process.env.DATABASE_URL;
   
+  if (!connectionString) {
+    console.error('DATABASE_URL is not set');
+    process.exit(1);
+  }
+
+  const queryClient = postgres(connectionString);
+  const db = drizzle(queryClient);
+
   try {
-    // Get all unique task categories
-    const result = await db.execute(sql`
-      SELECT DISTINCT task_category, COUNT(*) as count
-      FROM tasks
-      GROUP BY task_category
-      ORDER BY count DESC
-    `);
+    console.log('Connecting to database...\n');
     
-    console.log('📊 Task Categories Distribution:');
-    console.log('================================');
+    // Get all tasks
+    const allTasks = await db.select().from(tasks);
+    console.log(`Total tasks in database: ${allTasks.length}`);
     
-    const categories = result.rows || result;
-    categories.forEach((row: any) => {
-      console.log(`${row.task_category || 'NULL'}: ${row.count} tasks`);
+    // Group by taskCategory
+    const categoryCounts = allTasks.reduce((acc, task) => {
+      const category = task.taskCategory || 'null';
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    console.log('\nTask Category Distribution:');
+    Object.entries(categoryCounts).forEach(([category, count]) => {
+      console.log(`  "${category}": ${count} tasks`);
     });
     
-    console.log('\n📋 Sample Tasks by Category:');
-    console.log('================================');
+    // Group by taskType
+    const typeCounts = allTasks.reduce((acc, task) => {
+      const type = task.taskType || 'null';
+      acc[type] = (acc[type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
     
-    // Get sample tasks for each category
-    for (const row of categories) {
-      const category = row.task_category;
-      console.log(`\n[${category || 'NULL'}]:`);
-      
-      const samples = await db.execute(sql`
-        SELECT id, title, completed, task_type, user_id
-        FROM tasks
-        WHERE task_category = ${category}
-        LIMIT 3
-      `);
-      
-      const sampleTasks = samples.rows || samples;
-      sampleTasks.forEach((task: any) => {
-        console.log(`  - ID: ${task.id}, Title: "${task.title}", Type: ${task.task_type}, Completed: ${task.completed}`);
-      });
-    }
-    
-    // Check for specific user
-    console.log('\n🧑 Checking specific user tasks:');
-    console.log('================================');
-    
-    const userTasks = await db.execute(sql`
-      SELECT id, title, task_category, task_type, completed
-      FROM tasks
-      WHERE user_id IN (
-        SELECT id FROM users 
-        WHERE email NOT LIKE '%test%' 
-        LIMIT 1
-      )
-      ORDER BY created_at DESC
-      LIMIT 10
-    `);
-    
-    const tasks = userTasks.rows || userTasks;
-    console.log(`Found ${tasks.length} tasks for non-test user:`);
-    tasks.forEach((task: any) => {
-      console.log(`  - Category: ${task.task_category}, Type: ${task.task_type}, Title: "${task.title}"`);
+    console.log('\nTask Type Distribution:');
+    Object.entries(typeCounts).forEach(([type, count]) => {
+      console.log(`  "${type}": ${count} tasks`);
     });
+    
+    // Show active (not completed) tasks by category
+    const activeTasks = allTasks.filter(task => !task.completed);
+    console.log(`\nActive tasks (not completed): ${activeTasks.length}`);
+    
+    const activeCategoryCounts = activeTasks.reduce((acc, task) => {
+      const category = task.taskCategory || 'null';
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    console.log('\nActive Task Category Distribution:');
+    Object.entries(activeCategoryCounts).forEach(([category, count]) => {
+      console.log(`  "${category}": ${count} tasks`);
+    });
+    
+    // Show some sample tasks with their categories
+    console.log('\nSample Active Tasks:');
+    activeTasks.slice(0, 10).forEach(task => {
+      console.log(`  ID: ${task.id}, Title: "${task.title}", Category: "${task.taskCategory}", Type: "${task.taskType}", Completed: ${task.completed}`);
+    });
+    
+    // Check for specific category values
+    const sideQuests = activeTasks.filter(task => 
+      task.taskCategory === '支线任务' || 
+      task.taskCategory === 'side' || 
+      task.taskCategory === 'todo'
+    );
+    console.log(`\nSide quests (支线任务/side/todo): ${sideQuests.length}`);
+    
+    const habits = activeTasks.filter(task => 
+      task.taskCategory === '习惯' || 
+      task.taskCategory === 'habit' || 
+      task.taskCategory === 'daily'
+    );
+    console.log(`Habits (习惯/habit/daily): ${habits.length}`);
     
   } catch (error) {
-    console.error('❌ Debug failed:', error);
+    console.error('Error:', error);
+  } finally {
+    await queryClient.end();
   }
 }
 
