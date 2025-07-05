@@ -94,20 +94,14 @@ export function useAITaskOptimistic() {
         
         // 显示成功通知（带分析结果）
         const { aiAnalysis } = data;
+        let description = data.task.title;
+        if (aiAnalysis) {
+          description += `\n类型: ${getCategoryName(aiAnalysis.category)} | 技能: ${aiAnalysis.skill || "通用"} | 难度: ${getDifficultyName(aiAnalysis.difficulty)}`;
+        }
+        
         toast({
           title: "✅ 任务创建成功",
-          description: (
-            <div className="space-y-1">
-              <p>{data.task.title}</p>
-              {aiAnalysis && (
-                <p className="text-xs opacity-80">
-                  类型: {getCategoryName(aiAnalysis.category)} | 
-                  技能: {aiAnalysis.skill || "通用"} | 
-                  难度: {getDifficultyName(aiAnalysis.difficulty)}
-                </p>
-              )}
-            </div>
-          ),
+          description,
           duration: 3000,
         });
       }

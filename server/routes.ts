@@ -1100,6 +1100,161 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all available tasks for pomodoro
+  app.get("/api/pomodoro/available-tasks", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      // Get all incomplete goals
+      const goals = await storage.getGoals(userId);
+      const activeGoals = goals.filter(g => !g.completedAt);
+
+      // Get all incomplete tasks (including habits)
+      const tasks = await storage.getTasks(userId);
+      const activeTasks = tasks.filter(t => !t.completed);
+
+      // Separate habits from regular tasks
+      const habits = activeTasks.filter(t => t.taskCategory === 'habit');
+      const regularTasks = activeTasks.filter(t => t.taskCategory !== 'habit');
+
+      res.json({
+        goals: activeGoals.map(g => ({
+          id: g.id,
+          title: g.title,
+          type: 'goal',
+          energyBalls: 3,
+          skillId: g.skillId,
+          category: g.category
+        })),
+        tasks: regularTasks.map(t => ({
+          id: t.id,
+          title: t.title,
+          type: 'task',
+          energyBalls: t.energyBalls,
+          skillId: t.skillId
+        })),
+        habits: habits.map(h => ({
+          id: h.id,
+          title: h.title,
+          type: 'habit',
+          energyBalls: h.energyBalls || 1,
+          skillId: h.skillId
+        }))
+      });
+    } catch (error) {
+      console.error("Failed to get available tasks:", error);
+      res.status(500).json({ error: "Failed to get available tasks" });
+    }
+  });
+
+  // Start pomodoro for habit
+  app.post("/api/habits/:id/start-pomodoro", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const habitId = parseInt(req.params.id);
+
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      // Get the habit (which is stored as a task with category='habit')
+      const tasks = await storage.getTasks(userId);
+      const habit = tasks.find(t => t.id === habitId && t.taskCategory === 'habit');
+
+      if (!habit) {
+        return res.status(404).json({ error: "Habit not found" });
+      }
+
+      // Create pomodoro session
+      const sessionId = await storage.createPomodoroSession({
+        userId,
+        taskId: habitId,
+        startTime: new Date()
+      });
+
+      // Update habit with battle start time
+      await storage.updateTask(userId, habitId, {
+        battleStartTime: new Date()
+      });
+
+      res.json({ 
+        success: true, 
+        sessionId,
+        task: habit
+      });
+    } catch (error) {
+      console.error("Failed to start pomodoro for habit:", error);
+      res.status(500).json({ error: "Failed to start pomodoro" });
+    }
+  });
+
+  // Complete pomodoro for habit
+  app.post("/api/habits/:id/complete-pomodoro", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      const habitId = parseInt(req.params.id);
+      const { sessionId, workDuration, restDuration, cyclesCompleted, actualEnergyBalls } = req.body;
+
+      if (!userId) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      // Update pomodoro session
+      await storage.updatePomodoroSession(sessionId, {
+        endTime: new Date(),
+        workDuration,
+        restDuration,
+        cyclesCompleted,
+        actualEnergyBalls,
+        completed: true
+      });
+
+      // Update habit
+      const tasks = await storage.getTasks(userId);
+      const habit = tasks.find(t => t.id === habitId && t.taskCategory === 'habit');
+
+      if (!habit) {
+        return res.status(404).json({ error: "Habit not found" });
+      }
+
+      const updatedCycles = (habit.pomodoroCycles || 0) + cyclesCompleted;
+      const updatedActualEnergyBalls = (habit.actualEnergyBalls || 0) + actualEnergyBalls;
+
+      await storage.updateTask(userId, habitId, {
+        pomodoroCycles: updatedCycles,
+        actualEnergyBalls: updatedActualEnergyBalls,
+        battleEndTime: new Date()
+      });
+
+      // Update daily battle report
+      await storage.updateDailyBattleReport(userId, {
+        battleTime: workDuration,
+        energyBalls: actualEnergyBalls,
+        taskCompleted: false, // Habits are not "completed" in the same way
+        cycles: cyclesCompleted,
+        taskDetails: {
+          taskId: habitId,
+          taskTitle: habit.title,
+          battleTime: workDuration,
+          energyBalls: actualEnergyBalls,
+          cycles: cyclesCompleted
+        }
+      });
+
+      res.json({ 
+        success: true,
+        totalCycles: updatedCycles,
+        totalEnergyBalls: updatedActualEnergyBalls
+      });
+    } catch (error) {
+      console.error("Failed to complete pomodoro for habit:", error);
+      res.status(500).json({ error: "Failed to complete pomodoro" });
+    }
+  });
+
   // Get daily battle report
   app.get("/api/battle-reports/daily", isAuthenticated, async (req: any, res) => {
     try {

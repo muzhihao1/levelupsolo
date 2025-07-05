@@ -245,25 +245,6 @@ const TaskCard = memo(function TaskCard({
           </div>
         </div>
 
-        {/* 番茄钟启动按钮 - 移动优化 */}
-        {showPomodoroControls && !isCurrentPomodoroTask && (
-          <div className="pt-3 mt-3 border-t border-border">
-            <Button 
-              size="sm" 
-              onClick={() => onStartPomodoro?.(task.id)}
-              className="w-full h-11 bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-800 hover:to-blue-700 text-white border-0 transition-all touch-manipulation shadow-md"
-              style={{ backgroundColor: '#1d4ed8' }}
-            >
-              <div className="flex items-center gap-2">
-                <div className="text-base">⚔️</div>
-                <div className="text-left">
-                  <div className="text-sm font-bold text-white">挑战Boss</div>
-                  <div className="text-xs font-medium text-blue-100">25分钟专注战斗</div>
-                </div>
-              </div>
-            </Button>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Target } from "lucide-react";
+import { CheckCircle, Target, Swords } from "lucide-react";
 import ProfileQuestionnaire from "@/components/profile-questionnaire";
 import ProfileSummary from "@/components/profile-summary";
 import OnboardingGuide from "@/components/onboarding-guide";
 import DailyBattleReportCard from "@/components/daily-battle-report";
+import TaskSelector from "@/components/task-selector";
 
 import { apiRequest } from "@/lib/queryClient";
 import type { Skill, Goal, Task, UserStats, UserProfile, InsertUserProfile } from "@shared/schema";
@@ -20,6 +21,7 @@ interface GoalWithMilestones extends Goal {
 export default function Dashboard() {
   const [showProfileQuestionnaire, setShowProfileQuestionnaire] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showTaskSelector, setShowTaskSelector] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch user profile
@@ -203,6 +205,20 @@ export default function Dashboard() {
             <DailyBattleReportCard />
           </div>
         </div>
+
+        {/* Challenge Boss Button */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => setShowTaskSelector(true)}
+            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg rounded-lg hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-200 shadow-lg"
+          >
+            <Swords className="h-6 w-6" />
+            挑战 Boss
+          </button>
+          <p className="mt-3 text-sm text-muted-foreground">
+            选择一个任务，开始25分钟的专注战斗
+          </p>
+        </div>
       </div>
 
       {/* Profile Summary */}
@@ -230,6 +246,12 @@ export default function Dashboard() {
           localStorage.setItem('onboarding_completed', 'true');
           setShowOnboarding(false);
         }}
+      />
+
+      {/* Task Selector */}
+      <TaskSelector
+        isOpen={showTaskSelector}
+        onClose={() => setShowTaskSelector(false)}
       />
     </div>
   );

@@ -90,14 +90,27 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
   });
 
   const completePomodoroMutation = useMutation({
-    mutationFn: async ({ sessionDuration, completed }: { sessionDuration: number; completed: boolean }) => {
-      const response = await apiRequest('POST', `/api/tasks/${task.id}/complete-pomodoro`, {
+    mutationFn: async ({ sessionDuration, completed, actualEnergyBalls, cycles }: { 
+      sessionDuration: number; 
+      completed: boolean;
+      actualEnergyBalls?: number;
+      cycles?: number;
+    }) => {
+      const endpoint = task.taskCategory === 'habit' 
+        ? `/api/habits/${task.id}/complete-pomodoro`
+        : `/api/tasks/${task.id}/complete-pomodoro`;
+      
+      const response = await apiRequest('POST', endpoint, {
         sessionDuration,
-        completed
+        completed,
+        workDuration: sessionDuration,
+        restDuration: 0,
+        cyclesCompleted: cycles || 1,
+        actualEnergyBalls: actualEnergyBalls || Math.ceil(sessionDuration / 15)
       });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=tasks'] });
       queryClient.invalidateQueries({ queryKey: ['/api/data?type=skills'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activity-logs'] });
@@ -109,7 +122,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
       setSessionCount(0);
       toast({
         title: "击败Boss成功！",
-        description: `消耗${data.actualEnergyBalls || 0}个能量球，获得${data.expGained || 0}经验值`,
+        description: `消耗${data?.actualEnergyBalls || 0}个能量球，获得${data?.expGained || 0}经验值`,
       });
     }
   });
@@ -519,8 +532,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     onClick={handleDefeatBoss}
                     disabled={completePomodoroMutation.isPending}
-                    variant="success"
-                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 h-12 text-base font-medium"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-12 text-base font-medium text-white"
                   >
                     <i className="fas fa-check-circle mr-2"></i>
                     击败Boss

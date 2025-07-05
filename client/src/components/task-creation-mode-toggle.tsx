@@ -63,7 +63,7 @@ export function TaskCreationModeToggle({
                   </p>
                   <p>
                     <strong>快速创建：</strong>
-                    立即创建任务，使用默认设置，稍后可手动调整（< 0.1 秒）
+                    立即创建任务，使用默认设置，稍后可手动调整（&lt; 0.1 秒）
                   </p>
                 </div>
               </TooltipContent>
