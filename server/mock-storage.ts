@@ -8,7 +8,9 @@ import {
   type MicroTask, type InsertMicroTask,
   type User, type UpsertUser,
   type UserProfile, type InsertUserProfile,
-  type UserStats, type InsertUserStats
+  type UserStats, type InsertUserStats,
+  type PomodoroSession, type InsertPomodoroSession,
+  type DailyBattleReport, type InsertDailyBattleReport
 } from "@shared/schema";
 import { IStorage } from "./storage";
 import bcrypt from "bcryptjs";
@@ -26,6 +28,8 @@ export class MockStorage implements IStorage {
   private microTasks: Map<number, MicroTask> = new Map();
   private userProfiles: Map<string, UserProfile> = new Map();
   private userStats: Map<string, UserStats> = new Map();
+  private pomodoroSessions: Map<number, PomodoroSession> = new Map();
+  private dailyBattleReports: Map<string, DailyBattleReport> = new Map();
   
   private nextId = {
     skill: 1,
@@ -36,7 +40,9 @@ export class MockStorage implements IStorage {
     milestone: 1,
     microTask: 1,
     userProfile: 1,
-    userStats: 1
+    userStats: 1,
+    pomodoroSession: 1,
+    dailyBattleReport: 1
   };
 
   constructor() {
@@ -511,6 +517,24 @@ export class MockStorage implements IStorage {
     return false;
   }
 
+  // Experience and levels
+  async addExperience(userId: string, exp: number): Promise<UserStats | undefined> {
+    const stats = this.userStats.get(userId);
+    if (!stats) return undefined;
+    
+    stats.exp += exp;
+    
+    // Check for level up
+    while (stats.exp >= stats.maxExp) {
+      stats.exp -= stats.maxExp;
+      stats.level++;
+      stats.maxExp = Math.floor(stats.maxExp * 1.2); // Increase required exp by 20% each level
+    }
+    
+    stats.updatedAt = new Date();
+    return stats;
+  }
+
   // Initialize core skills
   async initializeCoreSkills(userId: string): Promise<void> {
     const coreSkills = [
@@ -535,5 +559,132 @@ export class MockStorage implements IStorage {
         unlocked: true
       });
     }
+  }
+
+  // Pomodoro Sessions
+  async createPomodoroSession(session: InsertPomodoroSession): Promise<PomodoroSession> {
+    const newSession: PomodoroSession = {
+      id: this.nextId.pomodoroSession++,
+      ...session,
+      createdAt: session.createdAt || new Date(),
+      updatedAt: new Date()
+    };
+    this.pomodoroSessions.set(newSession.id, newSession);
+    return newSession;
+  }
+
+  async updatePomodoroSession(id: number, session: Partial<InsertPomodoroSession>): Promise<PomodoroSession | undefined> {
+    const existing = this.pomodoroSessions.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...session, updatedAt: new Date() };
+    this.pomodoroSessions.set(id, updated);
+    return updated;
+  }
+
+  async getPomodoroSession(id: number): Promise<PomodoroSession | undefined> {
+    return this.pomodoroSessions.get(id);
+  }
+
+  // Daily Battle Reports
+  async getDailyBattleReport(userId: string, date: Date): Promise<DailyBattleReport | undefined> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const key = `${userId}-${startOfDay.toISOString().split('T')[0]}`;
+    return this.dailyBattleReports.get(key);
+  }
+
+  async updateDailyBattleReport(data: {
+    userId: string;
+    date: Date;
+    battleTime: number;
+    energyBalls: number;
+    taskCompleted: boolean;
+    cycles: number;
+    taskId: number;
+    taskTitle: string;
+  }): Promise<DailyBattleReport> {
+    const startOfDay = new Date(data.date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const key = `${data.userId}-${startOfDay.toISOString().split('T')[0]}`;
+    
+    const existing = this.dailyBattleReports.get(key);
+    
+    if (existing) {
+      const updatedTaskDetails = existing.taskDetails || [];
+      updatedTaskDetails.push({
+        taskId: data.taskId,
+        taskTitle: data.taskTitle,
+        battleTime: data.battleTime,
+        energyBalls: data.energyBalls,
+        cycles: data.cycles
+      });
+      
+      const updated: DailyBattleReport = {
+        ...existing,
+        totalBattleTime: (existing.totalBattleTime || 0) + data.battleTime,
+        energyBallsConsumed: (existing.energyBallsConsumed || 0) + data.energyBalls,
+        tasksCompleted: (existing.tasksCompleted || 0) + (data.taskCompleted ? 1 : 0),
+        pomodoroCycles: (existing.pomodoroCycles || 0) + data.cycles,
+        taskDetails: updatedTaskDetails,
+        updatedAt: new Date()
+      };
+      
+      this.dailyBattleReports.set(key, updated);
+      return updated;
+    } else {
+      const newReport: DailyBattleReport = {
+        id: this.nextId.dailyBattleReport++,
+        userId: data.userId,
+        date: startOfDay,
+        totalBattleTime: data.battleTime,
+        energyBallsConsumed: data.energyBalls,
+        tasksCompleted: data.taskCompleted ? 1 : 0,
+        pomodoroCycles: data.cycles,
+        taskDetails: [{
+          taskId: data.taskId,
+          taskTitle: data.taskTitle,
+          battleTime: data.battleTime,
+          energyBalls: data.energyBalls,
+          cycles: data.cycles
+        }],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      this.dailyBattleReports.set(key, newReport);
+      return newReport;
+    }
+  }
+
+  async getBattleReportSummary(userId: string, startDate: Date, endDate: Date): Promise<any> {
+    const reports: DailyBattleReport[] = [];
+    
+    // Iterate through all daily reports and filter by user and date range
+    for (const [key, report] of this.dailyBattleReports) {
+      if (report.userId === userId && 
+          report.date >= startDate && 
+          report.date <= endDate) {
+        reports.push(report);
+      }
+    }
+    
+    // Calculate summary
+    const summary = {
+      totalBattleTime: 0,
+      totalEnergyBalls: 0,
+      totalTasksCompleted: 0,
+      totalPomodoroCycles: 0,
+      dailyReports: reports
+    };
+    
+    for (const report of reports) {
+      summary.totalBattleTime += report.totalBattleTime || 0;
+      summary.totalEnergyBalls += report.energyBallsConsumed || 0;
+      summary.totalTasksCompleted += report.tasksCompleted || 0;
+      summary.totalPomodoroCycles += report.pomodoroCycles || 0;
+    }
+    
+    return summary;
   }
 }
