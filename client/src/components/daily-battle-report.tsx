@@ -24,12 +24,26 @@ interface DailyBattleReport {
 export default function DailyBattleReportCard() {
   const today = new Date().toISOString().split('T')[0];
   
-  const { data: report, isLoading } = useQuery({
+  const { data: report, isLoading, error } = useQuery({
     queryKey: ['battle-report', 'daily', today],
     queryFn: async () => {
       const response = await apiRequest('GET', `/api/battle-reports/daily?date=${today}`);
+      if (!response.ok) {
+        // Return empty report on error instead of throwing
+        return {
+          date: today,
+          totalBattleTime: 0,
+          energyBallsConsumed: 0,
+          tasksCompleted: 0,
+          pomodoroCycles: 0,
+          taskDetails: []
+        };
+      }
       return response.json() as Promise<DailyBattleReport>;
-    }
+    },
+    retry: 1, // Only retry once
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    cacheTime: 10 * 60 * 1000 // Keep in cache for 10 minutes
   });
 
   if (isLoading) {

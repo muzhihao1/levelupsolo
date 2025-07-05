@@ -57,18 +57,26 @@ export default function Dashboard() {
     setShowProfileQuestionnaire(true);
   };
 
-  // Fetch data
-  const { data: skills = [] } = useQuery<Skill[]>({
-    queryKey: ['/api/data?type=skills']
+  // Fetch data with loading states
+  const { data: skills = [], isLoading: skillsLoading } = useQuery<Skill[]>({
+    queryKey: ['/api/data?type=skills'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    cacheTime: 10 * 60 * 1000 // 10 minutes
   });
 
-  const { data: goals = [] } = useQuery<GoalWithMilestones[]>({
-    queryKey: ['/api/data?type=goals']
+  const { data: goals = [], isLoading: goalsLoading } = useQuery<GoalWithMilestones[]>({
+    queryKey: ['/api/data?type=goals'],
+    staleTime: 5 * 60 * 1000,
+    cacheTime: 10 * 60 * 1000
   });
 
-  const { data: tasks = [] } = useQuery<Task[]>({
-    queryKey: ['/api/data?type=tasks']
+  const { data: tasks = [], isLoading: tasksLoading } = useQuery<Task[]>({
+    queryKey: ['/api/data?type=tasks'],
+    staleTime: 1 * 60 * 1000, // 1 minute for tasks (more frequent updates)
+    cacheTime: 5 * 60 * 1000
   });
+
+  const isDataLoading = profileLoading || statsLoading || skillsLoading || goalsLoading || tasksLoading;
 
   // Check if onboarding should be shown
   useEffect(() => {
@@ -94,6 +102,18 @@ export default function Dashboard() {
   const todayExp = completedTodayTasks.reduce((sum, task) => sum + (task.expReward || 0), 0);
   
   const inProgressGoals = goals.filter(goal => !goal.completedAt);
+
+  // Show loading state while fetching initial data
+  if (isDataLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">正在加载数据...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
