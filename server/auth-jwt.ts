@@ -53,6 +53,16 @@ export function generateTokens(userId: string, email: string) {
     refreshToken,
   };
 }
+
+// Verify access token
+export function verifyAccessToken(token: string): { userId: string; email: string } {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
+    return decoded;
+  } catch (error) {
+    throw new Error("Invalid or expired token");
+  }
+}
 // Middleware to authenticate token
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
