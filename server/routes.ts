@@ -13,6 +13,7 @@ import { runDatabaseDiagnostics, testDatabaseConnection } from './db-diagnostics
 import { sql } from "drizzle-orm";
 import { db } from "./db";
 import { testEndpointSecurity } from "./middleware/test-endpoint-security";
+import { normalizeTaskCategory } from "./utils/task-category-mapper";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -1162,20 +1163,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeTasks = Array.isArray(tasks) ? tasks.filter(t => t && !t.completed) : [];
       console.log(`Found ${activeTasks.length} active tasks`);
 
-      // Separate tasks by category
-      const habits = activeTasks.filter(t => t && t.taskCategory === 'habit');
-      const todoTasks = activeTasks.filter(t => t && t.taskCategory === 'todo');
-      const goalTasks = activeTasks.filter(t => t && t.taskCategory === 'goal');
+      // Separate tasks by category with normalization
+      // Note: Normalize categories to handle various values in database
+      const habits = activeTasks.filter(t => t && normalizeTaskCategory(t.taskCategory) === 'habit');
+      const todoTasks = activeTasks.filter(t => t && normalizeTaskCategory(t.taskCategory) === 'todo');
+      const goalTasks = activeTasks.filter(t => t && normalizeTaskCategory(t.taskCategory) === 'goal');
       
       console.log(`Task breakdown: ${todoTasks.length} todos, ${habits.length} habits, ${goalTasks.length} goal-tasks`);
       
-      // Debug: Log task categories
+      // Debug: Log task categories and all task properties
+      console.log('First active task properties:', activeTasks.length > 0 ? Object.keys(activeTasks[0]) : 'No active tasks');
       console.log('Task categories:', activeTasks.map(t => ({ 
         id: t.id, 
         title: t.title, 
         category: t.taskCategory,
+        normalizedCategory: normalizeTaskCategory(t.taskCategory),
+        type: t.taskType,
         completed: t.completed 
       })));
+      
+      // Also log the breakdown
+      console.log('Task category analysis:', {
+        allCategories: [...new Set(activeTasks.map(t => t.taskCategory))],
+        allNormalizedCategories: [...new Set(activeTasks.map(t => normalizeTaskCategory(t.taskCategory)))],
+        allTypes: [...new Set(activeTasks.map(t => t.taskType))],
+        nullCategoryCount: activeTasks.filter(t => !t.taskCategory).length,
+        todoCount: todoTasks.length,
+        habitCount: habits.length,
+        goalTaskCount: goalTasks.length
+      });
 
       res.json({
         goals: activeGoals.map(g => ({
@@ -1184,21 +1200,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
           type: 'goal',
           energyBalls: 3,
           skillId: g.skillId || null,
-          category: g.category || null
+          category: g.category || null,
+          description: g.description || ''
         })),
         tasks: todoTasks.map(t => ({
           id: t.id,
           title: t.title || 'Untitled Task',
           type: 'task',
-          energyBalls: t.energyBalls || 1,
-          skillId: t.skillId || null
+          energyBalls: t.requiredEnergyBalls || t.energyBalls || 1,
+          skillId: t.skillId || null,
+          category: t.taskCategory || 'todo',
+          description: t.description || '',
+          difficulty: t.difficulty || 'medium'
         })),
         habits: habits.map(h => ({
           id: h.id,
           title: h.title || 'Untitled Habit',
           type: 'habit',
-          energyBalls: h.energyBalls || 1,
-          skillId: h.skillId || null
+          energyBalls: h.requiredEnergyBalls || h.energyBalls || 1,
+          skillId: h.skillId || null,
+          category: h.taskCategory || 'habit',
+          description: h.description || '',
+          difficulty: h.difficulty || 'medium'
         }))
       });
     } catch (error) {

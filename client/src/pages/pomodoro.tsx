@@ -136,12 +136,19 @@ export default function PomodoroPage() {
 
       {/* Timer */}
       <PomodoroTimer
-        taskId={task.id}
-        taskTitle={task.title}
-        taskType={task.type}
+        task={{
+          id: task.id,
+          title: task.title,
+          taskCategory: task.type === 'habit' ? 'habit' : task.type === 'goal' ? 'goal' : 'todo',
+          taskType: task.type === 'habit' ? 'daily' : 'once',
+          estimatedDuration: 25,
+          energyBalls: task.energyBalls,
+          skillId: task.skillId,
+          completed: false,
+          userId: '',
+          createdAt: task.startTime
+        } as any}
         onComplete={handleComplete}
-        estimatedDuration={25}
-        energyBalls={task.energyBalls}
       />
     </div>
   );

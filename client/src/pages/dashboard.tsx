@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Target, Swords } from "lucide-react";
+import { CheckCircle, Target, Swords, Zap } from "lucide-react";
 import ProfileQuestionnaire from "@/components/profile-questionnaire";
 import ProfileSummary from "@/components/profile-summary";
 import OnboardingGuide from "@/components/onboarding-guide";
@@ -150,7 +150,7 @@ export default function Dashboard() {
 
       {/* Simplified Progress Overview */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 grid-responsive-tablet">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 grid-responsive-tablet">
           {/* Today's Completed Tasks */}
           <Card className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-8">
@@ -172,6 +172,35 @@ export default function Dashboard() {
                     </span>
                   </div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Energy Status */}
+          <Card className="bg-card border-border shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-foreground">能量状态</h2>
+                <Zap className="h-6 w-6 text-yellow-500" />
+              </div>
+              <div className="text-center">
+                <div className="text-5xl font-bold text-foreground mb-2">
+                  {userStats?.energyBalls || 0}
+                </div>
+                <div className="text-lg text-muted-foreground">
+                  / {userStats?.maxEnergyBalls || 18} 能量球
+                </div>
+                <div className="mt-4">
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className="bg-yellow-500 h-2 rounded-full transition-all"
+                      style={{ width: `${((userStats?.energyBalls || 0) / (userStats?.maxEnergyBalls || 18)) * 100}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-2">
+                    每个能量球 = 15分钟专注时间
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -203,21 +232,19 @@ export default function Dashboard() {
           </Card>
           
           {/* Daily Battle Report */}
-          <div className="md:col-span-2 lg:col-span-1">
-            <DailyBattleReportCard />
-          </div>
+          <DailyBattleReportCard />
         </div>
 
-        {/* Challenge Boss Button */}
+        {/* Challenge Boss Button - More Subtle Design */}
         <div className="mt-8 text-center">
           <button
             onClick={() => setShowTaskSelector(true)}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-lg rounded-lg hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-200 shadow-lg"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-primary/10 border border-primary/20 text-primary font-medium rounded-lg hover:bg-primary/20 transition-all duration-200"
           >
-            <Swords className="h-6 w-6" />
+            <Swords className="h-5 w-5" />
             挑战 Boss
           </button>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground">
             选择一个任务，开始25分钟的专注战斗
           </p>
         </div>
