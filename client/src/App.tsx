@@ -22,7 +22,6 @@ const SkillTree = lazy(() => import("@/pages/skill-tree"));
 const GoalsSimple = lazy(() => import("@/pages/goals"));
 const GrowthLog = lazy(() => import("@/pages/growth-log"));
 const WeeklySummary = lazy(() => import("@/pages/weekly-summary"));
-const Templates = lazy(() => import("@/pages/templates"));
 const AuthPage = lazy(() => import("@/pages/auth"));
 const DebugUser = lazy(() => import("@/pages/debug-user"));
 const FixData = lazy(() => import("@/pages/fix-data"));
@@ -87,7 +86,6 @@ function Router() {
             <Route path="/tasks" component={Tasks} />
             <Route path="/skills" component={SkillTree} />
             <Route path="/goals" component={GoalsSimple} />
-            <Route path="/templates" component={Templates} />
             <Route path="/log" component={GrowthLog} />
             <Route path="/weekly-summary" component={WeeklySummary} />
             <Route path="/debug-user" component={DebugUser} />
@@ -120,7 +118,6 @@ function Router() {
             'skills': '/skills', 
             'goals': '/goals',
             'dashboard': '/',
-            'templates': '/templates',
             'log': '/log'
           };
           setLocation(routeMap[page] || '/');

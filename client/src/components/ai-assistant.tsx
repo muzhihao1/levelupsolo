@@ -235,21 +235,6 @@ export default function AIAssistant({ isVisible, onToggle, onPageChange }: AIAss
                       <Badge variant="secondary" className="text-xs mt-1">数据洞察</Badge>
                     </div>
                   </div>
-                  
-                  <div 
-                    className="flex items-start gap-3 p-3 bg-background rounded-lg border border-orange-200 hover:shadow-sm transition-shadow cursor-pointer"
-                    onClick={() => {
-                      onPageChange?.('goals');
-                      onToggle();
-                    }}
-                  >
-                    <Lightbulb className="h-4 w-4 text-orange-600 mt-0.5" />
-                    <div className="flex-1">
-                      <div className="font-medium text-sm text-gray-900 dark:text-gray-100">探索模板中心</div>
-                      <div className="text-xs text-gray-700 dark:text-gray-300 mt-1">发现更多专业的任务和目标模板</div>
-                      <Badge variant="secondary" className="text-xs mt-1">优化建议</Badge>
-                    </div>
-                  </div>
                 </div>
               </div>
             </CardContent>

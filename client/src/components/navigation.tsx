@@ -73,13 +73,6 @@ export default function Navigation({ currentPage, onPageChange }: NavigationProp
       description: "长期目标追踪" 
     },
     { 
-      id: "templates", 
-      href: "/templates", 
-      icon: Sparkles, 
-      label: "模板", 
-      description: "快速创建模板" 
-    },
-    { 
       id: "log", 
       href: "/log", 
       icon: BookOpen, 
@@ -99,7 +92,6 @@ export default function Navigation({ currentPage, onPageChange }: NavigationProp
     if (location === '/tasks') return 'tasks';
     if (location === '/skills') return 'skills';
     if (location === '/goals') return 'goals';
-    if (location === '/templates') return 'templates';
     if (location === '/log') return 'log';
     return 'dashboard';
   };
