@@ -1,45 +1,43 @@
-# Level Up Solo 文档索引
+# Level Up Solo 文档中心
 
 ## 🚀 快速开始
-- [快速开始指南](../README.md) - 项目概览和基本设置
-- [CLAUDE.md](../CLAUDE.md) - AI 开发助手指南
-- [环境配置](./deployment/ENVIRONMENT_SETUP.md) - 环境变量设置
+- **[项目 README](../README.md)** - 项目概览和快速开始
+- **[Web 端完成总结](./WEB_COMPLETION_SUMMARY.md)** - 当前开发状态 🆕
+- **[安全指南](../SECURITY_GUIDE.md)** - 安全最佳实践
 
-## 📦 部署相关
-### Railway 部署（当前使用）
-- [Railway 部署指南](./deployment/RAILWAY_DEPLOYMENT_GUIDE.md) - 完整部署教程
-- [Railway 故障排查](../RAILWAY_DEPLOYMENT_TROUBLESHOOTING.md) - 常见问题解决方案 ⭐
-- [Railway 部署检查清单](./deployment/RAILWAY_DEPLOYMENT_CHECKLIST.md) - 部署前检查项
-- [Railway 环境配置](./deployment/RAILWAY_ENV_CONFIG.md) - 环境变量设置
-- [Railway 部署修复记录](./deployment/RAILWAY_DEPLOYMENT_FIX.md) - 历史问题修复
+## 📦 Railway 部署
+- **[部署指南](./deployment/RAILWAY_DEPLOYMENT_GUIDE.md)** - 完整部署步骤
+- **[部署检查清单](./deployment/RAILWAY_DEPLOYMENT_CHECKLIST.md)** - 部署前检查
+- **[环境配置](./deployment/RAILWAY_ENV_CONFIG.md)** - 环境变量说明
+- **[故障排除](./RAILWAY_DEPLOYMENT_TROUBLESHOOTING.md)** - 常见问题解决 ⭐
+
+## 🏗️ 系统架构
+- **[API 文档](./architecture/API_DOCUMENTATION.md)** - API 接口说明
+- **[架构分析](./architecture/ARCHITECTURE_ANALYSIS.md)** - 系统架构设计
+- **[设计系统](./architecture/DESIGN_SYSTEM.md)** - UI/UX 设计规范
+- **[性能优化](./architecture/PERFORMANCE_OPTIMIZATION.md)** - 优化策略
 
 ## 🗄️ 数据库
-- [数据库架构](./database/SCHEMA.md) - 表结构说明
-- [数据库设置](./database/SETUP.md) - 初始化步骤
-- [习惯功能修复](./database/HABIT_FIX_FINAL.md) - 最终解决方案
+- **[数据库架构](./database/DATABASE_SCHEMA.md)** - 表结构说明
+- **[数据库设置](./database/DATABASE_SETUP.md)** - 初始化指南
+- **[Supabase 连接](./database/SUPABASE_CONNECTION_GUIDE.md)** - 连接配置
 
-## 🔧 问题修复
-- [习惯完成问题](./fixes/HABIT_COMPLETION_SOLUTION.md) - 完整解决方案
-- [认证问题修复](./fixes/AUTHENTICATION_FIX.md)
-- [活动日志修复](./fixes/ACTIVITY_LOGS_FIX.md)
-
-## 🏗️ 架构设计
-- [系统架构](./architecture/SYSTEM_ARCHITECTURE.md)
-- [技术债务分析](./architecture/TECHNICAL_DEBT.md)
-- [性能优化指南](./architecture/PERFORMANCE_OPTIMIZATION.md)
+## 🔧 修复记录
+- **[修复文档目录](./fixes/README.md)** - 所有修复记录索引
+- **[习惯完成解决方案](./fixes/COMPLETE_HABIT_SOLUTION.md)** - 习惯功能修复
+- **[认证系统修复](./fixes/AUTHENTICATION_FIX_2025-07-01.md)** - JWT 认证问题
 
 ## 📱 开发计划
-- [iOS 应用开发](./development/iOS_APP_PLAN.md)
-- [Web 应用开发](./development/WEB_APP_PLAN.md)
-- [下一步计划](./development/NEXT_STEPS.md)
-
-## 🔐 安全
-- [安全指南](../SECURITY_GUIDE.md)
-- [认证系统](./architecture/AUTHENTICATION.md)
-
-## 📋 项目管理
-- [项目进度](./PROJECT_STATUS.md)
-- [待办事项](./TODO.md)
+- **[iOS 开发计划](./development/iOS_APP_DEVELOPMENT_PLAN.md)** - iOS 应用路线图
+- **[Web 开发计划](./development/WEB_DEVELOPMENT_PLAN.md)** - Web 端路线图
+- **[项目进度更新](./development/PROJECT_PROGRESS_UPDATE.md)** - 最新进展
 
 ## 🗂️ 归档文档
-旧版本和重复的文档已移至 [archive](./archive/) 目录。
+- **[archive/](./archive/)** - 历史文档和已废弃内容
+  - `vercel/` - Vercel 部署相关（已停用）
+  - `railway-fixes/` - Railway 历史修复记录
+  - `root-docs/` - 旧版文档
+
+---
+
+💡 **提示**: 文档按重要性和使用频率排序，新开发者应先阅读快速开始和部署指南。

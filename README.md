@@ -273,8 +273,22 @@ git commit --allow-empty -m "Force rebuild" && git push
 ## 🙏 致谢
 
 - **OpenAI**: 提供强大的GPT-4o AI能力
-- **Replit**: 优秀的开发和部署平台
+- **Railway**: 可靠的部署平台
+- **Supabase**: 优秀的数据库服务
 - **开源社区**: 众多优秀的开源项目支持
+
+## 📁 项目文档
+
+### 核心文档
+- **[项目文档索引](docs/README.md)** - 所有文档的组织结构
+- **[Web 端完成总结](docs/WEB_COMPLETION_SUMMARY.md)** - 当前开发状态
+- **[安全指南](SECURITY_GUIDE.md)** - 安全最佳实践
+
+### 快速访问
+- **部署**: [Railway 部署指南](docs/deployment/RAILWAY_DEPLOYMENT_GUIDE.md)
+- **架构**: [系统架构分析](docs/architecture/ARCHITECTURE_ANALYSIS.md)
+- **API**: [API 文档](docs/architecture/API_DOCUMENTATION.md)
+- **故障排除**: [故障排除指南](docs/RAILWAY_DEPLOYMENT_TROUBLESHOOTING.md)
 
 ---
 
