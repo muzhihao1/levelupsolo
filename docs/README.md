@@ -6,14 +6,12 @@
 - [环境配置](./deployment/ENVIRONMENT_SETUP.md) - 环境变量设置
 
 ## 📦 部署相关
-### Railway 部署
-- [Railway 部署指南](./deployment/RAILWAY_DEPLOYMENT_GUIDE.md) - 最新部署步骤
+### Railway 部署（当前使用）
+- [Railway 部署指南](./deployment/RAILWAY_DEPLOYMENT_GUIDE.md) - 完整部署教程
+- [Railway 故障排查](../RAILWAY_DEPLOYMENT_TROUBLESHOOTING.md) - 常见问题解决方案 ⭐
+- [Railway 部署检查清单](./deployment/RAILWAY_DEPLOYMENT_CHECKLIST.md) - 部署前检查项
 - [Railway 环境配置](./deployment/RAILWAY_ENV_CONFIG.md) - 环境变量设置
-- [Railway 故障排查](./deployment/RAILWAY_TROUBLESHOOTING.md) - 常见问题解决
-
-### 其他部署选项
-- [Vercel 部署指南](./deployment/VERCEL_DEPLOYMENT_GUIDE.md)
-- [部署选项对比](./deployment/DEPLOYMENT_OPTIONS.md)
+- [Railway 部署修复记录](./deployment/RAILWAY_DEPLOYMENT_FIX.md) - 历史问题修复
 
 ## 🗄️ 数据库
 - [数据库架构](./database/SCHEMA.md) - 表结构说明
