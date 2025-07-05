@@ -1162,11 +1162,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const activeTasks = Array.isArray(tasks) ? tasks.filter(t => t && !t.completed) : [];
       console.log(`Found ${activeTasks.length} active tasks`);
 
-      // Separate habits from regular tasks
+      // Separate tasks by category
       const habits = activeTasks.filter(t => t && t.taskCategory === 'habit');
-      const regularTasks = activeTasks.filter(t => t && t.taskCategory !== 'habit');
+      const todoTasks = activeTasks.filter(t => t && t.taskCategory === 'todo');
+      const goalTasks = activeTasks.filter(t => t && t.taskCategory === 'goal');
       
-      console.log(`Separated into ${regularTasks.length} regular tasks and ${habits.length} habits`);
+      console.log(`Task breakdown: ${todoTasks.length} todos, ${habits.length} habits, ${goalTasks.length} goal-tasks`);
       
       // Debug: Log task categories
       console.log('Task categories:', activeTasks.map(t => ({ 
@@ -1185,7 +1186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           skillId: g.skillId || null,
           category: g.category || null
         })),
-        tasks: regularTasks.map(t => ({
+        tasks: todoTasks.map(t => ({
           id: t.id,
           title: t.title || 'Untitled Task',
           type: 'task',

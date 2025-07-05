@@ -114,8 +114,20 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
 
   const handleTaskSelect = async (task: UnifiedTask) => {
     try {
-      // Navigate to the pomodoro timer
-      setLocation(`/pomodoro?type=${task.type}&id=${task.id}`);
+      // Store task data in session storage
+      const pomodoroData = {
+        id: task.id,
+        title: task.title,
+        type: task.type,
+        energyBalls: task.energyBalls || 1,
+        skillId: task.skillId || null,
+        startTime: new Date().toISOString()
+      };
+      
+      sessionStorage.setItem('currentPomodoroTask', JSON.stringify(pomodoroData));
+      
+      // Navigate to pomodoro timer
+      setLocation('/pomodoro');
       onClose();
     } catch (error) {
       console.error('Failed to start pomodoro:', error);
