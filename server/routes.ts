@@ -1167,6 +1167,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const regularTasks = activeTasks.filter(t => t && t.taskCategory !== 'habit');
       
       console.log(`Separated into ${regularTasks.length} regular tasks and ${habits.length} habits`);
+      
+      // Debug: Log task categories
+      console.log('Task categories:', activeTasks.map(t => ({ 
+        id: t.id, 
+        title: t.title, 
+        category: t.taskCategory,
+        completed: t.completed 
+      })));
 
       res.json({
         goals: activeGoals.map(g => ({

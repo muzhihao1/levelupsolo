@@ -40,6 +40,8 @@
     "test:pomodoro-auth": "tsx scripts/test-pomodoro-auth.ts",
     "test:register-user": "tsx scripts/test-pomodoro-auth.ts register",
     "test:check-user-data": "tsx scripts/check-user-data.ts",
+    "test:debug-tasks": "tsx scripts/test-available-tasks-debug.ts",
+    "test:add-tasks": "tsx scripts/add-test-tasks.ts",
     "check:env": "tsx scripts/check-env-config.ts",
     "validate:data": "tsx tools/cross-platform-validator.ts",
     "validate:db": "tsx tools/cross-platform-validator.ts --db",

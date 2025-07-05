@@ -6,7 +6,7 @@ import ProfileQuestionnaire from "@/components/profile-questionnaire";
 import ProfileSummary from "@/components/profile-summary";
 import OnboardingGuide from "@/components/onboarding-guide";
 import DailyBattleReportCard from "@/components/daily-battle-report";
-import TaskSelector from "@/components/task-selector";
+import TaskSelector from "@/components/task-selector-v2";
 import AuthDebug from "@/components/auth-debug";
 
 import { apiRequest } from "@/lib/queryClient";

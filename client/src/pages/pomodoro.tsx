@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useRoute, useRouter } from "wouter";
+import { useLocation, useRouter } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import PomodoroTimer from "@/components/pomodoro-timer";
@@ -46,37 +46,31 @@ export default function PomodoroPage() {
 
         if (taskType === 'goal') {
           // Load goal
-          const response = await apiRequest('GET', '/api/data?type=goals');
-          if (response.ok) {
-            const goals: Goal[] = await response.json();
-            const goal = goals.find(g => g.id === parseInt(taskId));
-            if (goal) {
-              loadedTask = {
-                id: goal.id,
-                title: goal.title,
-                type: 'goal',
-                estimatedDuration: 25,
-                energyBalls: 3,
-                skillId: goal.skillId
-              };
-            }
+          const goals: Goal[] = await apiRequest('GET', '/api/data?type=goals');
+          const goal = goals.find(g => g.id === parseInt(taskId));
+          if (goal) {
+            loadedTask = {
+              id: goal.id,
+              title: goal.title,
+              type: 'goal',
+              estimatedDuration: 25,
+              energyBalls: 3,
+              skillId: goal.skillId
+            };
           }
         } else if (taskType === 'task' || taskType === 'habit') {
           // Load task or habit
-          const response = await apiRequest('GET', '/api/data?type=tasks');
-          if (response.ok) {
-            const tasks: Task[] = await response.json();
-            const task = tasks.find(t => t.id === parseInt(taskId));
-            if (task) {
-              loadedTask = {
-                id: task.id,
-                title: task.title,
-                type: task.taskCategory === 'habit' ? 'habit' : 'task',
-                estimatedDuration: task.estimatedDuration || 25,
-                energyBalls: task.energyBalls,
-                skillId: task.skillId
-              };
-            }
+          const tasks: Task[] = await apiRequest('GET', '/api/data?type=tasks');
+          const task = tasks.find(t => t.id === parseInt(taskId));
+          if (task) {
+            loadedTask = {
+              id: task.id,
+              title: task.title,
+              type: task.taskCategory === 'habit' ? 'habit' : 'task',
+              estimatedDuration: task.estimatedDuration || 25,
+              energyBalls: task.energyBalls,
+              skillId: task.skillId
+            };
           }
         }
 
