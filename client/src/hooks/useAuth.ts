@@ -32,9 +32,17 @@ async function fetchWithAuth(url: string) {
       });
       
       if (refreshResponse.ok) {
-        const { accessToken, refreshToken: newRefreshToken } = await refreshResponse.json();
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        const data = await refreshResponse.json();
+        // Handle both response formats
+        const accessToken = data.accessToken || data.data?.accessToken;
+        const newRefreshToken = data.refreshToken || data.data?.refreshToken;
+        
+        if (accessToken && newRefreshToken) {
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
+        } else {
+          throw new Error("Invalid refresh response format");
+        }
         
         // Retry original request
         return fetch(url, {

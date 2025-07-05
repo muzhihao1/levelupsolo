@@ -37,6 +37,7 @@ const loginSchema = z.object({
 
 // Generate tokens
 export function generateAccessToken(userId: string, email: string) {
+  console.log("Generating access token with JWT_SECRET:", JWT_SECRET ? `${JWT_SECRET.substring(0, 10)}...` : "NOT SET");
   return jwt.sign({ userId, email }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
@@ -56,10 +57,12 @@ export function generateTokens(userId: string, email: string) {
 
 // Verify access token
 export function verifyAccessToken(token: string): { userId: string; email: string } {
+  console.log("Verifying token with JWT_SECRET:", JWT_SECRET ? `${JWT_SECRET.substring(0, 10)}...` : "NOT SET");
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string; email: string };
     return decoded;
   } catch (error) {
+    console.error("JWT verification error:", (error as any)?.message);
     throw new Error("Invalid or expired token");
   }
 }

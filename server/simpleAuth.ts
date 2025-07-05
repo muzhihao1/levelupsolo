@@ -20,13 +20,25 @@ const loginSchema = z.object({
 
 // JWT-based authentication middleware
 export const isAuthenticated: RequestHandler = async (req, res, next) => {
+  console.log("=== AUTH MIDDLEWARE START ===");
+  console.log("URL:", req.url);
+  console.log("Headers:", JSON.stringify(req.headers, null, 2));
+  
   // Check for JWT token first
   const authHeader = req.headers.authorization;
+  console.log("Auth header:", authHeader);
+  
   if (authHeader && authHeader.startsWith('Bearer ')) {
     const token = authHeader.substring(7);
+    console.log("Token found, length:", token.length);
+    
     try {
       const decoded = auth.verifyAccessToken(token);
+      console.log("Token decoded successfully:", { userId: decoded.userId, email: decoded.email });
+      
       const user = await storage.getUser(decoded.userId);
+      console.log("User found:", user ? { id: user.id, email: user.email } : "null");
+      
       if (user) {
         (req as any).user = {
           claims: {
@@ -37,13 +49,19 @@ export const isAuthenticated: RequestHandler = async (req, res, next) => {
             profile_image_url: user.profileImageUrl,
           }
         };
+        console.log("=== AUTH MIDDLEWARE SUCCESS ===");
         return next();
       }
     } catch (error) {
-      // Token invalid, continue to check session
+      console.error("Token verification error:", error);
+      console.error("Error type:", (error as any)?.name);
+      console.error("Error message:", (error as any)?.message);
     }
+  } else {
+    console.log("No valid auth header found");
   }
 
+  console.log("=== AUTH MIDDLEWARE FAILED ===");
   // No authentication provided - always require authentication
   return res.status(401).json({ message: "Authentication required" });
 };
@@ -195,8 +213,33 @@ export async function setupAuth(app: Express) {
   app.post("/api/auth/login", loginHandler);
   app.post("/api/auth/simple-login", loginHandler);
   
-  // Refresh token endpoint
-  app.post("/api/auth/refresh", auth.refreshToken);
+  // Refresh token endpoint - use the one from auth-jwt.ts but wrap response
+  app.post("/api/auth/refresh", async (req, res) => {
+    // Call the original refresh token handler
+    const originalJson = res.json;
+    let capturedResponse: any = null;
+    
+    // Intercept the response to modify format
+    res.json = function(data: any) {
+      capturedResponse = data;
+      
+      // If it's the success response from auth-jwt.ts, transform it
+      if (data.success && data.data) {
+        const transformedResponse = {
+          message: "刷新成功",
+          accessToken: data.data.accessToken,
+          refreshToken: data.data.refreshToken,
+        };
+        return originalJson.call(this, transformedResponse);
+      }
+      
+      // For error responses, keep original format
+      return originalJson.call(this, data);
+    };
+    
+    // Call the original handler
+    return auth.refreshToken(req, res);
+  });
   
   // Get current user endpoint
   app.get("/api/auth/user", isAuthenticated, async (req: any, res) => {
