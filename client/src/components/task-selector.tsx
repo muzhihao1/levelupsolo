@@ -38,12 +38,14 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   const [, setLocation] = useLocation();
 
   // Fetch all available tasks from the unified API
-  const { data: availableTasks, isLoading } = useQuery({
+  const { data: availableTasks, isLoading, error } = useQuery({
     queryKey: ['pomodoro-available-tasks'],
     queryFn: async () => {
       const response = await apiRequest('GET', '/api/pomodoro/available-tasks');
       if (!response.ok) {
-        throw new Error('Failed to fetch available tasks');
+        const errorData = await response.json();
+        console.error('Failed to fetch tasks:', errorData);
+        throw new Error(errorData.message || 'Failed to fetch available tasks');
       }
       return response.json();
     },
@@ -143,6 +145,11 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
                   <p className="text-muted-foreground">加载中...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center py-8">
+                  <p className="text-destructive mb-2">加载任务失败</p>
+                  <p className="text-sm text-muted-foreground">{error.message}</p>
                 </div>
               ) : filteredTasks.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">

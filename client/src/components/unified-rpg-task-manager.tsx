@@ -1406,21 +1406,7 @@ export default function UnifiedRPGTaskManager() {
                             击败最终Boss - 完成主线
                           </Button>
                         </div>
-                      ) : (
-                        <Button 
-                          onClick={() => startPomodoro(goal.id)}
-                          className="w-full h-9 bg-gradient-to-r from-orange-700 to-red-600 hover:from-orange-800 hover:to-red-700 text-white font-medium shadow-lg border-0"
-                          style={{ backgroundColor: '#dc2626' }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-base">⚔️</span>
-                            <div className="text-left">
-                              <div className="text-sm font-bold text-white" style={{ color: '#ffffff', textShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>开始主线挑战</div>
-                              <div className="text-xs font-medium" style={{ color: '#fee2e2', textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}>25分钟挑战</div>
-                            </div>
-                          </div>
-                        </Button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </CardContent>

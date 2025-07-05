@@ -60,7 +60,53 @@ export class MockStorage implements IStorage {
     this.users.set(demoUser.id, demoUser);
     this.usersByEmail.set(demoUser.email, demoUser.id);
     
-    console.log("MockStorage initialized with demo user");
+    // Add some demo tasks
+    this.createTask({
+      userId: demoUser.id,
+      title: "完成每日运动",
+      description: "30分钟有氧运动",
+      taskCategory: "habit",
+      taskType: "daily",
+      energyBalls: 2,
+      expReward: 20,
+      skillId: 1,
+      difficulty: "medium",
+      priority: 1,
+      completed: false,
+      estimatedDuration: 30,
+      requiredEnergyBalls: 2
+    });
+    
+    this.createTask({
+      userId: demoUser.id,
+      title: "阅读技术文档",
+      description: "学习新的编程技术",
+      taskCategory: "todo",
+      taskType: "simple",
+      energyBalls: 3,
+      expReward: 30,
+      skillId: 3,
+      difficulty: "hard",
+      priority: 2,
+      completed: false,
+      estimatedDuration: 45,
+      requiredEnergyBalls: 3
+    });
+    
+    this.createGoal({
+      userId: demoUser.id,
+      title: "掌握 React 18",
+      description: "深入学习 React 18 的新特性",
+      targetDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      status: "active",
+      category: "skill",
+      skillId: 3,
+      expReward: 100,
+      pomodoroExpReward: 10,
+      requiredEnergyBalls: 10
+    });
+    
+    console.log("MockStorage initialized with demo user and sample data");
   }
 
   // User operations

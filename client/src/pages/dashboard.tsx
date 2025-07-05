@@ -7,6 +7,7 @@ import ProfileSummary from "@/components/profile-summary";
 import OnboardingGuide from "@/components/onboarding-guide";
 import DailyBattleReportCard from "@/components/daily-battle-report";
 import TaskSelector from "@/components/task-selector";
+import AuthDebug from "@/components/auth-debug";
 
 import { apiRequest } from "@/lib/queryClient";
 import type { Skill, Goal, Task, UserStats, UserProfile, InsertUserProfile } from "@shared/schema";
@@ -22,6 +23,7 @@ export default function Dashboard() {
   const [showProfileQuestionnaire, setShowProfileQuestionnaire] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showTaskSelector, setShowTaskSelector] = useState(false);
+  const [showAuthDebug, setShowAuthDebug] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch user profile
@@ -63,19 +65,19 @@ export default function Dashboard() {
   const { data: skills = [], isLoading: skillsLoading } = useQuery<Skill[]>({
     queryKey: ['/api/data?type=skills'],
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 10 * 60 * 1000 // 10 minutes
+    gcTime: 10 * 60 * 1000 // 10 minutes
   });
 
   const { data: goals = [], isLoading: goalsLoading } = useQuery<GoalWithMilestones[]>({
     queryKey: ['/api/data?type=goals'],
     staleTime: 5 * 60 * 1000,
-    cacheTime: 10 * 60 * 1000
+    gcTime: 10 * 60 * 1000
   });
 
   const { data: tasks = [], isLoading: tasksLoading } = useQuery<Task[]>({
     queryKey: ['/api/data?type=tasks'],
     staleTime: 1 * 60 * 1000, // 1 minute for tasks (more frequent updates)
-    cacheTime: 5 * 60 * 1000
+    gcTime: 5 * 60 * 1000
   });
 
   const isDataLoading = profileLoading || statsLoading || skillsLoading || goalsLoading || tasksLoading;
@@ -219,6 +221,18 @@ export default function Dashboard() {
             选择一个任务，开始25分钟的专注战斗
           </p>
         </div>
+
+        {/* Debug Auth Button - Development Only */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 text-center">
+            <button
+              onClick={() => setShowAuthDebug(!showAuthDebug)}
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showAuthDebug ? '隐藏' : '显示'}认证调试信息
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Profile Summary */}
@@ -253,6 +267,9 @@ export default function Dashboard() {
         isOpen={showTaskSelector}
         onClose={() => setShowTaskSelector(false)}
       />
+
+      {/* Auth Debug - Development Only */}
+      {showAuthDebug && <AuthDebug />}
     </div>
   );
 }

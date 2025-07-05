@@ -564,6 +564,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Auth routes
+  // Debug endpoint to check auth state
+  app.get('/api/auth/debug', (req: any, res) => {
+    const authHeader = req.headers.authorization;
+    const hasBearer = authHeader && authHeader.startsWith('Bearer ');
+    const token = hasBearer ? authHeader.substring(7) : null;
+    
+    res.json({
+      hasAuthHeader: !!authHeader,
+      hasBearer,
+      tokenLength: token ? token.length : 0,
+      headers: Object.keys(req.headers),
+      cookies: Object.keys(req.cookies || {})
+    });
+  });
+
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
       const userId = (req.user as any)?.claims?.sub;
@@ -1103,50 +1118,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all available tasks for pomodoro
   app.get("/api/pomodoro/available-tasks", isAuthenticated, async (req: any, res) => {
     try {
+      console.log("Pomodoro available tasks endpoint hit");
+      console.log("Request user:", req.user);
+      
       const userId = req.user?.claims?.sub;
       if (!userId) {
-        return res.status(401).json({ error: "Unauthorized" });
+        console.error("No userId found in request. User object:", req.user);
+        return res.status(401).json({ error: "Unauthorized", details: "No user ID in token" });
       }
 
-      // Get all incomplete goals
-      const goals = await storage.getGoals(userId);
-      const activeGoals = goals.filter(g => !g.completedAt);
+      console.log(`Fetching available tasks for user: ${userId}`);
+      console.log(`Storage type: ${storage.constructor.name}`);
 
-      // Get all incomplete tasks (including habits)
-      const tasks = await storage.getTasks(userId);
-      const activeTasks = tasks.filter(t => !t.completed);
+      // Get all incomplete goals
+      let goals = [];
+      let tasks = [];
+      
+      try {
+        goals = await storage.getGoals(userId);
+        console.log(`Fetched ${goals?.length || 0} goals`);
+      } catch (error) {
+        console.error("Error fetching goals:", error);
+        goals = [];
+      }
+
+      try {
+        tasks = await storage.getTasks(userId);
+        console.log(`Fetched ${tasks.length} tasks`);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        tasks = [];
+      }
+
+      // Filter active goals (not completed)
+      const activeGoals = Array.isArray(goals) ? goals.filter(g => g && !g.completedAt) : [];
+      console.log(`Found ${activeGoals.length} active goals`);
+
+      // Filter active tasks (not completed)
+      const activeTasks = Array.isArray(tasks) ? tasks.filter(t => t && !t.completed) : [];
+      console.log(`Found ${activeTasks.length} active tasks`);
 
       // Separate habits from regular tasks
-      const habits = activeTasks.filter(t => t.taskCategory === 'habit');
-      const regularTasks = activeTasks.filter(t => t.taskCategory !== 'habit');
+      const habits = activeTasks.filter(t => t && t.taskCategory === 'habit');
+      const regularTasks = activeTasks.filter(t => t && t.taskCategory !== 'habit');
+      
+      console.log(`Separated into ${regularTasks.length} regular tasks and ${habits.length} habits`);
 
       res.json({
         goals: activeGoals.map(g => ({
           id: g.id,
-          title: g.title,
+          title: g.title || 'Untitled Goal',
           type: 'goal',
           energyBalls: 3,
-          skillId: g.skillId,
-          category: g.category
+          skillId: g.skillId || null,
+          category: g.category || null
         })),
         tasks: regularTasks.map(t => ({
           id: t.id,
-          title: t.title,
+          title: t.title || 'Untitled Task',
           type: 'task',
-          energyBalls: t.energyBalls,
-          skillId: t.skillId
+          energyBalls: t.energyBalls || 1,
+          skillId: t.skillId || null
         })),
         habits: habits.map(h => ({
           id: h.id,
-          title: h.title,
+          title: h.title || 'Untitled Habit',
           type: 'habit',
           energyBalls: h.energyBalls || 1,
-          skillId: h.skillId
+          skillId: h.skillId || null
         }))
       });
     } catch (error) {
       console.error("Failed to get available tasks:", error);
-      res.status(500).json({ error: "Failed to get available tasks" });
+      console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
+      res.status(500).json({ 
+        error: "Failed to get available tasks",
+        message: error instanceof Error ? error.message : "Unknown error",
+        details: process.env.NODE_ENV === 'development' ? error : undefined
+      });
     }
   });
 
