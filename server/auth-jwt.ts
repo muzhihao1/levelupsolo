@@ -44,6 +44,15 @@ export function generateRefreshToken(userId: string) {
   return jwt.sign({ userId, type: "refresh" }, JWT_SECRET, { expiresIn: REFRESH_TOKEN_EXPIRES_IN });
 }
 
+// Generate both tokens at once
+export function generateTokens(userId: string, email: string) {
+  const accessToken = generateAccessToken(userId, email);
+  const refreshToken = generateRefreshToken(userId);
+  return {
+    accessToken,
+    refreshToken,
+  };
+}
 // Middleware to authenticate token
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
