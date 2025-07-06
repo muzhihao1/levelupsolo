@@ -369,10 +369,12 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
           setTaskCompleted(false);
         }
       }}>
-        <DialogContent className="w-[95vw] max-w-md h-[90vh] max-h-none bg-slate-800 border-slate-700 p-4 sm:p-6" aria-describedby="pomodoro-description">
-          <DialogHeader className="pb-2">
-            <DialogTitle className="text-white flex items-center text-base sm:text-lg lg:text-xl">
-              <i className="fas fa-tomato text-red-500 mr-2"></i>
+        <DialogContent className="w-[95vw] max-w-md h-[90vh] max-h-none bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 p-4 sm:p-6 shadow-2xl" aria-describedby="pomodoro-description">
+          <DialogHeader className="pb-4 border-b border-gray-200 dark:border-gray-700">
+            <DialogTitle className="text-gray-900 dark:text-white flex items-center text-lg sm:text-xl lg:text-2xl font-semibold">
+              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
+                <i className="fas fa-clock text-white"></i>
+              </div>
               番茄钟计时器
             </DialogTitle>
           </DialogHeader>
@@ -382,20 +384,20 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
 
           <div className="space-y-4 overflow-y-auto flex-1">
             {/* Task Info */}
-            <div className="bg-slate-700 rounded-lg p-3 sm:p-4">
-              <h4 className="font-medium text-white mb-2 text-xs sm:text-sm lg:text-base truncate">{task.title}</h4>
-              <div className="flex justify-between gap-2 text-[10px] sm:text-xs lg:text-sm">
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4 sm:p-5 border border-gray-200 dark:border-gray-700">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-3 text-sm sm:text-base lg:text-lg truncate">{task.title}</h4>
+              <div className="flex justify-between gap-2 text-xs sm:text-sm lg:text-base">
                 <div className="flex flex-col items-center">
-                  <span className="text-gray-400">预估时长</span>
-                  <span className="text-cyan-400 font-medium">{task.estimatedDuration || 25} 分钟</span>
+                  <span className="text-gray-600 dark:text-gray-400">预估时长</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-semibold">{task.estimatedDuration || 25} 分钟</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-gray-400">已投入</span>
-                  <span className="text-orange-400 font-medium">{task.accumulatedTime || 0} 分钟</span>
+                  <span className="text-gray-600 dark:text-gray-400">已投入</span>
+                  <span className="text-orange-600 dark:text-orange-400 font-semibold">{task.accumulatedTime || 0} 分钟</span>
                 </div>
                 <div className="flex flex-col items-center">
-                  <span className="text-gray-400">本次轮数</span>
-                  <span className="text-purple-400 font-medium">{sessionCount} 轮</span>
+                  <span className="text-gray-600 dark:text-gray-400">本次轮数</span>
+                  <span className="text-purple-600 dark:text-purple-400 font-semibold">{sessionCount} 轮</span>
                 </div>
               </div>
               {task.accumulatedTime && task.accumulatedTime > (task.estimatedDuration || 25) && (
@@ -409,9 +411,9 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
             {/* Timer Settings (only when idle) */}
             {pomodoroState === 'idle' && (
               <div className="space-y-4">
-                <div className="text-[10px] sm:text-xs text-gray-400 bg-slate-600/50 rounded p-2 sm:p-3">
-                  <i className="fas fa-lightbulb mr-1 text-yellow-400"></i>
-                  <strong className="text-gray-200">新版番茄钟战斗系统：</strong><br/>
+                <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3 sm:p-4">
+                  <i className="fas fa-lightbulb mr-1 text-blue-600 dark:text-blue-400"></i>
+                  <strong className="text-gray-800 dark:text-gray-200">新版番茄钟战斗系统：</strong><br/>
                   • 25分钟战斗 → 5分钟休息（自动切换）<br/>
                   • 根据实际战斗时间计算能量球消耗<br/>
                   • 支持多轮战斗，灵活击败Boss<br/>
@@ -424,14 +426,16 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
             {pomodoroState === 'working' && (
               <div className="text-center space-y-4 py-4 sm:py-6">
                 <div className="flex items-center justify-center mb-2">
-                  <i className="fas fa-swords text-red-500 text-2xl mr-2"></i>
-                  <h3 className="text-xl font-bold text-white">战斗中...</h3>
+                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
+                    <i className="fas fa-fire text-white text-xl"></i>
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">战斗中...</h3>
                 </div>
-                <div className="text-3xl sm:text-5xl lg:text-6xl font-mono font-bold text-white">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-mono font-bold text-gray-900 dark:text-white">
                   {formatTime(timeLeft)}
                 </div>
-                <Progress value={getProgressValue()} className="h-3 sm:h-4" />
-                <div className="text-[10px] sm:text-xs lg:text-sm text-gray-400">
+                <Progress value={getProgressValue()} className="h-4 sm:h-5 bg-gray-200 dark:bg-gray-700" />
+                <div className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
                   第 {sessionCount + 1} 轮战斗 • {Math.floor(getProgressValue())}% 完成
                 </div>
               </div>
@@ -446,7 +450,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                 <div className="text-3xl sm:text-5xl lg:text-6xl font-mono font-bold text-blue-400">
                   {formatTime(timeLeft)}
                 </div>
-                <Progress value={getProgressValue()} className="h-3 sm:h-4 bg-blue-900" />
+                <Progress value={getProgressValue()} className="h-4 sm:h-5 bg-gray-200 dark:bg-gray-700" />
                 <div className="text-[10px] sm:text-xs lg:text-sm text-gray-400">
                   休息结束后将继续下一轮战斗
                 </div>
@@ -483,7 +487,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     onClick={handleStartTimer}
                     disabled={startPomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 h-10 sm:h-12 text-sm sm:text-base font-medium shadow-md hover:shadow-lg transition-all"
                   >
                     <i className="fas fa-swords mr-2"></i>
                     开始战斗
@@ -491,7 +495,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     variant="outline"
                     onClick={() => setIsOpen(false)}
-                    className="w-full sm:flex-1 h-10 sm:h-12 text-sm sm:text-base"
+                    className="w-full sm:flex-1 h-10 sm:h-12 text-sm sm:text-base bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                   >
                     取消
                   </Button>
@@ -503,7 +507,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     onClick={handleDefeatBoss}
                     disabled={completePomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-cyan-500 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-10 sm:h-12 text-sm sm:text-base font-medium shadow-md hover:shadow-lg transition-all"
                   >
                     <i className="fas fa-trophy mr-2"></i>
                     击败Boss
@@ -512,7 +516,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                     onClick={handlePauseTimer}
                     disabled={completePomodoroMutation.isPending}
                     variant="destructive"
-                    className="w-full sm:flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    className="w-full sm:flex-1 h-10 sm:h-12 text-sm sm:text-base font-medium bg-red-500 hover:bg-red-600 transition-colors"
                   >
                     <i className="fas fa-pause mr-2"></i>
                     暂停任务
@@ -542,7 +546,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
             </div>
 
             {/* Tips */}
-            <div className="text-[10px] sm:text-xs text-gray-400 text-center space-y-1">
+            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 text-center space-y-1 bg-gray-50 dark:bg-gray-800 rounded-lg p-3">
               <p>💡 专注时请尽量避免分心</p>
               <p>🔔 浏览器通知需要您的授权</p>
             </div>

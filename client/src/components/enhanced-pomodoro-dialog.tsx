@@ -214,11 +214,11 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
   return (
     <DialogPrimitive.Root open={isOpen} onOpenChange={() => {}}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content 
           className={cn(
             "fixed left-[50%] top-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%]",
-            "bg-slate-800 border border-slate-700 shadow-lg duration-200 sm:rounded-lg",
+            "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-2xl duration-200 sm:rounded-xl",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -229,14 +229,14 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
         >
         <div className="relative">
           {/* 头部区域 */}
-          <div className="bg-slate-700 px-6 py-4 flex items-center justify-between">
-            <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white truncate flex-1 mr-4">
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-5 flex items-center justify-between">
+            <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-white truncate flex-1 mr-4">
               {task.title}
             </h3>
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-400 hover:text-white hover:bg-slate-600"
+              className="text-white/80 hover:text-white hover:bg-white/20 rounded-lg"
               onClick={handleMinimize}
               title="最小化到悬浮窗"
             >
@@ -245,26 +245,26 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
           </div>
 
           {/* 主要内容 */}
-          <div className="p-6 text-center">
+          <div className="p-6 sm:p-8 text-center bg-gray-50 dark:bg-gray-800/50">
             {/* 任务信息 */}
-            <div className="mb-4 sm:mb-6 text-xs sm:text-sm text-gray-300">
-              <span className="text-gray-200">专注时间：</span>
-              <span className="text-cyan-400 font-medium">25分钟</span>
-              <span className="mx-1 sm:mx-2 text-gray-500">•</span>
-              <span className="text-gray-200">消耗能量球：</span>
-              <span className="text-yellow-400 font-medium">{task.energyBalls} 个</span>
+            <div className="mb-4 sm:mb-6 text-sm sm:text-base text-gray-600 dark:text-gray-300 bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm">
+              <span className="text-gray-700 dark:text-gray-200">专注时间：</span>
+              <span className="text-blue-600 dark:text-blue-400 font-semibold">25分钟</span>
+              <span className="mx-2 text-gray-400 dark:text-gray-500">•</span>
+              <span className="text-gray-700 dark:text-gray-200">消耗能量球：</span>
+              <span className="text-orange-600 dark:text-orange-400 font-semibold">{task.energyBalls} 个</span>
             </div>
 
             {/* 计时器 */}
             <div className="mb-8">
-              <div className="text-5xl sm:text-6xl lg:text-7xl font-mono font-bold text-white mb-3 sm:mb-4">
+              <div className="text-5xl sm:text-6xl lg:text-7xl font-mono font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 {formatTime(timeLeft)}
               </div>
               <Progress 
                 value={getProgress()} 
-                className="h-3 mb-3 bg-slate-700" 
+                className="h-4 mb-3 bg-gray-200 dark:bg-gray-700" 
               />
-              <p className="text-xs sm:text-sm text-gray-300 font-medium">
+              <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-medium">
                 {Math.floor(getProgress())}% 完成
               </p>
             </div>
@@ -278,7 +278,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
                   size="default"
                   onClick={handlePause}
                   disabled={!isRunning || timeLeft === 0}
-                  className="w-24 sm:w-32 h-10 sm:h-12 bg-slate-700 border-slate-600 text-white hover:bg-slate-600 text-sm sm:text-base"
+                  className="w-24 sm:w-32 h-10 sm:h-12 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 text-sm sm:text-base transition-colors"
                 >
                   {isPaused ? (
                     <>
@@ -296,7 +296,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
                   size="default"
                   onClick={() => handleComplete(true)}
                   disabled={timeLeft === 0}
-                  className="w-24 sm:w-32 h-10 sm:h-12 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
+                  className="w-24 sm:w-32 h-10 sm:h-12 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
                 >
                   <CheckCircle className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                   完成任务
@@ -308,7 +308,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
                 variant="destructive"
                 size="sm"
                 onClick={handleGiveUp}
-                className="bg-red-600/20 hover:bg-red-600/30 text-red-400 border-red-600/30 text-xs sm:text-sm h-8 sm:h-9"
+                className="bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 text-xs sm:text-sm h-8 sm:h-9 transition-colors"
               >
                 <XCircle className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                 放弃任务
@@ -317,7 +317,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
 
             {/* 提示信息 */}
             {isPaused && (
-              <div className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-yellow-400 bg-yellow-400/10 rounded px-2 sm:px-3 py-1.5 sm:py-2">
+              <div className="mt-3 sm:mt-4 text-xs sm:text-sm text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg px-3 sm:px-4 py-2 sm:py-2.5">
                 任务已暂停，点击继续按钮恢复计时
               </div>
             )}
