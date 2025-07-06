@@ -247,10 +247,12 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
           {/* 主要内容 */}
           <div className="p-6 text-center">
             {/* 任务信息 */}
-            <div className="mb-6 text-sm text-gray-400">
-              <span>专注时间：25分钟</span>
-              <span className="mx-2">•</span>
-              <span>消耗能量球：{task.energyBalls} 个</span>
+            <div className="mb-6 text-sm text-gray-300">
+              <span className="text-gray-200">专注时间：</span>
+              <span className="text-cyan-400 font-medium">25分钟</span>
+              <span className="mx-2 text-gray-500">•</span>
+              <span className="text-gray-200">消耗能量球：</span>
+              <span className="text-yellow-400 font-medium">{task.energyBalls} 个</span>
             </div>
 
             {/* 计时器 */}
@@ -262,7 +264,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
                 value={getProgress()} 
                 className="h-3 mb-3 bg-slate-700" 
               />
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300 font-medium">
                 {Math.floor(getProgress())}% 完成
               </p>
             </div>

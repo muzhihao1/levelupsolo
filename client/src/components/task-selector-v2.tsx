@@ -142,14 +142,14 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   };
 
   const renderEmptyState = () => (
-    <div className="flex flex-col items-center justify-center py-12 px-4">
-      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-        <AlertCircle className="h-8 w-8 text-muted-foreground" />
+    <div className="flex flex-col items-center justify-center py-16 px-4">
+      <div className="w-20 h-20 bg-gradient-to-br from-muted to-muted/50 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+        <AlertCircle className="h-10 w-10 text-muted-foreground" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground mb-2">
+      <h3 className="text-xl font-semibold text-foreground mb-3">
         没有找到可用的任务
       </h3>
-      <p className="text-sm text-muted-foreground text-center max-w-sm">
+      <p className="text-base text-muted-foreground text-center max-w-md">
         {searchTerm ? 
           `没有找到包含 "${searchTerm}" 的任务` : 
           '创建一些任务来开始你的专注之旅'
@@ -165,30 +165,34 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
       <Card
         key={`${task.type}-${task.id}`}
         className={cn(
-          "p-4 cursor-pointer border transition-all duration-200",
+          "p-6 cursor-pointer border-2 transition-all duration-200 group",
           TASK_BG_COLORS[task.type],
-          "hover:shadow-md hover:scale-[1.02]"
+          "hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5"
         )}
         onClick={() => handleTaskSelect(task)}
       >
-        <div className="flex items-start gap-3">
+        <div className="flex items-center gap-4">
           {/* Icon */}
           <div className={cn(
-            "w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0",
-            TASK_BG_COLORS[task.type].replace('hover:', '')
+            "w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110",
+            TASK_BG_COLORS[task.type].replace('hover:', '').replace('border-', 'bg-')
           )}>
-            <Icon className={cn("h-5 w-5", TASK_COLORS[task.type])} />
+            <Icon className={cn("h-7 w-7", TASK_COLORS[task.type])} />
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-semibold text-xl text-foreground mb-2 line-clamp-1">
+              {task.title}
+            </h3>
+            <div className="flex items-center gap-3">
               <Badge 
                 variant="outline" 
                 className={cn(
-                  "text-xs",
-                  TASK_COLORS[task.type],
-                  "border-current"
+                  "text-sm font-medium px-3 py-1 border-2",
+                  task.type === 'goal' ? 'border-blue-500/30 text-blue-600 bg-blue-500/5' :
+                  task.type === 'task' ? 'border-purple-500/30 text-purple-600 bg-purple-500/5' :
+                  'border-green-500/30 text-green-600 bg-green-500/5'
                 )}
               >
                 {getTaskTypeLabel(task.type)}
@@ -196,28 +200,25 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
               {task.difficulty && (
                 <Badge 
                   variant="outline"
-                  className={cn("text-xs", DIFFICULTY_COLORS[task.difficulty])}
+                  className={cn(
+                    "text-sm font-medium px-3 py-1 border-2",
+                    task.difficulty === 'easy' ? 'border-green-500/30 text-green-600 bg-green-500/5' :
+                    task.difficulty === 'medium' ? 'border-yellow-500/30 text-yellow-600 bg-yellow-500/5' :
+                    'border-red-500/30 text-red-600 bg-red-500/5'
+                  )}
                 >
                   {task.difficulty === 'easy' ? '简单' : 
                    task.difficulty === 'medium' ? '中等' : '困难'}
                 </Badge>
               )}
             </div>
-            <h3 className="font-medium text-foreground truncate">
-              {task.title}
-            </h3>
-            {task.description && (
-              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                {task.description}
-              </p>
-            )}
           </div>
 
           {/* Energy balls */}
           {task.energyBalls && (
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <Zap className="h-4 w-4 text-yellow-500" />
-              <span className="font-medium">{task.energyBalls}</span>
+            <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl px-4 py-3 border-2 border-yellow-500/30">
+              <Zap className="h-6 w-6 text-yellow-500" />
+              <span className="font-bold text-lg text-yellow-600">{task.energyBalls}</span>
             </div>
           )}
         </div>
@@ -235,56 +236,68 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[85vh] p-0">
-        <DialogHeader className="p-6 pb-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-              <Swords className="h-6 w-6 text-white" />
+      <DialogContent className="max-w-4xl max-h-[85vh] p-0 bg-background">
+        <DialogHeader className="px-8 pt-8 pb-6 border-b bg-gradient-to-b from-background to-muted/20">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <Swords className="h-8 w-8 text-white" />
             </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold">选择要挑战的任务</DialogTitle>
-              <DialogDescription>
+            <div className="flex-1">
+              <DialogTitle className="text-3xl font-bold text-foreground tracking-tight">选择要挑战的任务</DialogTitle>
+              <DialogDescription className="text-base mt-2 text-muted-foreground">
                 选择一个任务开始25分钟的专注战斗
               </DialogDescription>
             </div>
           </div>
 
           {/* Search */}
-          <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <div className="relative mt-6">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
               type="text"
               placeholder="搜索任务..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-muted/50"
+              className="pl-12 h-14 bg-background border-2 text-lg placeholder:text-muted-foreground/60 focus:border-primary/50"
             />
           </div>
         </DialogHeader>
 
         {/* Type Filter */}
-        <div className="px-6">
+        <div className="px-8 pt-2">
           <Tabs value={selectedTaskType} onValueChange={(v) => setSelectedTaskType(v as any)}>
-            <TabsList className="grid w-full grid-cols-4 bg-muted/50">
-              <TabsTrigger value="all" className="data-[state=active]:bg-background">
-                全部 {tabCounts.all > 0 && <span className="ml-1 text-xs">({tabCounts.all})</span>}
+            <TabsList className="grid w-full grid-cols-4 h-14 bg-muted/30 p-1">
+              <TabsTrigger value="all" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
+                <span className="flex items-center gap-2">
+                  <span>全部</span>
+                  {tabCounts.all > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.all})</span>}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="goal" className="data-[state=active]:bg-background">
-                主线 {tabCounts.goal > 0 && <span className="ml-1 text-xs">({tabCounts.goal})</span>}
+              <TabsTrigger value="goal" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
+                <span className="flex items-center gap-2">
+                  <span>主线</span>
+                  {tabCounts.goal > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.goal})</span>}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="task" className="data-[state=active]:bg-background">
-                支线 {tabCounts.task > 0 && <span className="ml-1 text-xs">({tabCounts.task})</span>}
+              <TabsTrigger value="task" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
+                <span className="flex items-center gap-2">
+                  <span>支线</span>
+                  {tabCounts.task > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.task})</span>}
+                </span>
               </TabsTrigger>
-              <TabsTrigger value="habit" className="data-[state=active]:bg-background">
-                习惯 {tabCounts.habit > 0 && <span className="ml-1 text-xs">({tabCounts.habit})</span>}
+              <TabsTrigger value="habit" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
+                <span className="flex items-center gap-2">
+                  <span>习惯</span>
+                  {tabCounts.habit > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.habit})</span>}
+                </span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
 
         {/* Task List */}
-        <ScrollArea className="flex-1 px-6 pb-6">
-          <div className="space-y-3 mt-4">
+        <ScrollArea className="flex-1 px-8 py-6">
+          <div className="space-y-3">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
@@ -315,26 +328,36 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
 
         {/* Stats Footer */}
         {!isLoading && !error && allTasks.length > 0 && (
-          <div className="border-t bg-muted/30 px-6 py-3">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <Trophy className="h-4 w-4" />
-                  {tabCounts.goal} 主线任务
+          <div className="border-t bg-gradient-to-r from-muted/40 to-muted/20 px-8 py-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6">
+                <span className="flex items-center gap-2 text-base">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                    <Trophy className="h-4 w-4 text-blue-500" />
+                  </div>
+                  <span className="font-medium">{tabCounts.goal}</span>
+                  <span className="text-muted-foreground">主线</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Target className="h-4 w-4" />
-                  {tabCounts.task} 支线任务
+                <span className="flex items-center gap-2 text-base">
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                    <Target className="h-4 w-4 text-purple-500" />
+                  </div>
+                  <span className="font-medium">{tabCounts.task}</span>
+                  <span className="text-muted-foreground">支线</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Repeat className="h-4 w-4" />
-                  {tabCounts.habit} 习惯养成
+                <span className="flex items-center gap-2 text-base">
+                  <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                    <Repeat className="h-4 w-4 text-green-500" />
+                  </div>
+                  <span className="font-medium">{tabCounts.habit}</span>
+                  <span className="text-muted-foreground">习惯</span>
                 </span>
               </div>
-              <span className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                25分钟专注时间
-              </span>
+              <div className="flex items-center gap-2 text-base bg-orange-500/10 rounded-lg px-4 py-2">
+                <Clock className="h-5 w-5 text-orange-500" />
+                <span className="font-medium text-orange-600">25分钟</span>
+                <span className="text-muted-foreground">专注时间</span>
+              </div>
             </div>
           </div>
         )}
