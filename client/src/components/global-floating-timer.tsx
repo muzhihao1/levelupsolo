@@ -49,7 +49,7 @@ export function GlobalFloatingTimer() {
 
   return createPortal(
     <div 
-      className="fixed bg-gradient-to-br from-orange-400 to-red-500 text-white rounded-full shadow-2xl cursor-pointer hover:scale-110 transition-all duration-200"
+      className="fixed bg-gradient-to-br from-primary to-accent text-white rounded-full shadow-2xl cursor-pointer hover:scale-110 transition-all duration-200"
       style={{ 
         position: 'fixed',
         bottom: '80px',
@@ -77,7 +77,7 @@ export function GlobalFloatingTimer() {
           {timerData.taskTitle}
         </div>
       </div>
-      <div className="absolute top-2 right-2 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+      <div className="absolute top-2 right-2 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
     </div>,
     document.body
   );

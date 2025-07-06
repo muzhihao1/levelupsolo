@@ -372,7 +372,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
         <DialogContent className="w-[95vw] max-w-md h-[90vh] max-h-none bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 p-4 sm:p-6 shadow-2xl" aria-describedby="pomodoro-description">
           <DialogHeader className="pb-4 border-b border-gray-200 dark:border-gray-700">
             <DialogTitle className="text-gray-900 dark:text-white flex items-center text-lg sm:text-xl lg:text-2xl font-semibold">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center mr-3">
                 <i className="fas fa-clock text-white"></i>
               </div>
               番茄钟计时器
@@ -393,7 +393,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-gray-600 dark:text-gray-400">已投入</span>
-                  <span className="text-orange-600 dark:text-orange-400 font-semibold">{task.accumulatedTime || 0} 分钟</span>
+                  <span className="text-amber-600 dark:text-amber-400 font-semibold">{task.accumulatedTime || 0} 分钟</span>
                 </div>
                 <div className="flex flex-col items-center">
                   <span className="text-gray-600 dark:text-gray-400">本次轮数</span>
@@ -426,7 +426,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
             {pomodoroState === 'working' && (
               <div className="text-center space-y-4 py-4 sm:py-6">
                 <div className="flex items-center justify-center mb-2">
-                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center mr-3 animate-pulse">
+                  <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center mr-3 animate-pulse">
                     <i className="fas fa-fire text-white text-xl"></i>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 dark:text-white">战斗中...</h3>
@@ -487,7 +487,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     onClick={handleStartTimer}
                     disabled={startPomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 h-10 sm:h-12 text-sm sm:text-base font-medium shadow-md hover:shadow-lg transition-all"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-primary to-accent hover:opacity-90 h-10 sm:h-12 text-sm sm:text-base font-medium text-white shadow-md hover:shadow-lg transition-all"
                   >
                     <i className="fas fa-swords mr-2"></i>
                     开始战斗
@@ -507,7 +507,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                   <Button
                     onClick={handleDefeatBoss}
                     disabled={completePomodoroMutation.isPending}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-10 sm:h-12 text-sm sm:text-base font-medium shadow-md hover:shadow-lg transition-all"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 h-10 sm:h-12 text-sm sm:text-base font-medium text-white shadow-md hover:shadow-lg transition-all"
                   >
                     <i className="fas fa-trophy mr-2"></i>
                     击败Boss
@@ -528,7 +528,7 @@ export default function PomodoroTimer({ task, onComplete }: PomodoroTimerProps) 
                 <>
                   <Button
                     onClick={handleContinueBattle}
-                    className="w-full sm:flex-1 bg-gradient-to-r from-blue-500 to-purple-500 h-10 sm:h-12 text-sm sm:text-base font-medium"
+                    className="w-full sm:flex-1 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 h-10 sm:h-12 text-sm sm:text-base font-medium text-white shadow-md hover:shadow-lg transition-all"
                   >
                     <i className="fas fa-swords mr-2"></i>
                     继续战斗 (第{sessionCount + 1}轮)

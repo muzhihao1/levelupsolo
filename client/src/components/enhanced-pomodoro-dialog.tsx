@@ -229,7 +229,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
         >
         <div className="relative">
           {/* 头部区域 */}
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 px-6 py-5 flex items-center justify-between">
+          <div className="bg-gradient-to-r from-primary to-accent px-6 py-5 flex items-center justify-between">
             <h3 className="text-base sm:text-lg lg:text-xl font-semibold text-white truncate flex-1 mr-4">
               {task.title}
             </h3>
@@ -252,7 +252,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
               <span className="text-blue-600 dark:text-blue-400 font-semibold">25分钟</span>
               <span className="mx-2 text-gray-400 dark:text-gray-500">•</span>
               <span className="text-gray-700 dark:text-gray-200">消耗能量球：</span>
-              <span className="text-orange-600 dark:text-orange-400 font-semibold">{task.energyBalls} 个</span>
+              <span className="text-amber-600 dark:text-amber-400 font-semibold">{task.energyBalls} 个</span>
             </div>
 
             {/* 计时器 */}

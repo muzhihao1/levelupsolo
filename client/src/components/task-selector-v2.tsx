@@ -239,7 +239,7 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
       <DialogContent className="max-w-4xl h-[90vh] sm:h-[85vh] p-0 bg-background overflow-hidden flex flex-col">
         <DialogHeader className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b bg-gradient-to-b from-background to-muted/20 flex-shrink-0">
           <div className="flex items-center gap-5">
-            <div className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <div className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-primary to-accent rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
               <Swords className="h-6 sm:h-8 w-6 sm:w-8 text-white" />
             </div>
             <div className="flex-1">
@@ -353,9 +353,9 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
                   <span className="text-muted-foreground">习惯</span>
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-base bg-orange-500/10 rounded-lg px-4 py-2">
-                <Clock className="h-5 w-5 text-orange-500" />
-                <span className="font-medium text-orange-600">25分钟</span>
+              <div className="flex items-center gap-2 text-base bg-primary/10 rounded-lg px-4 py-2">
+                <Clock className="h-5 w-5 text-primary" />
+                <span className="font-medium text-primary">25分钟</span>
                 <span className="text-muted-foreground">专注时间</span>
               </div>
             </div>
