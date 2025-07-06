@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
-import SimplePomodoroDialog from "./simple-pomodoro-dialog";
+import EnhancedPomodoroDialog from "./enhanced-pomodoro-dialog";
 
 interface TaskSelectorProps {
   isOpen: boolean;
@@ -341,8 +341,8 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
       </DialogContent>
     </Dialog>
 
-      {/* Simple Pomodoro Dialog */}
-      <SimplePomodoroDialog
+      {/* Enhanced Pomodoro Dialog */}
+      <EnhancedPomodoroDialog
         task={selectedTask}
         isOpen={showPomodoro}
         onClose={handlePomodoroClose}
