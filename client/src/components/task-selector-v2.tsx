@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +28,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { cn } from "@/lib/utils";
+import PomodoroDialog from "./pomodoro-dialog";
 
 interface TaskSelectorProps {
   isOpen: boolean;
@@ -74,7 +74,8 @@ const DIFFICULTY_COLORS = {
 export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTaskType, setSelectedTaskType] = useState<'all' | 'goal' | 'task' | 'habit'>('all');
-  const [, setLocation] = useLocation();
+  const [selectedTask, setSelectedTask] = useState<UnifiedTask | null>(null);
+  const [showPomodoro, setShowPomodoro] = useState(false);
 
   // Fetch all available tasks from the unified API
   const { data: availableTasks, isLoading, error } = useQuery({
@@ -114,24 +115,19 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
 
   const handleTaskSelect = async (task: UnifiedTask) => {
     try {
-      // Store task data in session storage
-      const pomodoroData = {
-        id: task.id,
-        title: task.title,
-        type: task.type,
-        energyBalls: task.energyBalls || 1,
-        skillId: task.skillId || null,
-        startTime: new Date().toISOString()
-      };
-      
-      sessionStorage.setItem('currentPomodoroTask', JSON.stringify(pomodoroData));
-      
-      // Navigate to pomodoro timer
-      setLocation('/pomodoro');
+      // Set selected task and show pomodoro dialog
+      setSelectedTask(task);
+      setShowPomodoro(true);
+      // Close task selector dialog
       onClose();
     } catch (error) {
       console.error('Failed to start pomodoro:', error);
     }
+  };
+
+  const handlePomodoroClose = () => {
+    setShowPomodoro(false);
+    setSelectedTask(null);
   };
 
   const getTaskTypeLabel = (type: UnifiedTask['type']) => {
@@ -237,7 +233,8 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-3xl max-h-[85vh] p-0">
         <DialogHeader className="p-6 pb-4">
           <div className="flex items-center gap-3 mb-2">
@@ -343,5 +340,13 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
         )}
       </DialogContent>
     </Dialog>
+
+      {/* Pomodoro Dialog */}
+      <PomodoroDialog
+        task={selectedTask}
+        isOpen={showPomodoro}
+        onClose={handlePomodoroClose}
+      />
+    </>
   );
 }
