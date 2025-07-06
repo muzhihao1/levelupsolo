@@ -230,7 +230,7 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
         <div className="relative">
           {/* 头部区域 */}
           <div className="bg-slate-700 px-6 py-4 flex items-center justify-between">
-            <h3 className="text-lg font-medium text-white truncate flex-1 mr-4">
+            <h3 className="text-sm sm:text-base lg:text-lg font-medium text-white truncate flex-1 mr-4">
               {task.title}
             </h3>
             <Button
@@ -247,24 +247,24 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
           {/* 主要内容 */}
           <div className="p-6 text-center">
             {/* 任务信息 */}
-            <div className="mb-6 text-sm text-gray-300">
+            <div className="mb-4 sm:mb-6 text-xs sm:text-sm text-gray-300">
               <span className="text-gray-200">专注时间：</span>
               <span className="text-cyan-400 font-medium">25分钟</span>
-              <span className="mx-2 text-gray-500">•</span>
+              <span className="mx-1 sm:mx-2 text-gray-500">•</span>
               <span className="text-gray-200">消耗能量球：</span>
               <span className="text-yellow-400 font-medium">{task.energyBalls} 个</span>
             </div>
 
             {/* 计时器 */}
             <div className="mb-8">
-              <div className="text-7xl font-mono font-bold text-white mb-4">
+              <div className="text-5xl sm:text-6xl lg:text-7xl font-mono font-bold text-white mb-3 sm:mb-4">
                 {formatTime(timeLeft)}
               </div>
               <Progress 
                 value={getProgress()} 
                 className="h-3 mb-3 bg-slate-700" 
               />
-              <p className="text-sm text-gray-300 font-medium">
+              <p className="text-xs sm:text-sm text-gray-300 font-medium">
                 {Math.floor(getProgress())}% 完成
               </p>
             </div>
@@ -275,30 +275,30 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
               <div className="flex justify-center gap-3">
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="default"
                   onClick={handlePause}
                   disabled={!isRunning || timeLeft === 0}
-                  className="w-32 bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
+                  className="w-24 sm:w-32 h-10 sm:h-12 bg-slate-700 border-slate-600 text-white hover:bg-slate-600 text-sm sm:text-base"
                 >
                   {isPaused ? (
                     <>
-                      <Play className="h-4 w-4 mr-2" />
+                      <Play className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                       继续
                     </>
                   ) : (
                     <>
-                      <Pause className="h-4 w-4 mr-2" />
+                      <Pause className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                       暂停
                     </>
                   )}
                 </Button>
                 <Button
-                  size="lg"
+                  size="default"
                   onClick={() => handleComplete(true)}
                   disabled={timeLeft === 0}
-                  className="w-32 bg-green-600 hover:bg-green-700 text-white"
+                  className="w-24 sm:w-32 h-10 sm:h-12 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base"
                 >
-                  <CheckCircle className="h-4 w-4 mr-2" />
+                  <CheckCircle className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                   完成任务
                 </Button>
               </div>
@@ -308,16 +308,16 @@ export default function EnhancedPomodoroDialog({ task, isOpen, onClose }: Enhanc
                 variant="destructive"
                 size="sm"
                 onClick={handleGiveUp}
-                className="bg-red-600/20 hover:bg-red-600/30 text-red-400 border-red-600/30"
+                className="bg-red-600/20 hover:bg-red-600/30 text-red-400 border-red-600/30 text-xs sm:text-sm h-8 sm:h-9"
               >
-                <XCircle className="h-4 w-4 mr-2" />
+                <XCircle className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
                 放弃任务
               </Button>
             </div>
 
             {/* 提示信息 */}
             {isPaused && (
-              <div className="mt-4 text-xs text-yellow-400 bg-yellow-400/10 rounded px-3 py-2">
+              <div className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-yellow-400 bg-yellow-400/10 rounded px-2 sm:px-3 py-1.5 sm:py-2">
                 任务已暂停，点击继续按钮恢复计时
               </div>
             )}

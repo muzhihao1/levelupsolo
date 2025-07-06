@@ -165,31 +165,31 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
       <Card
         key={`${task.type}-${task.id}`}
         className={cn(
-          "p-6 cursor-pointer border-2 transition-all duration-200 group",
+          "p-4 sm:p-6 cursor-pointer border-2 transition-all duration-200 group",
           TASK_BG_COLORS[task.type],
-          "hover:shadow-xl hover:scale-[1.02] hover:-translate-y-0.5"
+          "hover:shadow-xl hover:scale-[1.01] sm:hover:scale-[1.02] hover:-translate-y-0.5"
         )}
         onClick={() => handleTaskSelect(task)}
       >
         <div className="flex items-center gap-4">
           {/* Icon */}
           <div className={cn(
-            "w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110",
+            "w-12 sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 transition-transform duration-200 group-hover:scale-110",
             TASK_BG_COLORS[task.type].replace('hover:', '').replace('border-', 'bg-')
           )}>
-            <Icon className={cn("h-7 w-7", TASK_COLORS[task.type])} />
+            <Icon className={cn("h-5 sm:h-7 w-5 sm:w-7", TASK_COLORS[task.type])} />
           </div>
 
           {/* Content */}
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-xl text-foreground mb-2 line-clamp-1">
+            <h3 className="font-semibold text-base sm:text-lg lg:text-xl text-foreground mb-1 sm:mb-2 line-clamp-1">
               {task.title}
             </h3>
             <div className="flex items-center gap-3">
               <Badge 
                 variant="outline" 
                 className={cn(
-                  "text-sm font-medium px-3 py-1 border-2",
+                  "text-xs sm:text-sm font-medium px-2 sm:px-3 py-0.5 sm:py-1 border sm:border-2",
                   task.type === 'goal' ? 'border-blue-500/30 text-blue-600 bg-blue-500/5' :
                   task.type === 'task' ? 'border-purple-500/30 text-purple-600 bg-purple-500/5' :
                   'border-green-500/30 text-green-600 bg-green-500/5'
@@ -201,7 +201,7 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
                 <Badge 
                   variant="outline"
                   className={cn(
-                    "text-sm font-medium px-3 py-1 border-2",
+                    "text-xs sm:text-sm font-medium px-2 sm:px-3 py-0.5 sm:py-1 border sm:border-2",
                     task.difficulty === 'easy' ? 'border-green-500/30 text-green-600 bg-green-500/5' :
                     task.difficulty === 'medium' ? 'border-yellow-500/30 text-yellow-600 bg-yellow-500/5' :
                     'border-red-500/30 text-red-600 bg-red-500/5'
@@ -216,9 +216,9 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
 
           {/* Energy balls */}
           {task.energyBalls && (
-            <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-2xl px-4 py-3 border-2 border-yellow-500/30">
-              <Zap className="h-6 w-6 text-yellow-500" />
-              <span className="font-bold text-lg text-yellow-600">{task.energyBalls}</span>
+            <div className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-2 sm:py-3 border sm:border-2 border-yellow-500/30">
+              <Zap className="h-4 sm:h-6 w-4 sm:w-6 text-yellow-500" />
+              <span className="font-bold text-sm sm:text-lg text-yellow-600">{task.energyBalls}</span>
             </div>
           )}
         </div>
@@ -236,15 +236,15 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[85vh] p-0 bg-background">
-        <DialogHeader className="px-8 pt-8 pb-6 border-b bg-gradient-to-b from-background to-muted/20">
+      <DialogContent className="max-w-4xl h-[90vh] sm:h-[85vh] p-0 bg-background overflow-hidden flex flex-col">
+        <DialogHeader className="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 sm:pb-6 border-b bg-gradient-to-b from-background to-muted/20 flex-shrink-0">
           <div className="flex items-center gap-5">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Swords className="h-8 w-8 text-white" />
+            <div className="w-12 sm:w-16 h-12 sm:h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <Swords className="h-6 sm:h-8 w-6 sm:w-8 text-white" />
             </div>
             <div className="flex-1">
-              <DialogTitle className="text-3xl font-bold text-foreground tracking-tight">选择要挑战的任务</DialogTitle>
-              <DialogDescription className="text-base mt-2 text-muted-foreground">
+              <DialogTitle className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">选择要挑战的任务</DialogTitle>
+              <DialogDescription className="text-sm sm:text-base mt-1 sm:mt-2 text-muted-foreground">
                 选择一个任务开始25分钟的专注战斗
               </DialogDescription>
             </div>
@@ -258,37 +258,37 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
               placeholder="搜索任务..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-14 bg-background border-2 text-lg placeholder:text-muted-foreground/60 focus:border-primary/50"
+              className="pl-10 sm:pl-12 h-12 sm:h-14 bg-background border-2 text-base sm:text-lg placeholder:text-muted-foreground/60 focus:border-primary/50"
             />
           </div>
         </DialogHeader>
 
         {/* Type Filter */}
-        <div className="px-8 pt-2">
+        <div className="px-6 sm:px-8 pt-2 flex-shrink-0">
           <Tabs value={selectedTaskType} onValueChange={(v) => setSelectedTaskType(v as any)}>
-            <TabsList className="grid w-full grid-cols-4 h-14 bg-muted/30 p-1">
-              <TabsTrigger value="all" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
-                <span className="flex items-center gap-2">
+            <TabsList className="grid w-full grid-cols-4 h-12 sm:h-14 bg-muted/30 p-1">
+              <TabsTrigger value="all" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-sm sm:text-base font-medium">
+                <span className="flex items-center gap-1 sm:gap-2">
                   <span>全部</span>
-                  {tabCounts.all > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.all})</span>}
+                  {tabCounts.all > 0 && <span className="text-xs sm:text-sm font-normal text-muted-foreground">({tabCounts.all})</span>}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="goal" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
-                <span className="flex items-center gap-2">
+              <TabsTrigger value="goal" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-sm sm:text-base font-medium">
+                <span className="flex items-center gap-1 sm:gap-2">
                   <span>主线</span>
-                  {tabCounts.goal > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.goal})</span>}
+                  {tabCounts.goal > 0 && <span className="text-xs sm:text-sm font-normal text-muted-foreground">({tabCounts.goal})</span>}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="task" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
-                <span className="flex items-center gap-2">
+              <TabsTrigger value="task" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-sm sm:text-base font-medium">
+                <span className="flex items-center gap-1 sm:gap-2">
                   <span>支线</span>
-                  {tabCounts.task > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.task})</span>}
+                  {tabCounts.task > 0 && <span className="text-xs sm:text-sm font-normal text-muted-foreground">({tabCounts.task})</span>}
                 </span>
               </TabsTrigger>
-              <TabsTrigger value="habit" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-base font-medium">
-                <span className="flex items-center gap-2">
+              <TabsTrigger value="habit" className="data-[state=active]:bg-background data-[state=active]:shadow-sm h-full text-sm sm:text-base font-medium">
+                <span className="flex items-center gap-1 sm:gap-2">
                   <span>习惯</span>
-                  {tabCounts.habit > 0 && <span className="text-sm font-normal text-muted-foreground">({tabCounts.habit})</span>}
+                  {tabCounts.habit > 0 && <span className="text-xs sm:text-sm font-normal text-muted-foreground">({tabCounts.habit})</span>}
                 </span>
               </TabsTrigger>
             </TabsList>
@@ -296,7 +296,7 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
         </div>
 
         {/* Task List */}
-        <ScrollArea className="flex-1 px-8 py-6">
+        <ScrollArea className="flex-1 px-6 sm:px-8 py-4 sm:py-6 overflow-y-auto">
           <div className="space-y-3">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-12">
@@ -328,7 +328,7 @@ export default function TaskSelector({ isOpen, onClose }: TaskSelectorProps) {
 
         {/* Stats Footer */}
         {!isLoading && !error && allTasks.length > 0 && (
-          <div className="border-t bg-gradient-to-r from-muted/40 to-muted/20 px-8 py-5">
+          <div className="border-t bg-gradient-to-r from-muted/40 to-muted/20 px-6 sm:px-8 py-3 sm:py-5 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <span className="flex items-center gap-2 text-base">
