@@ -1134,6 +1134,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log(`Fetching available tasks for user: ${userId}`);
       console.log(`Storage type: ${storage.constructor.name}`);
+      console.log(`User email: ${req.user?.claims?.email || 'unknown'}`);
 
       // Get all incomplete goals
       let goals = [];
@@ -1224,7 +1225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         goalTaskCount: goalTasks.length
       });
 
-      res.json({
+      const response = {
         goals: activeGoals.map(g => ({
           id: g.id,
           title: g.title || 'Untitled Goal',
@@ -1232,7 +1233,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           energyBalls: 3,
           skillId: g.skillId || null,
           category: g.category || null,
-          description: g.description || ''
+          description: ''
         })),
         tasks: todoTasks.map(t => ({
           id: t.id,
@@ -1241,7 +1242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           energyBalls: t.requiredEnergyBalls || t.energyBalls || 1,
           skillId: t.skillId || null,
           category: t.taskCategory || 'todo',
-          description: t.description || '',
+          description: '',
           difficulty: t.difficulty || 'medium'
         })),
         habits: habits.map(h => ({
@@ -1251,10 +1252,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           energyBalls: h.requiredEnergyBalls || h.energyBalls || 1,
           skillId: h.skillId || null,
           category: h.taskCategory || 'habit',
-          description: h.description || '',
+          description: '',
           difficulty: h.difficulty || 'medium'
         }))
+      };
+      
+      console.log(`Sending response - Goals: ${response.goals.length}, Tasks: ${response.tasks.length}, Habits: ${response.habits.length}`);
+      console.log('Sample response data:', {
+        firstGoal: response.goals[0],
+        firstTask: response.tasks[0],
+        firstHabit: response.habits[0]
       });
+      
+      res.json(response);
     } catch (error) {
       console.error("Failed to get available tasks:", error);
       console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");

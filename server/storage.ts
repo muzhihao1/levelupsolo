@@ -163,6 +163,19 @@ export class DatabaseStorage implements IStorage {
     // NOTE: lastCompletedAt and completionCount removed as they may not exist
   };
 
+  // Micro tasks selector - only columns that exist in database
+  private readonly microTaskSelectColumns = {
+    id: microTasks.id,
+    taskId: microTasks.taskId,
+    userId: microTasks.userId,
+    title: microTasks.title,
+    // description: microTasks.description, // Column doesn't exist in database
+    completed: microTasks.completed,
+    createdAt: microTasks.createdAt,
+    // These columns exist in schema but not in database:
+    // duration, expReward, difficulty, order, completedAt
+  };
+
   // User operations (required for authentication)
   async getUser(id: string): Promise<User | undefined> {
     if (!isDatabaseInitialized()) {
@@ -502,9 +515,8 @@ export class DatabaseStorage implements IStorage {
     // Fetch micro tasks for each task
     const tasksWithMicroTasks = await Promise.all(
       userTasks.map(async (task) => {
-        const taskMicroTasks = await db.select().from(microTasks)
-          .where(eq(microTasks.taskId, task.id))
-          .orderBy(microTasks.order);
+        const taskMicroTasks = await db.select(this.microTaskSelectColumns).from(microTasks)
+          .where(eq(microTasks.taskId, task.id));
         
         // Add microTasks and default values for potentially missing columns
         return { 
@@ -1092,9 +1104,19 @@ export class DatabaseStorage implements IStorage {
 
   // Micro Tasks - only for main tasks (goal-related tasks)
   async getMicroTasks(taskId: number): Promise<MicroTask[]> {
-    return await db.select().from(microTasks)
-      .where(eq(microTasks.taskId, taskId))
-      .orderBy(asc(microTasks.order));
+    const results = await db.select(this.microTaskSelectColumns).from(microTasks)
+      .where(eq(microTasks.taskId, taskId));
+    
+    // Add default values for missing columns to match MicroTask type
+    return results.map(mt => ({
+      ...mt,
+      duration: 5,
+      expReward: 5,
+      difficulty: 'easy',
+      order: 0,
+      completedAt: null,
+      description: null
+    })) as MicroTask[];
   }
 
   async generateMicroTasksForMainTask(taskId: number, userId: string): Promise<MicroTask[]> {
