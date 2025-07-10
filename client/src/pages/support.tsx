@@ -28,6 +28,13 @@ export default function Support() {
     resolver: zodResolver(contactFormSchema)
   });
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
     try {
@@ -95,7 +102,10 @@ export default function Support() {
 
         {/* 快速链接卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => scrollToSection('faq-section')}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
@@ -107,7 +117,7 @@ export default function Support() {
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg transition-shadow opacity-60">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Users className="w-5 h-5" />
@@ -115,11 +125,14 @@ export default function Support() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">与其他用户交流经验和技巧</p>
+              <p className="text-muted-foreground">即将推出 - 与其他用户交流经验</p>
             </CardContent>
           </Card>
 
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer"
+            onClick={() => scrollToSection('contact-section')}
+          >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Mail className="w-5 h-5" />
@@ -133,7 +146,7 @@ export default function Support() {
         </div>
 
         {/* FAQ 部分 */}
-        <Card>
+        <Card id="faq-section">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <HelpCircle className="w-5 h-5" />
@@ -166,7 +179,7 @@ export default function Support() {
         </Card>
 
         {/* 联系表单 */}
-        <Card>
+        <Card id="contact-section">
           <CardHeader>
             <CardTitle>联系支持团队</CardTitle>
             <CardDescription>
