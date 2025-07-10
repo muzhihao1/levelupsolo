@@ -6,15 +6,35 @@ console.log('🔨 Building for Railway (Simplified)...\n');
 
 // Step 1: Build client
 console.log('📦 Building client...');
+console.log('Current directory:', process.cwd());
+console.log('Script directory:', __dirname);
+
+// First, let's check if node_modules exists
+const nodeModulesPath = path.join(__dirname, '..', 'node_modules');
+if (!fs.existsSync(nodeModulesPath)) {
+  console.error('❌ node_modules not found! Running npm install first...');
+  try {
+    execSync('npm install', { 
+      stdio: 'inherit',
+      cwd: path.join(__dirname, '..')
+    });
+  } catch (installError) {
+    console.error('❌ npm install failed:', installError.message);
+    process.exit(1);
+  }
+}
+
 try {
-  // Run vite build directly instead of npm run build:client to avoid the || echo suppression
-  execSync('npx vite build', { 
+  // Run vite build directly with more verbose output
+  execSync('npx vite build --debug', { 
     stdio: 'inherit',
-    cwd: path.join(__dirname, '..')
+    cwd: path.join(__dirname, '..'),
+    env: { ...process.env, NODE_ENV: 'production' }
   });
   console.log('✅ Client build complete\n');
 } catch (error) {
   console.error('❌ Client build failed:', error.message);
+  console.error('Error details:', error);
   process.exit(1);
 }
 

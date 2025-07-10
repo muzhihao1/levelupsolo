@@ -1,26 +1,32 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, MessageSquare, FileText, Shield, BookOpen, ExternalLink } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { ChevronDown, ChevronUp, Mail, FileText, Users, HelpCircle } from "lucide-react";
 
-interface ContactFormData {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}
+const contactFormSchema = z.object({
+  name: z.string().min(2, "姓名至少需要2个字符"),
+  email: z.string().email("请输入有效的邮箱地址"),
+  subject: z.string().min(5, "主题至少需要5个字符"),
+  message: z.string().min(10, "消息内容至少需要10个字符"),
+});
+
+type ContactFormData = z.infer<typeof contactFormSchema>;
 
 export default function Support() {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>();
+  const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
+  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactFormData>({
+    resolver: zodResolver(contactFormSchema)
+  });
 
   const onSubmit = async (data: ContactFormData) => {
     setIsSubmitting(true);
@@ -33,8 +39,8 @@ export default function Support() {
 
       if (response.ok) {
         toast({
-          title: "消息已发送",
-          description: "我们已收到您的消息，将在24-48小时内回复。",
+          title: "发送成功",
+          description: "我们已收到您的消息，将尽快回复您。",
         });
         reset();
       } else {
@@ -51,22 +57,14 @@ export default function Support() {
     }
   };
 
-  const faqs = [
+  const faqItems = [
     {
-      question: "如何开始使用 Level Up Solo？",
-      answer: "您可以直接下载iOS应用或访问网页版开始使用。应用支持访客模式，无需注册即可体验核心功能，包括任务管理、技能追踪等。如果需要数据同步和AI功能，可以选择创建账户。"
+      question: "如何在不注册的情况下使用应用？",
+      answer: "Level Up Solo 支持访客模式！您无需注册即可使用大部分核心功能，包括创建任务、追踪进度、使用番茄钟等。只有需要数据同步、AI功能等高级特性时才需要注册账户。"
     },
     {
-      question: "哪些功能需要注册账户？",
-      answer: "大部分核心功能都可以在访客模式下使用，包括：创建任务、设定目标、追踪技能进度、使用番茄钟等。需要账户的功能包括：跨设备数据同步、AI任务分类、数据导出、高级统计分析。"
-    },
-    {
-      question: "如何同步我的数据？",
-      answer: "创建账户后，您的数据将自动在所有设备间同步。支持iOS应用和网页版之间的实时同步。如果您之前使用访客模式，创建账户后可以选择将本地数据迁移到云端。"
-    },
-    {
-      question: "技能系统如何工作？",
-      answer: "Level Up Solo包含六大核心技能：意志力、体能、情感、财务、人际和智力。完成相关任务可以获得对应技能的经验值，提升技能等级。每个技能都有独特的成长曲线和奖励系统。"
+      question: "注册账户有什么好处？",
+      answer: "注册账户后，您可以：1) 在多设备间同步数据 2) 使用AI任务分类和建议功能 3) 数据自动备份 4) 查看详细的统计分析 5) 参与社区活动"
     },
     {
       question: "什么是能量球系统？",
@@ -74,11 +72,11 @@ export default function Support() {
     },
     {
       question: "如何删除我的账户？",
-      answer: "您可以在应用设置中找到"账户管理"选项，选择"删除账户"。或者访问 <a href='/account-deletion' class='text-primary hover:underline'>账户删除页面</a>。删除请求提交后，您的数据将在30天内完全删除。在此期间，您可以随时取消删除请求。"
+      answer: "您可以在应用设置中找到\"账户管理\"选项，选择\"删除账户\"。或者访问账户删除页面。删除请求提交后，您的数据将在30天内完全删除。在此期间，您可以随时取消删除请求。"
     },
     {
       question: "我的数据安全吗？",
-      answer: "我们非常重视您的数据安全。所有数据传输都使用HTTPS加密，敏感信息采用行业标准的加密存储。我们遵守GDPR和其他隐私法规，您可以随时导出或删除您的数据。详情请查看我们的<a href='/privacy-policy' class='text-primary hover:underline'>隐私政策</a>。"
+      answer: "我们非常重视您的数据安全。所有数据传输都使用HTTPS加密，敏感信息采用行业标准的加密存储。我们遵守GDPR和其他隐私法规，您可以随时导出或删除您的数据。详情请查看我们的隐私政策。"
     },
     {
       question: "如何使用AI功能？",
@@ -88,199 +86,145 @@ export default function Support() {
 
   return (
     <div className="container max-w-6xl mx-auto py-8 px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Level Up Solo 用户支持</h1>
-          <p className="text-lg text-muted-foreground">
-            我们致力于为您提供最好的使用体验
-          </p>
+      <div className="space-y-8">
+        {/* 页面标题 */}
+        <div className="text-center">
+          <h1 className="text-4xl font-bold">帮助与支持</h1>
+          <p className="text-muted-foreground mt-2">我们随时准备为您提供帮助</p>
         </div>
 
-        {/* 快速链接 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+        {/* 快速链接卡片 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="text-center">
-              <BookOpen className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <CardTitle className="text-lg">使用指南</CardTitle>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                使用指南
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground text-center">
-                快速了解如何使用应用的各项功能
-              </p>
+              <p className="text-muted-foreground">查看详细的功能说明和使用教程</p>
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="text-center">
-              <MessageSquare className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <CardTitle className="text-lg">常见问题</CardTitle>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                社区论坛
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground text-center">
-                查看用户最常问的问题和解答
-              </p>
+              <p className="text-muted-foreground">与其他用户交流经验和技巧</p>
             </CardContent>
           </Card>
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="text-center">
-              <Shield className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <CardTitle className="text-lg">隐私安全</CardTitle>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                联系我们
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground text-center">
-                了解我们如何保护您的数据
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-            <CardHeader className="text-center">
-              <Mail className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <CardTitle className="text-lg">联系我们</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground text-center">
-                直接联系我们的支持团队
-              </p>
+              <p className="text-muted-foreground">直接向我们的支持团队发送消息</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* 常见问题 */}
-        <Card className="mb-12">
+        {/* FAQ 部分 */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">常见问题</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <HelpCircle className="w-5 h-5" />
+              常见问题
+            </CardTitle>
             <CardDescription>
-              以下是用户最常咨询的问题，点击查看答案
+              这里是用户最常问的问题和解答
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger className="text-left">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div 
-                      className="text-muted-foreground"
-                      dangerouslySetInnerHTML={{ __html: faq.answer }}
-                    />
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+          <CardContent className="space-y-4">
+            {faqItems.map((item, index) => (
+              <div key={index} className="border-b last:border-0 pb-4 last:pb-0">
+                <button
+                  className="w-full text-left flex justify-between items-center py-2 hover:text-primary transition-colors"
+                  onClick={() => setExpandedFAQ(expandedFAQ === index ? null : index)}
+                >
+                  <span className="font-medium">{item.question}</span>
+                  {expandedFAQ === index ? (
+                    <ChevronUp className="w-4 h-4" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4" />
+                  )}
+                </button>
+                {expandedFAQ === index && (
+                  <p className="mt-2 text-muted-foreground pl-2">{item.answer}</p>
+                )}
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* 联系表单 */}
-        <Card className="mb-12">
+        <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">联系我们</CardTitle>
+            <CardTitle>联系支持团队</CardTitle>
             <CardDescription>
-              如果您没有找到需要的答案，请通过以下方式联系我们
+              如果您在FAQ中没有找到答案，请直接联系我们
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* 联系信息 */}
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-semibold mb-2">直接联系</h3>
-                  <div className="space-y-2 text-muted-foreground">
-                    <p className="flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
-                      support@levelupsolo.net
-                    </p>
-                    <p>响应时间：24-48小时</p>
-                    <p>工作时间：周一至周五 9:00-18:00 (UTC+8)</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold mb-2">其他资源</h3>
-                  <div className="space-y-2">
-                    <a href="/privacy-policy" className="flex items-center gap-2 text-primary hover:underline">
-                      <FileText className="w-4 h-4" />
-                      隐私政策
-                    </a>
-                    <a href="/terms-of-service" className="flex items-center gap-2 text-primary hover:underline">
-                      <FileText className="w-4 h-4" />
-                      服务条款
-                    </a>
-                    <a href="/account-deletion" className="flex items-center gap-2 text-primary hover:underline">
-                      <Shield className="w-4 h-4" />
-                      删除账户
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* 联系表单 */}
+            <div className="max-w-2xl mx-auto">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                <div>
-                  <Label htmlFor="name">姓名</Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">姓名</Label>
+                    <Input
+                      id="name"
+                      {...register("name")}
+                      placeholder="您的姓名"
+                    />
+                    {errors.name && (
+                      <p className="text-sm text-red-500">{errors.name.message}</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="email">邮箱</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      {...register("email")}
+                      placeholder="your@email.com"
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-red-500">{errors.email.message}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="subject">主题</Label>
                   <Input
-                    id="name"
-                    {...register("name", { required: "请输入您的姓名" })}
-                    placeholder="您的姓名"
+                    id="subject"
+                    {...register("subject")}
+                    placeholder="简要描述您的问题"
                   />
-                  {errors.name && (
-                    <p className="text-sm text-red-500 mt-1">{errors.name.message}</p>
+                  {errors.subject && (
+                    <p className="text-sm text-red-500">{errors.subject.message}</p>
                   )}
                 </div>
 
-                <div>
-                  <Label htmlFor="email">邮箱</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    {...register("email", { 
-                      required: "请输入您的邮箱",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "请输入有效的邮箱地址"
-                      }
-                    })}
-                    placeholder="your@email.com"
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
-                  )}
-                </div>
-
-                <div>
-                  <Label htmlFor="subject">问题类型</Label>
-                  <Select onValueChange={(value) => register("subject").onChange({ target: { value } })}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="请选择问题类型" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="technical">技术问题</SelectItem>
-                      <SelectItem value="account">账户问题</SelectItem>
-                      <SelectItem value="feature">功能建议</SelectItem>
-                      <SelectItem value="bug">错误报告</SelectItem>
-                      <SelectItem value="other">其他</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="message">详细描述</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="message">消息内容</Label>
                   <Textarea
                     id="message"
-                    {...register("message", { 
-                      required: "请描述您的问题",
-                      minLength: {
-                        value: 10,
-                        message: "请至少输入10个字符"
-                      }
-                    })}
-                    placeholder="请详细描述您遇到的问题或建议..."
+                    {...register("message")}
+                    placeholder="请详细描述您遇到的问题..."
                     rows={5}
                   />
                   {errors.message && (
-                    <p className="text-sm text-red-500 mt-1">{errors.message.message}</p>
+                    <p className="text-sm text-red-500">{errors.message.message}</p>
                   )}
                 </div>
 
