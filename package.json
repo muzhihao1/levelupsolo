@@ -42,6 +42,8 @@
     "test:check-user-data": "tsx scripts/check-user-data.ts",
     "test:debug-tasks": "tsx scripts/test-available-tasks-debug.ts",
     "test:add-tasks": "tsx scripts/add-test-tasks.ts",
+    "create:demo-account": "tsx server/create-demo-account.ts",
+    "create:demo-api": "tsx scripts/create-demo-account-api.ts",
     "check:env": "tsx scripts/check-env-config.ts",
     "validate:data": "tsx tools/cross-platform-validator.ts",
     "validate:db": "tsx tools/cross-platform-validator.ts --db",

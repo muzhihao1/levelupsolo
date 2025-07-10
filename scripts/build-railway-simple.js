@@ -7,7 +7,11 @@ console.log('🔨 Building for Railway (Simplified)...\n');
 // Step 1: Build client
 console.log('📦 Building client...');
 try {
-  execSync('npm run build:client', { stdio: 'inherit' });
+  // Run vite build directly instead of npm run build:client to avoid the || echo suppression
+  execSync('npx vite build', { 
+    stdio: 'inherit',
+    cwd: path.join(__dirname, '..')
+  });
   console.log('✅ Client build complete\n');
 } catch (error) {
   console.error('❌ Client build failed:', error.message);
@@ -27,6 +31,15 @@ try {
   
   // Create server/public directory
   fs.mkdirSync(serverPublicPath, { recursive: true });
+  
+  // Debug: Check what's in dist directory
+  console.log('📂 Checking dist directory...');
+  if (fs.existsSync(distPath)) {
+    const distContents = fs.readdirSync(distPath);
+    console.log('  Contents of dist:', distContents);
+  } else {
+    console.log('  ❌ dist directory does not exist!');
+  }
   
   // Copy all files from dist/public to server/public
   const distPublicPath = path.join(distPath, 'public');
