@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ import { AlertTriangle, CheckCircle, Info } from "lucide-react";
 
 export default function AccountDeletion() {
   const { isAuthenticated, logout } = useAuth();
-  const [navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [step, setStep] = useState<"warning" | "confirm" | "processing" | "completed">("warning");
   const [confirmText, setConfirmText] = useState("");
@@ -46,7 +46,7 @@ export default function AccountDeletion() {
         // Log out after 5 seconds
         setTimeout(() => {
           logout();
-          navigate("/");
+          setLocation("/");
         }, 5000);
       } else {
         throw new Error("删除请求失败");
@@ -74,7 +74,7 @@ export default function AccountDeletion() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate("/auth")}>
+            <Button onClick={() => setLocation("/auth")}>
               前往登录
             </Button>
           </CardContent>
@@ -124,7 +124,7 @@ export default function AccountDeletion() {
             </Alert>
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => navigate("/")}>
+            <Button variant="outline" onClick={() => setLocation("/")}>
               取消
             </Button>
             <Button variant="destructive" onClick={() => setStep("confirm")}>
