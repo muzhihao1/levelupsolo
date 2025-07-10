@@ -28,6 +28,9 @@ const FixData = lazy(() => import("@/pages/fix-data"));
 const TestTaskCreation = lazy(() => import("@/pages/test-task-creation"));
 const ApiTest = lazy(() => import("@/pages/api-test"));
 const Pomodoro = lazy(() => import("@/pages/pomodoro"));
+const Support = lazy(() => import("@/pages/support"));
+const AccountDeletion = lazy(() => import("@/pages/account-deletion"));
+const PrivacyPolicy = lazy(() => import("@/pages/privacy-policy"));
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -59,6 +62,9 @@ function Router() {
           <Route path="/" component={Landing} />
           <Route path="/landing" component={Landing} />
           <Route path="/auth" component={AuthPage} />
+          <Route path="/support" component={Support} />
+          <Route path="/account-deletion" component={AccountDeletion} />
+          <Route path="/privacy-policy" component={PrivacyPolicy} />
           <Route component={Landing} />
         </Switch>
       </Suspense>
@@ -90,6 +96,9 @@ function Router() {
             <Route path="/log" component={GrowthLog} />
             <Route path="/weekly-summary" component={WeeklySummary} />
             <Route path="/pomodoro" component={Pomodoro} />
+            <Route path="/support" component={Support} />
+            <Route path="/account-deletion" component={AccountDeletion} />
+            <Route path="/privacy-policy" component={PrivacyPolicy} />
             <Route path="/debug-user" component={DebugUser} />
             <Route path="/fix-data" component={FixData} />
             <Route path="/test-task" component={TestTaskCreation} />
