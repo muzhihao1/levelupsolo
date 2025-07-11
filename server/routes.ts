@@ -14,6 +14,12 @@ import { sql } from "drizzle-orm";
 import { db } from "./db";
 import { testEndpointSecurity } from "./middleware/test-endpoint-security";
 import { normalizeTaskCategory } from "./utils/task-category-mapper";
+import { 
+  requestAccountDeletion, 
+  cancelAccountDeletion,
+  deleteAccountSchema,
+  cancelDeletionSchema 
+} from "./account-deletion";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -4956,6 +4962,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
   // Account deletion endpoint
   app.delete("/api/v1/users/account", isAuthenticated, async (req: any, res) => {
     try {
@@ -4965,46 +4972,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Mark account for deletion
-      const deletionDate = new Date();
-      deletionDate.setDate(deletionDate.getDate() + 30); // 30 days from now
+      // Validate request body
+      const data = deleteAccountSchema.parse(req.body);
 
-      // Update user record to mark for deletion
-      await db.execute(sql`
-        UPDATE users 
-        SET 
-          updated_at = ${new Date()},
-          email = ${`deleted_${userId}@deleted.com`},
-          first_name = '[DELETED]',
-          last_name = '[DELETED]',
-          profile_image_url = NULL
-        WHERE id = ${userId}
-      `);
+      // Process deletion request with password verification
+      const result = await requestAccountDeletion(
+        userId, 
+        data.password,
+        data.scheduledDeletionDate
+      );
 
-      // Create deletion record in activity logs
-      await storage.createActivityLog({
-        userId,
-        action: 'account_deletion_requested',
-        details: {
-          description: 'Account deletion requested',
-          scheduledDeletionDate: deletionDate.toISOString(),
-          requestedAt: new Date().toISOString()
-        }
-      });
-
-      // TODO: Schedule actual deletion job for 30 days later
-      // This would typically be done with a job queue like Bull or similar
-      
-      // TODO: Send confirmation email
-      // await sendDeletionConfirmationEmail(userEmail);
-
-      res.json({
-        message: "Account deletion request received",
-        deletionDate: deletionDate.toISOString(),
-        note: "Your account will be permanently deleted after 30 days. You can cancel this request by logging in before the deletion date."
-      });
+      res.json(result);
 
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid request data", 
+          errors: error.errors 
+        });
+      }
+      
+      if (error.message === "Invalid password") {
+        return res.status(401).json({ message: "密码错误" });
+      }
+
       console.error("Error processing account deletion:", error);
       res.status(500).json({ message: "Failed to process account deletion request" });
     }
@@ -5019,36 +5010,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Check if there's a pending deletion
-      const deletionLog = await db.execute(sql`
-        SELECT * FROM activity_logs 
-        WHERE user_id = ${userId} 
-        AND action = 'account_deletion_requested'
-        ORDER BY created_at DESC
-        LIMIT 1
-      `);
-
-      if (!deletionLog.rows || deletionLog.rows.length === 0) {
-        return res.status(400).json({ message: "No pending deletion request found" });
-      }
-
-      // Restore user data (this is simplified - in production you'd restore from backup)
-      // For now, we'll just log the cancellation
-      await storage.createActivityLog({
-        userId,
-        action: 'account_deletion_cancelled',
-        details: {
-          description: 'Account deletion cancelled',
-          cancelledAt: new Date().toISOString()
-        }
-      });
-
+      // Process cancellation request
+      const result = await cancelAccountDeletion(userId);
+      
       res.json({
-        message: "Account deletion request has been cancelled",
+        ...result,
         note: "Your account will remain active"
       });
 
     } catch (error) {
+      if (error.message === "No pending deletion request found") {
+        return res.status(400).json({ message: error.message });
+      }
+
       console.error("Error cancelling account deletion:", error);
       res.status(500).json({ message: "Failed to cancel account deletion request" });
     }
