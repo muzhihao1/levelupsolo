@@ -3,6 +3,12 @@ import { storage } from "./storage";
 import * as auth from "./auth-jwt";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { 
+  requestPasswordReset, 
+  resetPassword,
+  requestPasswordResetSchema,
+  resetPasswordSchema 
+} from "./password-reset";
 
 // Schema for registration
 const registerSchema = z.object({
@@ -188,5 +194,38 @@ export async function setupAuth(app: Express) {
   // Logout endpoint (for compatibility)
   app.post("/api/auth/logout", (req, res) => {
     res.json({ message: "已登出" });
+  });
+  
+  // Request password reset endpoint
+  app.post("/api/auth/request-password-reset", async (req, res) => {
+    try {
+      const data = requestPasswordResetSchema.parse(req.body);
+      const result = await requestPasswordReset(data.email);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "输入数据无效", errors: error.errors });
+      }
+      console.error("Request password reset error:", error);
+      res.status(500).json({ message: "请求密码重置失败" });
+    }
+  });
+  
+  // Reset password endpoint
+  app.post("/api/auth/reset-password", async (req, res) => {
+    try {
+      const data = resetPasswordSchema.parse(req.body);
+      const result = await resetPassword(data.token, data.newPassword);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "输入数据无效", errors: error.errors });
+      }
+      if (error instanceof Error && error.message === "无效或已过期的重置令牌") {
+        return res.status(400).json({ message: error.message });
+      }
+      console.error("Reset password error:", error);
+      res.status(500).json({ message: "重置密码失败" });
+    }
   });
 }

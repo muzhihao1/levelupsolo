@@ -21,6 +21,10 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   hashedPassword: text("hashed_password"), // 密码字段
+  passwordResetToken: varchar("password_reset_token", { length: 255 }),
+  passwordResetExpires: timestamp("password_reset_expires"),
+  deletionRequestedAt: timestamp("deletion_requested_at"),
+  deletionScheduledFor: timestamp("deletion_scheduled_for"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -42,6 +42,9 @@ export interface IStorage {
   upsertUser(user: UpsertUser): Promise<User>;
   setUserPassword(userId: string, hashedPassword: string): Promise<void>;
   getUserPassword(userId: string): Promise<string | undefined>;
+  setPasswordResetToken(userId: string, token: string, expires: Date): Promise<void>;
+  getUserByResetToken(token: string): Promise<User | undefined>;
+  clearPasswordResetToken(userId: string): Promise<void>;
 
   // Skills
   getSkills(userId: string): Promise<Skill[]>;
@@ -248,6 +251,57 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .where(eq(users.id, userId));
     return user?.hashedPassword || undefined;
+  }
+
+  async setPasswordResetToken(userId: string, token: string, expires: Date): Promise<void> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in setPasswordResetToken");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
+    await db
+      .update(users)
+      .set({
+        passwordResetToken: token,
+        passwordResetExpires: expires,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
+  }
+
+  async getUserByResetToken(token: string): Promise<User | undefined> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in getUserByResetToken");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(and(
+        eq(users.passwordResetToken, token),
+        gte(users.passwordResetExpires, new Date())
+      ));
+    return user || undefined;
+  }
+
+  async clearPasswordResetToken(userId: string): Promise<void> {
+    if (!isDatabaseInitialized()) {
+      console.error("Database not initialized in clearPasswordResetToken");
+      const error = getDatabaseError();
+      console.error(error);
+      throw new Error(`Database not initialized: ${error.error}`);
+    }
+    await db
+      .update(users)
+      .set({
+        passwordResetToken: null,
+        passwordResetExpires: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, userId));
   }
 
   // Skills
